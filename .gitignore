@@ -1,0 +1,18 @@
+# Vim
+*.swp
+*~
+tags
+*.plist
+
+# CMake
+CMakeFiles/
+compile_commands.json
+cmake_install.cmake
+Makefile
+CMakeCache.txt
+
+# Qt
+*_autogen/
+
+# Project
+img_viz
