@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/img_viz.dir/img_viz_autogen/mocs_compilation.cpp.o CMakeFiles/img_viz.dir/src/main.cpp.o CMakeFiles/img_viz.dir/src/mainwindow.cpp.o  -o img_viz /usr/lib/libQt5Widgets.so.5.13.0 /usr/lib/libQt5Gui.so.5.13.0 /usr/lib/libQt5Core.so.5.13.0 

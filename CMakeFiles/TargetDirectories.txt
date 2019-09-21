@@ -1,0 +1,4 @@
+/home/david/Projects/img_viz/CMakeFiles/rebuild_cache.dir
+/home/david/Projects/img_viz/CMakeFiles/img_viz.dir
+/home/david/Projects/img_viz/CMakeFiles/edit_cache.dir
+/home/david/Projects/img_viz/CMakeFiles/img_viz_autogen.dir

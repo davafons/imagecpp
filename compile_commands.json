@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/david/Projects/img_viz",
+  "command": "/usr/bin/c++  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/david/Projects/img_viz/img_viz_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++    -fPIC -o CMakeFiles/img_viz.dir/img_viz_autogen/mocs_compilation.cpp.o -c /home/david/Projects/img_viz/img_viz_autogen/mocs_compilation.cpp",
+  "file": "/home/david/Projects/img_viz/img_viz_autogen/mocs_compilation.cpp"
+},
+{
+  "directory": "/home/david/Projects/img_viz",
+  "command": "/usr/bin/c++  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/david/Projects/img_viz/img_viz_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++    -fPIC -o CMakeFiles/img_viz.dir/src/main.cpp.o -c /home/david/Projects/img_viz/src/main.cpp",
+  "file": "/home/david/Projects/img_viz/src/main.cpp"
+},
+{
+  "directory": "/home/david/Projects/img_viz",
+  "command": "/usr/bin/c++  -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/david/Projects/img_viz/img_viz_autogen/include -isystem /usr/include/qt -isystem /usr/include/qt/QtWidgets -isystem /usr/include/qt/QtGui -isystem /usr/include/qt/QtCore -isystem /usr/lib/qt/mkspecs/linux-g++    -fPIC -o CMakeFiles/img_viz.dir/src/mainwindow.cpp.o -c /home/david/Projects/img_viz/src/mainwindow.cpp",
+  "file": "/home/david/Projects/img_viz/src/mainwindow.cpp"
+}
+]
