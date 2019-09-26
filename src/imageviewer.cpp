@@ -1,6 +1,7 @@
 #include "imageviewer.hpp"
 
 #include <QDebug>
+#include <QMessageBox>
 #include <QPalette>
 #include <QPixmap>
 
@@ -11,11 +12,11 @@ ImageViewer::ImageViewer(QWidget *parent) {
 
 ImageViewer::ImageViewer(const QString &file_path, QWidget *parent)
     : ImageViewer(parent) {
-  openImage(file_path);
+  open(file_path);
 }
 
-void ImageViewer::openImage(const QString &file_path) {
-  qDebug() << QString("Open image: %1").arg(file_path);
+void ImageViewer::open(const QString &file_path) {
+  qDebug() << "ImageViewer::open() called with" << file_path;
 
   loaded_image_ = QImage(file_path);
 
@@ -24,4 +25,12 @@ void ImageViewer::openImage(const QString &file_path) {
 
   file_path_ = file_path;
   setWindowTitle(file_path_);
+}
+
+bool ImageViewer::save() const { return saveAs(file_path_); }
+
+bool ImageViewer::saveAs(const QString &file_path) const {
+  qDebug() << "ImageViewer::saveAs() called";
+
+  return loaded_image_.save(file_path);
 }

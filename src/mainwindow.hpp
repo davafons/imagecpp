@@ -1,10 +1,14 @@
+#pragma once
+
 #include <QAction>
-#include <QMainWindow>
-#include <QMenu>
 #include <QImage>
 #include <QLabel>
+#include <QMainWindow>
+#include <QMenu>
 
 #include <QMdiArea>
+
+#include "imageviewer.hpp"
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -13,12 +17,16 @@ public:
   MainWindow(QWidget *parent = nullptr,
              Qt::WindowFlags flags = Qt::WindowFlags());
 
+private slots:
+  void open();
+  void save();
+  void saveAs();
+
 private:
   void createActions();
   void createMenus();
 
-private slots:
-  void openImage();
+  ImageViewer *getActiveImageViewer() const;
 
 private:
   QMenu *file_menu_;
@@ -26,6 +34,8 @@ private:
 
   QAction *quit_act_;
   QAction *open_act_;
+  QAction *save_act_;
+  QAction *save_as_act_;
 
   QAction *toggle_subtabs_act_;
 
