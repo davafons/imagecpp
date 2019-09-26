@@ -3,12 +3,15 @@
 #include <QLabel>
 #include <QScrollArea>
 
+class HistogramModel;
+
 class ImageViewer : public QScrollArea {
   Q_OBJECT
 
 public:
   explicit ImageViewer(QWidget *parent = 0);
   explicit ImageViewer(const QString &file_name, QWidget *parent = 0);
+  ~ImageViewer();
 
   QString getFilePath() const { return file_path_; }
 
@@ -22,4 +25,5 @@ private:
   QLabel *display_{new QLabel()};
 
   QString file_path_{""};
+  HistogramModel *histogram_{nullptr};
 };

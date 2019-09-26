@@ -5,6 +5,8 @@
 #include <QPalette>
 #include <QPixmap>
 
+#include "histogram_model.hpp"
+
 ImageViewer::ImageViewer(QWidget *parent) {
   setBackgroundRole(QPalette::Base);
   setWidget(display_);
@@ -14,6 +16,8 @@ ImageViewer::ImageViewer(const QString &file_path, QWidget *parent)
     : ImageViewer(parent) {
   open(file_path);
 }
+
+ImageViewer::~ImageViewer() { delete histogram_; }
 
 void ImageViewer::open(const QString &file_path) {
   qDebug() << "ImageViewer::open() called with" << file_path;
@@ -25,6 +29,9 @@ void ImageViewer::open(const QString &file_path) {
 
   file_path_ = file_path;
   setWindowTitle(file_path_);
+
+  // Build the histogram
+  histogram_ = new HistogramModel(loaded_image_);
 }
 
 bool ImageViewer::save() const { return saveAs(file_path_); }

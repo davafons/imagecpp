@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/mainwindow.cpp
     src/imageviewer.cpp
+    src/histogram_model.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets)
