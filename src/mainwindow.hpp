@@ -17,6 +17,9 @@ public:
   MainWindow(QWidget *parent = nullptr,
              Qt::WindowFlags flags = Qt::WindowFlags());
 
+public slots:
+  void pixelMouseOver(const QPoint& point, const QColor& color);
+
 private slots:
   void open();
   void save();

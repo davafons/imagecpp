@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPalette>
 #include <QPixmap>
 
@@ -40,4 +41,9 @@ bool ImageViewer::saveAs(const QString &file_path) const {
   qDebug() << "ImageViewer::saveAs() called";
 
   return loaded_image_.save(file_path);
+}
+
+// TODO: Only emit while hovering the image, not the whole area
+void ImageViewer::mouseMoveEvent(QMouseEvent *event) {
+  emit pixelInformation(event->pos(), loaded_image_.pixel(event->pos()));
 }

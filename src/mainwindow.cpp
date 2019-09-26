@@ -8,6 +8,7 @@
 #include <QMdiSubWindow>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
 #include <QStatusBar>
@@ -18,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
   createActions();
   createMenus();
   setStatusBar(statusBar());
+
+  mdi_area_->setTabsClosable(true);
+  mdi_area_->setTabsMovable(true);
 
   setCentralWidget(mdi_area_);
 }
@@ -82,6 +86,16 @@ ImageViewer *MainWindow::getActiveImageViewer() const {
   return image_viewer;
 }
 
+void MainWindow::pixelMouseOver(const QPoint &point, const QColor &color) {
+  statusBar()->showMessage(QString("x: %1 y: %2 \t R: %3 G: %4 B: %5 A: %6")
+                               .arg(point.x())
+                               .arg(point.y())
+                               .arg(color.red())
+                               .arg(color.green())
+                               .arg(color.blue())
+                               .arg(color.alpha()));
+}
+
 // TODO: Move dialog to imageviewer ??
 void MainWindow::open() {
   qDebug() << "MainWindow::open() called";
@@ -95,6 +109,9 @@ void MainWindow::open() {
     // Add subwindow
     mdi_area_->addSubWindow(image_viewer);
     image_viewer->show();
+
+    connect(image_viewer, &ImageViewer::pixelInformation, this,
+            &MainWindow::pixelMouseOver);
   }
 }
 

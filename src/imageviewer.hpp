@@ -15,10 +15,16 @@ public:
 
   QString getFilePath() const { return file_path_; }
 
+signals:
+  void pixelInformation(const QPoint& point, const QColor& color);
+
 public slots:
   void open(const QString &file_path);
   bool save() const;
   bool saveAs(const QString &file_path) const;
+
+private:
+  void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
   QImage loaded_image_;
