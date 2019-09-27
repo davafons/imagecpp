@@ -18,7 +18,7 @@ public:
              Qt::WindowFlags flags = Qt::WindowFlags());
 
 public slots:
-  void pixelMouseOver(const QPoint& point, const QColor& color);
+  void pixelMouseOver(const QPoint &point, const QColor &color);
 
 private slots:
   void open();
@@ -43,4 +43,6 @@ private:
   QAction *toggle_subtabs_act_;
 
   QMdiArea *mdi_area_;
+
+  QLabel *colorLabel_;
 };

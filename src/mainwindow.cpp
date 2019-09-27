@@ -1,5 +1,5 @@
-#include "mainwindow.hpp"
 #include "imageviewer.hpp"
+#include "mainwindow.hpp"
 
 #include <QApplication>
 #include <QBitmap>
@@ -19,6 +19,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
   createActions();
   createMenus();
   setStatusBar(statusBar());
+
+  colorLabel_ = new QLabel();
+  colorLabel_->setFixedSize(QSize(16, 16));
+  colorLabel_->setAutoFillBackground(true);
+  colorLabel_->setStyleSheet("background-color: red;");
+  // Add black frame to widget
+
+  statusBar()->addPermanentWidget(colorLabel_, 1);
 
   mdi_area_->setTabsClosable(true);
   mdi_area_->setTabsMovable(true);
@@ -94,6 +102,9 @@ void MainWindow::pixelMouseOver(const QPoint &point, const QColor &color) {
                                .arg(color.green())
                                .arg(color.blue())
                                .arg(color.alpha()));
+
+  colorLabel_->setStyleSheet(
+      QString("background-color: %1;").arg(color.name()));
 }
 
 // TODO: Move dialog to imageviewer ??
@@ -101,7 +112,7 @@ void MainWindow::open() {
   qDebug() << "MainWindow::open() called";
 
   QString file_path = QFileDialog::getOpenFileName(
-      this, tr("Open Image"), "~", tr("Image Files(*.png *.jpg *.bmp)"));
+      this, tr("Open Image"), "~", tr("Image Files(*.png *.jpg *.jpeg *.bmp)"));
 
   if (!file_path.isEmpty()) {
     ImageViewer *image_viewer = new ImageViewer(file_path);
@@ -150,7 +161,7 @@ void MainWindow::saveAs() {
 
   // TODO: Enforce save with image extension
   QString file_path = QFileDialog::getSaveFileName(
-      this, tr("Save Image"), "~", tr("Image Files(*.png *.jpg *.bmp)"));
+      this, tr("Save Image"), "~", tr("Image Files(*.png *.jpg *.jpeg *.bmp)"));
 
   qDebug() << "Image to save path:" << file_path;
 
