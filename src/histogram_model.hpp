@@ -1,20 +1,22 @@
 #pragma once
 
+#include <QBarSet>
 #include <QImage>
 
 #include <array>
 
 class HistogramModel {
 public:
-  explicit HistogramModel(const QImage &image);
+  explicit HistogramModel(const QImage *image);
 
 private:
   void buildHistogram();
 
-private:
-  const QImage &image_;
+public:
+  const QImage *image_;
 
-  std::array<int, 256> hr_{0};
-  std::array<int, 256> hg_{0};
-  std::array<int, 256> hb_{0};
+  QtCharts::QBarSet *hr_{new QtCharts::QBarSet("Red")};
+  QtCharts::QBarSet *hg_{new QtCharts::QBarSet("Green")};
+  QtCharts::QBarSet *hb_{new QtCharts::QBarSet("Blue")};
+  QtCharts::QBarSet *hi_{new QtCharts::QBarSet("Intensity")};
 };

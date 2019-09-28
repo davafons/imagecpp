@@ -1,5 +1,5 @@
 #include "mainwindow.hpp"
-#include "imageviewer.hpp"
+#include "imageviewarea.hpp"
 
 #include <QApplication>
 #include <QBitmap>
@@ -13,6 +13,8 @@
 #include <QPixmap>
 #include <QStatusBar>
 #include <QString>
+
+#include "histogram_view.hpp"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), mdi_area_(new QMdiArea()) {
@@ -71,6 +73,19 @@ void MainWindow::createActions() {
             (checked) ? mdi_area_->setViewMode(QMdiArea::TabbedView)
                       : mdi_area_->setViewMode(QMdiArea::SubWindowView);
           });
+
+  zoom_in_act_ = new QAction(tr("Zoom in"));
+  zoom_in_act_->setShortcut(QKeySequence::ZoomIn);
+
+  connect(zoom_in_act_, &QAction::triggered, this, &MainWindow::zoomIn);
+
+  zoom_out_act_ = new QAction(tr("Zoom out"));
+  zoom_out_act_->setShortcut(QKeySequence::ZoomOut);
+
+  connect(zoom_out_act_, &QAction::triggered, this, &MainWindow::zoomOut);
+
+  normal_size_act_ = new QAction(tr("Reset to normal size"));
+  connect(normal_size_act_, &QAction::triggered, this, &MainWindow::normalSize);
 }
 
 void MainWindow::createMenus() {
@@ -82,15 +97,19 @@ void MainWindow::createMenus() {
   file_menu_->addAction(quit_act_);
 
   options_menu_ = menuBar()->addMenu(tr("Options"));
+  options_menu_->addAction(zoom_in_act_);
+  options_menu_->addAction(zoom_out_act_);
+  options_menu_->addAction(normal_size_act_);
+  options_menu_->addSeparator();
   options_menu_->addAction(toggle_subtabs_act_);
 }
 
-ImageViewer *MainWindow::getActiveImageViewer() const {
-  ImageViewer *image_viewer = nullptr;
+ImageViewArea *MainWindow::getActiveImageViewArea() const {
+  ImageViewArea *image_viewer = nullptr;
 
   QMdiSubWindow *active_subwindow = mdi_area_->activeSubWindow();
   if (active_subwindow) {
-    image_viewer = dynamic_cast<ImageViewer *>(active_subwindow->widget());
+    image_viewer = dynamic_cast<ImageViewArea *>(active_subwindow->widget());
   }
 
   return image_viewer;
@@ -119,21 +138,29 @@ void MainWindow::open() {
       this, tr("Open Image"), "~", tr("Image Files(*.png *.jpg *.jpeg *.bmp)"));
 
   if (!file_path.isEmpty()) {
-    ImageViewer *image_viewer = new ImageViewer(file_path);
+    ImageViewArea *image_viewer = new ImageViewArea(file_path);
 
     // Add subwindow
     mdi_area_->addSubWindow(image_viewer);
     image_viewer->show();
 
-    connect(image_viewer, &ImageViewer::pixelInformation, this,
+    connect(image_viewer, &ImageViewArea::pixelInformation, this,
             &MainWindow::pixelMouseOver);
+
+    // HistogramView *hist_view = new HistogramView(image_viewer->getHistogram());
+    // QChartView *chartView = new QChartView(hist_view);
+    // chartView->setRenderHint(QPainter::Antialiasing);
+    // chartView->resize(400, 400);
+    //
+    // mdi_area_->addSubWindow(chartView);
+    // chartView->show();
   }
 }
 
 void MainWindow::save() {
   qDebug() << "MainWindow::save() called";
 
-  ImageViewer *active_imageviewer = getActiveImageViewer();
+  ImageViewArea *active_imageviewer = getActiveImageViewArea();
 
   // TODO: Remove code duplication
   if (!active_imageviewer) {
@@ -155,7 +182,7 @@ void MainWindow::save() {
 void MainWindow::saveAs() {
   qDebug() << "MainWindow::saveAs() called";
 
-  ImageViewer *active_imageviewer = getActiveImageViewer();
+  ImageViewArea *active_imageviewer = getActiveImageViewArea();
 
   if (!active_imageviewer) {
     QMessageBox::critical(this, tr("Save As... error"),
@@ -173,5 +200,26 @@ void MainWindow::saveAs() {
     // TODO: Specify why image couldn't be saved
     QMessageBox::critical(this, tr("Save As... error"),
                           tr("Couldn't save image!"));
+  }
+}
+
+void MainWindow::zoomIn() {
+  ImageViewArea *active_imageviewer = getActiveImageViewArea();
+  if (active_imageviewer) {
+    active_imageviewer->zoomIn();
+  }
+}
+
+void MainWindow::zoomOut() {
+  ImageViewArea *active_imageviewer = getActiveImageViewArea();
+  if (active_imageviewer) {
+    active_imageviewer->zoomOut();
+  }
+}
+
+void MainWindow::normalSize() {
+  ImageViewArea *active_imageviewer = getActiveImageViewArea();
+  if (active_imageviewer) {
+    active_imageviewer->normalSize();
   }
 }
