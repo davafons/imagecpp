@@ -9,7 +9,7 @@
 #include "histogram_model.hpp"
 
 ImageViewer::ImageViewer(QWidget *parent) {
-  setBackgroundRole(QPalette::Base);
+  setBackgroundRole(QPalette::Dark);
   setWidget(display_);
 
   connect(display_, &ImageDisplay::mouseHover, this, [this](const QPoint &p) {

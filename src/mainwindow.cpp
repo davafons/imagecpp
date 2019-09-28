@@ -1,5 +1,5 @@
-#include "imageviewer.hpp"
 #include "mainwindow.hpp"
+#include "imageviewer.hpp"
 
 #include <QApplication>
 #include <QBitmap>
@@ -22,11 +22,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   colorLabel_ = new QLabel();
   colorLabel_->setFixedSize(QSize(16, 16));
-  colorLabel_->setAutoFillBackground(true);
-  colorLabel_->setStyleSheet("background-color: red;");
-  // Add black frame to widget
+  colorLabel_->setStyleSheet(
+      "background-color: white; border: 1px solid black; ");
 
-  statusBar()->addPermanentWidget(colorLabel_, 1);
+  pixelLabel_ = new QLabel();
+
+  statusBar()->addWidget(colorLabel_);
+  statusBar()->addWidget(pixelLabel_);
 
   mdi_area_->setTabsClosable(true);
   mdi_area_->setTabsMovable(true);
@@ -95,16 +97,18 @@ ImageViewer *MainWindow::getActiveImageViewer() const {
 }
 
 void MainWindow::pixelMouseOver(const QPoint &point, const QColor &color) {
-  statusBar()->showMessage(QString("x: %1 y: %2 \t R: %3 G: %4 B: %5 A: %6")
-                               .arg(point.x())
-                               .arg(point.y())
-                               .arg(color.red())
-                               .arg(color.green())
-                               .arg(color.blue())
-                               .arg(color.alpha()));
+  pixelLabel_->setText(QString("x: %1 y: %2 \t R: %3 G: %4 B: %5 A: %6")
+                           .arg(point.x() + 1)
+                           .arg(point.y() + 1)
+                           .arg(color.red())
+                           .arg(color.green())
+                           .arg(color.blue())
+                           .arg(color.alpha()));
 
   colorLabel_->setStyleSheet(
-      QString("background-color: %1;").arg(color.name()));
+      QString("background-color: %1; border: 1px solid black;")
+          .arg(color.name()));
+  // TODO: Don't repeat "border" property again
 }
 
 // TODO: Move dialog to imageviewer ??

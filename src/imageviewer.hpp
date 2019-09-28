@@ -17,13 +17,16 @@ signals:
 public:
   ImageDisplay(QWidget *parent = nullptr) : QLabel(parent) {
     setAttribute(Qt::WA_Hover);
+    setStyleSheet("background: url(:/img/png_pat_dark.png) repeat;");
   }
 
   bool event(QEvent *event) override {
     if (event->type() == QEvent::HoverMove) {
       // Emit mouse position when hovering the image
       QHoverEvent *hover_event = dynamic_cast<QHoverEvent *>(event);
-      emit mouseHover(hover_event->pos());
+      if (rect().contains(hover_event->pos())) {
+        emit mouseHover(hover_event->pos());
+      }
 
       return true;
     }

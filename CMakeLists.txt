@@ -15,6 +15,7 @@ endif()
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 add_executable(${PROJECT_NAME}
+    res/res.qrc
     src/main.cpp
     src/mainwindow.cpp
     src/imageviewer.cpp

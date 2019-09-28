@@ -45,4 +45,5 @@ private:
   QMdiArea *mdi_area_;
 
   QLabel *colorLabel_;
+  QLabel *pixelLabel_;
 };
