@@ -54,9 +54,26 @@ public slots:
   bool saveAs(const QString &file_path) const;
 
 private:
+  void mousePressEvent(QMouseEvent *event) override {
+    if (event->buttons() & Qt::MiddleButton) {
+      last_point_ = event->pos();
+    }
+  }
+
+  void mouseMoveEvent(QMouseEvent *event) override {
+    if (event->buttons() & Qt::MiddleButton) {
+      display_->move(display_->pos() + (event->pos() - last_point_));
+      qDebug() << "Draggin";
+      last_point_ = event->pos();
+    }
+  }
+
+private:
   QImage loaded_image_;
   ImageDisplay *display_{new ImageDisplay()};
 
   QString file_path_{""};
   HistogramModel *histogram_{nullptr};
+
+  QPoint last_point_;
 };
