@@ -1,5 +1,4 @@
 #include "imagedisplayarea.hpp"
-#include "proimage.hpp"
 
 #include <QDebug>
 #include <QHoverEvent>

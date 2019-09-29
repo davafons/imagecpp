@@ -8,6 +8,7 @@ class ProImage : public QSharedData {
 public:
   ProImage();
   ProImage(const QString &file_path) { open(file_path); }
+  virtual ~ProImage() = default;
 
   QPixmap getPixmap() const { return QPixmap::fromImage(image_); }
 

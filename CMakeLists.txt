@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
     res/res.qrc
     src/main.cpp
     src/mainwindow.cpp
+    src/menus/filemenu.cpp
     src/image/imagedisplayarea.cpp
     src/image/proimage.cpp
 )
