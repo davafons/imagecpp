@@ -1,9 +1,9 @@
 #pragma once
 
-#include "proimage.hpp"
-
 #include <QLabel>
 #include <QScrollArea>
+
+class ProImage;
 
 /*!
  * \class ImageDisplayArea
@@ -14,11 +14,11 @@ class ImageDisplayArea : public QScrollArea {
   Q_OBJECT
 
 public:
-  ImageDisplayArea(QWidget *parent = nullptr);
+  explicit ImageDisplayArea(QWidget *parent = nullptr);
   virtual ~ImageDisplayArea() = default;
 
-  float scaleFactor() const { return scale_factor_; }
-  const ProImage *image() const { return image_ref_; }
+  float scaleFactor() const;
+  const ProImage *image() const;
 
 signals:
   void pixelInformation(const QPoint &point, const QColor &color);

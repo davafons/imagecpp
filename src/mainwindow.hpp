@@ -6,6 +6,7 @@ class FileMenu;
 class ProImage;
 class QMdiArea;
 class ImageDisplayArea;
+class MainStatusBar;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -23,12 +24,14 @@ private slots:
 
 private:
   void createMenus();
-  void connectMenus();
+  void createStatusBar();
 
   ProImage *activeImage() const;
 
 private:
   FileMenu *file_menu_;
+
+  MainStatusBar *main_status_bar_;
 
   QMdiArea *mdi_area_;
 };

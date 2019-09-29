@@ -18,9 +18,11 @@ add_executable(${PROJECT_NAME}
     res/res.qrc
     src/main.cpp
     src/mainwindow.cpp
-    src/menus/filemenu.cpp
     src/image/imagedisplayarea.cpp
     src/image/proimage.cpp
+    src/menus/filemenu.cpp
+    src/statusbar/mainstatusbar.cpp
+    src/statusbar/pixelinformationwidget.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Charts)

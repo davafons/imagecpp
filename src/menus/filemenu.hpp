@@ -4,7 +4,7 @@
 
 class FileMenu : public QMenu {
 public:
-  FileMenu(const QString &title = tr("&File"), QWidget *parent = nullptr);
+  explicit FileMenu(const QString &title = tr("&File"), QWidget *parent = nullptr);
   virtual ~FileMenu() = default;
 
   QAction *openAct() const { return open_act_; }

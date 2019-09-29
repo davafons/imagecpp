@@ -8,8 +8,8 @@ class ProImage : public QObject {
   Q_OBJECT
 
 public:
-  ProImage() = default;
-  ProImage(const QString &file_path);
+  explicit ProImage() = default;
+  explicit ProImage(const QString &file_path);
   virtual ~ProImage() = default;
 
   QPixmap getPixmap() const;

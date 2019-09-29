@@ -1,4 +1,5 @@
 #include "imagedisplayarea.hpp"
+#include "proimage.hpp"
 
 #include <QDebug>
 #include <QHoverEvent>
@@ -18,6 +19,9 @@ ImageDisplayArea::ImageDisplayArea(QWidget *parent) : QScrollArea(parent) {
 
   setWidget(&target_);
 }
+
+float ImageDisplayArea::scaleFactor() const { return scale_factor_; }
+const ProImage *ImageDisplayArea::image() const { return image_ref_; }
 
 void ImageDisplayArea::setImage(const ProImage *image) {
   // Reset attributes

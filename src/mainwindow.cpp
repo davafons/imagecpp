@@ -2,6 +2,7 @@
 #include "image/imagedisplayarea.hpp"
 #include "image/proimage.hpp"
 #include "menus/filemenu.hpp"
+#include "statusbar/mainstatusbar.hpp"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -14,9 +15,7 @@
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), mdi_area_(new QMdiArea()) {
   createMenus();
-  connectMenus();
-
-  setStatusBar(statusBar());
+  createStatusBar();
 
   mdi_area_->setTabsClosable(true);
   mdi_area_->setTabsMovable(true);
@@ -82,21 +81,28 @@ void MainWindow::addImageDisplayArea(const ProImage *image) {
   display_area->setImage(image);
   mdi_area_->addSubWindow(display_area);
   display_area->show();
+
+  connect(display_area, &ImageDisplayArea::pixelInformation,
+          main_status_bar_->pixelInfoWidget(),
+          &PixelInformationWidget::onPixelInformationReceived);
 }
 
 void MainWindow::createMenus() {
   file_menu_ = new FileMenu();
   menuBar()->addMenu(file_menu_);
-}
 
-void MainWindow::connectMenus() {
-  // File Menu
+  // Connections
   connect(file_menu_->openAct(), &QAction::triggered, this, &MainWindow::open);
   connect(file_menu_->saveAct(), &QAction::triggered, this, &MainWindow::save);
   connect(file_menu_->saveAsAct(), &QAction::triggered, this,
           &MainWindow::saveAs);
   connect(file_menu_->quitAct(), &QAction::triggered, qApp,
           &QApplication::quit);
+}
+
+void MainWindow::createStatusBar() {
+  main_status_bar_ = new MainStatusBar();
+  setStatusBar(main_status_bar_);
 }
 
 ProImage *MainWindow::activeImage() const {
