@@ -4,7 +4,9 @@
 #include <QPixmap>
 #include <QSharedData>
 
-class ProImage : public QSharedData {
+class ProImage : public QObject {
+  Q_OBJECT
+
 public:
   ProImage() = default;
   ProImage(const QString &file_path);
@@ -18,10 +20,14 @@ public:
   QRgb pixel(const QPoint &position) const;
   QRect rect() const;
 
+signals:
+  void filePathChanged(const QString &file_path);
+
 public slots:
   void open(const QString &file_path);
   bool save() const;
   bool saveAs(const QString &file_path) const;
+  void setFilePath(const QString &file_path);
 
 private:
   QImage image_;

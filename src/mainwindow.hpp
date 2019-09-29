@@ -17,6 +17,7 @@ public:
 private slots:
   void open();
   void save();
+  void saveAs();
 
   void addImageDisplayArea(const ProImage *image);
 
@@ -24,7 +25,7 @@ private:
   void createMenus();
   void connectMenus();
 
-  ImageDisplayArea *activeImageDisplayArea() const;
+  ProImage *activeImage() const;
 
 private:
   FileMenu *file_menu_;

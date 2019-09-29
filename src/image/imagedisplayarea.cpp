@@ -20,11 +20,18 @@ ImageDisplayArea::ImageDisplayArea(QWidget *parent) : QScrollArea(parent) {
 }
 
 void ImageDisplayArea::setImage(const ProImage *image) {
+  // Reset attributes
   image_ref_ = image;
   scale_factor_ = 1.0f;
+  setWindowTitle(image_ref_->filePath());
 
+  // Display image at full size
   target_.setPixmap(image_ref_->getPixmap());
   target_.resize(image_ref_->size());
+
+  // Connections
+  connect(image_ref_, &ProImage::filePathChanged, this,
+          &ImageDisplayArea::setWindowTitle);
 }
 
 void ImageDisplayArea::resetSize() { setScaleFactor(1.0f); }

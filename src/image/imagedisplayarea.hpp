@@ -18,9 +18,7 @@ public:
   virtual ~ImageDisplayArea() = default;
 
   float scaleFactor() const { return scale_factor_; }
-  QExplicitlySharedDataPointer<const ProImage> image() const {
-    return image_ref_;
-  }
+  const ProImage *image() const { return image_ref_; }
 
 signals:
   void pixelInformation(const QPoint &point, const QColor &color);
@@ -40,7 +38,7 @@ protected:
   virtual void wheelEvent(QWheelEvent *event) override;
 
 private:
-  QExplicitlySharedDataPointer<const ProImage> image_ref_;
+  const ProImage *image_ref_;
   QLabel target_;
 
   float scale_factor_{1.0f};
