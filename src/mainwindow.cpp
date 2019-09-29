@@ -1,5 +1,4 @@
 #include "mainwindow.hpp"
-#include "imageviewarea.hpp"
 
 #include <QApplication>
 #include <QBitmap>
@@ -14,7 +13,7 @@
 #include <QStatusBar>
 #include <QString>
 
-#include "histogram_view.hpp"
+#include "image/proimage.hpp"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags), mdi_area_(new QMdiArea()) {
@@ -55,13 +54,13 @@ void MainWindow::createActions() {
   save_act_->setShortcut(QKeySequence::Save);
   save_act_->setStatusTip(tr("Save current image"));
 
-  connect(save_act_, &QAction::triggered, this, &MainWindow::save);
+  // connect(save_act_, &QAction::triggered, this, &MainWindow::save);
 
   save_as_act_ = new QAction(tr("&Save As..."), this);
   save_as_act_->setShortcut(QKeySequence::SaveAs);
   save_as_act_->setStatusTip(tr("Save current image as a new image"));
 
-  connect(save_as_act_, &QAction::triggered, this, &MainWindow::saveAs);
+  // connect(save_as_act_, &QAction::triggered, this, &MainWindow::saveAs);
 
   toggle_subtabs_act_ = new QAction(tr("Toggle tabs view"));
   toggle_subtabs_act_->setCheckable(true);
@@ -74,18 +73,8 @@ void MainWindow::createActions() {
                       : mdi_area_->setViewMode(QMdiArea::SubWindowView);
           });
 
-  zoom_in_act_ = new QAction(tr("Zoom in"));
-  zoom_in_act_->setShortcut(QKeySequence::ZoomIn);
-
-  connect(zoom_in_act_, &QAction::triggered, this, &MainWindow::zoomIn);
-
-  zoom_out_act_ = new QAction(tr("Zoom out"));
-  zoom_out_act_->setShortcut(QKeySequence::ZoomOut);
-
-  connect(zoom_out_act_, &QAction::triggered, this, &MainWindow::zoomOut);
-
-  normal_size_act_ = new QAction(tr("Reset to normal size"));
-  connect(normal_size_act_, &QAction::triggered, this, &MainWindow::normalSize);
+  reset_size_act_ = new QAction(tr("Reset to normal size"));
+  connect(reset_size_act_, &QAction::triggered, this, &MainWindow::resetSize);
 }
 
 void MainWindow::createMenus() {
@@ -97,19 +86,17 @@ void MainWindow::createMenus() {
   file_menu_->addAction(quit_act_);
 
   options_menu_ = menuBar()->addMenu(tr("Options"));
-  options_menu_->addAction(zoom_in_act_);
-  options_menu_->addAction(zoom_out_act_);
-  options_menu_->addAction(normal_size_act_);
+  options_menu_->addAction(reset_size_act_);
   options_menu_->addSeparator();
   options_menu_->addAction(toggle_subtabs_act_);
 }
 
-ImageViewArea *MainWindow::getActiveImageViewArea() const {
-  ImageViewArea *image_viewer = nullptr;
+ImageDisplayArea *MainWindow::getActiveImageDisplayArea() const {
+  ImageDisplayArea *image_viewer = nullptr;
 
   QMdiSubWindow *active_subwindow = mdi_area_->activeSubWindow();
   if (active_subwindow) {
-    image_viewer = dynamic_cast<ImageViewArea *>(active_subwindow->widget());
+    image_viewer = dynamic_cast<ImageDisplayArea *>(active_subwindow->widget());
   }
 
   return image_viewer;
@@ -138,18 +125,20 @@ void MainWindow::open() {
       this, tr("Open Image"), "~", tr("Image Files(*.png *.jpg *.jpeg *.bmp)"));
 
   if (!file_path.isEmpty()) {
-    ImageViewArea *image_viewer = new ImageViewArea(file_path);
+    ImageDisplayArea *image_viewer = new ImageDisplayArea();
+    image_viewer->setImage(new ProImage(file_path));
 
     // Add subwindow
     mdi_area_->addSubWindow(image_viewer);
     image_viewer->show();
+    image_viewer->setWindowTitle(file_path);
 
-    connect(image_viewer, &ImageViewArea::pixelInformation, this,
+    connect(image_viewer, &ImageDisplayArea::pixelInformation, this,
             &MainWindow::pixelMouseOver);
 
-    // HistogramView *hist_view = new HistogramView(image_viewer->getHistogram());
-    // QChartView *chartView = new QChartView(hist_view);
-    // chartView->setRenderHint(QPainter::Antialiasing);
+    // HistogramView *hist_view = new
+    // HistogramView(image_viewer->getHistogram()); QChartView *chartView = new
+    // QChartView(hist_view); chartView->setRenderHint(QPainter::Antialiasing);
     // chartView->resize(400, 400);
     //
     // mdi_area_->addSubWindow(chartView);
@@ -157,69 +146,58 @@ void MainWindow::open() {
   }
 }
 
-void MainWindow::save() {
-  qDebug() << "MainWindow::save() called";
+// void MainWindow::save() {
+//   qDebug() << "MainWindow::save() called";
+//
+//   ImageDisplayArea *active_imageviewer = getActiveImageDisplayArea();
+//
+//   // TODO: Remove code duplication
+//   if (!active_imageviewer) {
+//     QMessageBox::critical(this, tr("Save As... error"),
+//                           tr("Select a window with an image!"));
+//     return;
+//   }
+//
+//   if (active_imageviewer->save()) {
+//     statusBar()->showMessage(
+//         QString("Saved image on %1").arg(active_imageviewer->getFilePath()));
+//   } else {
+//     // TODO: Specify why image couldn't be saved
+//     QMessageBox::critical(this, tr("Save As... error"),
+//                           tr("Couldn't save image!"));
+//   }
+// }
+//
+// void MainWindow::saveAs() {
+//   qDebug() << "MainWindow::saveAs() called";
+//
+//   ImageDisplayArea *active_imageviewer = getActiveImageDisplayArea();
+//
+//   if (!active_imageviewer) {
+//     QMessageBox::critical(this, tr("Save As... error"),
+//                           tr("Select a window with an image!"));
+//     return;
+//   }
+//
+//   // TODO: Enforce save with image extension
+//   QString file_path = QFileDialog::getSaveFileName(
+//       this, tr("Save Image"), "~", tr("Image Files(*.png *.jpg *.jpeg
+//       *.bmp)"));
+//
+//   qDebug() << "Image to save path:" << file_path;
+//
+//   if (!file_path.isEmpty() && !active_imageviewer->saveAs(file_path)) {
+//     // TODO: Specify why image couldn't be saved
+//     QMessageBox::critical(this, tr("Save As... error"),
+//                           tr("Couldn't save image!"));
+//   }
+// }
+//
+//
 
-  ImageViewArea *active_imageviewer = getActiveImageViewArea();
-
-  // TODO: Remove code duplication
-  if (!active_imageviewer) {
-    QMessageBox::critical(this, tr("Save As... error"),
-                          tr("Select a window with an image!"));
-    return;
-  }
-
-  if (active_imageviewer->save()) {
-    statusBar()->showMessage(
-        QString("Saved image on %1").arg(active_imageviewer->getFilePath()));
-  } else {
-    // TODO: Specify why image couldn't be saved
-    QMessageBox::critical(this, tr("Save As... error"),
-                          tr("Couldn't save image!"));
-  }
-}
-
-void MainWindow::saveAs() {
-  qDebug() << "MainWindow::saveAs() called";
-
-  ImageViewArea *active_imageviewer = getActiveImageViewArea();
-
-  if (!active_imageviewer) {
-    QMessageBox::critical(this, tr("Save As... error"),
-                          tr("Select a window with an image!"));
-    return;
-  }
-
-  // TODO: Enforce save with image extension
-  QString file_path = QFileDialog::getSaveFileName(
-      this, tr("Save Image"), "~", tr("Image Files(*.png *.jpg *.jpeg *.bmp)"));
-
-  qDebug() << "Image to save path:" << file_path;
-
-  if (!file_path.isEmpty() && !active_imageviewer->saveAs(file_path)) {
-    // TODO: Specify why image couldn't be saved
-    QMessageBox::critical(this, tr("Save As... error"),
-                          tr("Couldn't save image!"));
-  }
-}
-
-void MainWindow::zoomIn() {
-  ImageViewArea *active_imageviewer = getActiveImageViewArea();
+void MainWindow::resetSize() {
+  ImageDisplayArea *active_imageviewer = getActiveImageDisplayArea();
   if (active_imageviewer) {
-    active_imageviewer->zoomIn();
-  }
-}
-
-void MainWindow::zoomOut() {
-  ImageViewArea *active_imageviewer = getActiveImageViewArea();
-  if (active_imageviewer) {
-    active_imageviewer->zoomOut();
-  }
-}
-
-void MainWindow::normalSize() {
-  ImageViewArea *active_imageviewer = getActiveImageViewArea();
-  if (active_imageviewer) {
-    active_imageviewer->normalSize();
+    active_imageviewer->resetSize();
   }
 }

@@ -18,10 +18,8 @@ add_executable(${PROJECT_NAME}
     res/res.qrc
     src/main.cpp
     src/mainwindow.cpp
-    src/imageviewarea.cpp
-    src/imagedisplay.cpp
-    src/histogram_model.cpp
-    src/histogram_view.cpp
+    src/image/imagedisplayarea.cpp
+    src/image/proimage.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Charts)

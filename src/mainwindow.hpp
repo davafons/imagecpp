@@ -8,7 +8,8 @@
 
 #include <QMdiArea>
 
-#include "imageviewarea.hpp"
+#include "image/imagedisplayarea.hpp"
+#include "image/proimage.hpp"
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -22,18 +23,16 @@ public slots:
 
 private slots:
   void open();
-  void save();
-  void saveAs();
+  // void save();
+  // void saveAs();
 
-  void zoomIn();
-  void zoomOut();
-  void normalSize();
+  void resetSize();
 
 private:
   void createActions();
   void createMenus();
 
-  ImageViewArea *getActiveImageViewArea() const;
+  ImageDisplayArea *getActiveImageDisplayArea() const;
 
 private:
   QMenu *file_menu_;
@@ -46,9 +45,7 @@ private:
   QMenu *options_menu_;
 
   QAction *toggle_subtabs_act_;
-  QAction *zoom_in_act_;
-  QAction *zoom_out_act_;
-  QAction *normal_size_act_;
+  QAction *reset_size_act_;
 
   QMdiArea *mdi_area_;
 
