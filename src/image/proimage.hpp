@@ -6,20 +6,24 @@
 
 class ProImage : public QSharedData {
 public:
-  ProImage();
-  ProImage(const QString &file_path) { open(file_path); }
+  ProImage() = default;
+  ProImage(const QString &file_path);
   virtual ~ProImage() = default;
 
-  QPixmap getPixmap() const { return QPixmap::fromImage(image_); }
+  QPixmap getPixmap() const;
+  QString filePath() const;
 
-  QSize size() const { return image_.size(); }
-  QRgb pixel(int x, int y) const { return image_.pixel(x, y); }
-  QRgb pixel(const QPoint &position) const { return image_.pixel(position); }
-  QRect rect() const { return image_.rect(); }
+  QSize size() const;
+  QRgb pixel(int x, int y) const;
+  QRgb pixel(const QPoint &position) const;
+  QRect rect() const;
 
 public slots:
-  void open(const QString &file_path) { image_ = QImage(file_path); }
+  void open(const QString &file_path);
+  bool save() const;
+  bool saveAs(const QString &file_path) const;
 
 private:
-  QImage image_{};
+  QImage image_;
+  QString file_path_;
 };
