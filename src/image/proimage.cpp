@@ -6,11 +6,26 @@ ProImage::ProImage(const QString &file_path) {
   open(file_path_);
 }
 
-QPixmap ProImage::getPixmap() const { return QPixmap::fromImage(image_); }
+ProImage::ProImage(const ProImage &other) {
+  image_ = other.image_.copy();
+  file_path_ = other.file_path_;
+}
 
-QString ProImage::filePath() const { return file_path_; }
+ProImage::ProImage(ProImage &&other) { swap(*this, other); }
 
-QSize ProImage::size() const { return image_.size(); }
+ProImage &ProImage::operator=(ProImage other) {
+  swap(*this, other);
+
+  return *this;
+}
+
+QPixmap ProImage::getPixmap() const noexcept {
+  return QPixmap::fromImage(image_);
+}
+
+QString ProImage::filePath() const noexcept { return file_path_; }
+
+QSize ProImage::size() const noexcept { return image_.size(); }
 
 QRgb ProImage::pixel(int x, int y) const { return image_.pixel(x, y); }
 
@@ -18,7 +33,14 @@ QRgb ProImage::pixel(const QPoint &position) const {
   return image_.pixel(position);
 }
 
-QRect ProImage::rect() const { return image_.rect(); }
+QRect ProImage::rect() const noexcept { return image_.rect(); }
+
+void swap(ProImage &first, ProImage &second) noexcept {
+  using std::swap;
+
+  swap(first.image_, second.image_);
+  swap(first.file_path_, second.file_path_);
+}
 
 void ProImage::open(const QString &file_path) {
   setFilePath(file_path);
