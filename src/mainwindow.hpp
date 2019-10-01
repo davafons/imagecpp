@@ -3,6 +3,7 @@
 #include <QMainWindow>
 
 class FileMenu;
+class ImageMenu;
 class ProImage;
 class QMdiArea;
 class ImageDisplayArea;
@@ -14,6 +15,9 @@ class MainWindow : public QMainWindow {
 public:
   MainWindow(QWidget *parent = nullptr,
              Qt::WindowFlags flags = Qt::WindowFlags());
+
+signals:
+  void activeImageChanged(ProImage *img);
 
 private slots:
   void open();
@@ -30,8 +34,10 @@ private:
 
 private:
   FileMenu *file_menu_;
+  ImageMenu *image_menu_;
 
   MainStatusBar *main_status_bar_;
 
+  ProImage *active_image_{nullptr};
   QMdiArea *mdi_area_;
 };

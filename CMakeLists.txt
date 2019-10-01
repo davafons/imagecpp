@@ -21,8 +21,11 @@ add_executable(${PROJECT_NAME}
     src/image/imagedisplayarea.cpp
     src/image/proimage.cpp
     src/menus/filemenu.cpp
+    src/menus/imagemenu.cpp
     src/statusbar/mainstatusbar.cpp
     src/statusbar/pixelinformationwidget.cpp
+    src/operations/color.cpp
 )
 
+target_include_directories(${PROJECT_NAME} PRIVATE src/)
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Charts)

@@ -2,6 +2,7 @@
 #include "image/imagedisplayarea.hpp"
 #include "image/proimage.hpp"
 #include "menus/filemenu.hpp"
+#include "menus/imagemenu.hpp"
 #include "statusbar/mainstatusbar.hpp"
 
 #include <QApplication>
@@ -21,6 +22,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
   mdi_area_->setTabsMovable(true);
 
   setCentralWidget(mdi_area_);
+
+  connect(mdi_area_, &QMdiArea::subWindowActivated, this,
+          [this](const QMdiSubWindow *w) {
+            emit activeImageChanged(activeImage());
+          });
 }
 
 void MainWindow::open() {
@@ -89,7 +95,9 @@ void MainWindow::addImageDisplayArea(const ProImage *image) {
 
 void MainWindow::createMenus() {
   file_menu_ = new FileMenu();
+  image_menu_ = new ImageMenu();
   menuBar()->addMenu(file_menu_);
+  menuBar()->addMenu(image_menu_);
 
   // Connections
   connect(file_menu_->openAct(), &QAction::triggered, this, &MainWindow::open);
