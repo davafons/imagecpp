@@ -5,6 +5,7 @@
 #include "menus/editmenu.hpp"
 #include "menus/filemenu.hpp"
 #include "menus/imagemenu.hpp"
+#include "operations/color.hpp"
 #include "statusbar/mainstatusbar.hpp"
 
 #include <QApplication>
@@ -66,8 +67,10 @@ void MainWindow::createMenus() {
   connect(&file_menu_, &FileMenu::saveAs, &image_manager_,
           [this] { image_manager_.saveAs(active_image_); });
 
-  connect(&file_menu_, &FileMenu::closeView, &mdi_area_, &QMdiArea::closeActiveSubWindow);
-  connect(&file_menu_, &FileMenu::closeAll, &mdi_area_, &QMdiArea::closeAllSubWindows);
+  connect(&file_menu_, &FileMenu::closeView, &mdi_area_,
+          &QMdiArea::closeActiveSubWindow);
+  connect(&file_menu_, &FileMenu::closeAll, &mdi_area_,
+          &QMdiArea::closeAllSubWindows);
   connect(&file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
 
   // Edit menu
@@ -78,6 +81,12 @@ void MainWindow::createMenus() {
 
   connect(&image_menu_, &ImageMenu::duplicateImage, &image_manager_,
           [this] { image_manager_.duplicate(active_image_); });
+
+  connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {
+    if (active_image_) {
+      active_image_->runCommand(new ToGrayscaleCommand(active_image_));
+    }
+  });
 }
 
 void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }

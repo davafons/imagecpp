@@ -26,7 +26,6 @@ add_executable(${PROJECT_NAME}
     src/statusbar/mainstatusbar.cpp
     src/statusbar/pixelinformationwidget.cpp
     src/manager/imagemanager.cpp
-    src/operations/color.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

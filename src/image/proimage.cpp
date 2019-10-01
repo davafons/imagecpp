@@ -1,5 +1,9 @@
 #include "proimage.hpp"
 
+#include <QDebug>
+#include <QUndoCommand>
+#include <QUndoStack>
+
 ProImage::ProImage(const QString &file_path) {
   setFilePath(file_path);
 
@@ -8,6 +12,7 @@ ProImage::ProImage(const QString &file_path) {
 
 ProImage::ProImage(const ProImage &other) {
   image_ = other.image_.copy();
+  undo_stack_ = other.undo_stack_; // TODO: Manage memory
   file_path_ = other.file_path_;
 }
 
@@ -62,3 +67,8 @@ void ProImage::setFilePath(const QString &file_path) const {
 
   emit filePathChanged(file_path);
 }
+
+void ProImage::runCommand(QUndoCommand *command) { undo_stack_->push(command); }
+
+void ProImage::undo() { undo_stack_->undo(); }
+void ProImage::redo() { undo_stack_->redo(); }

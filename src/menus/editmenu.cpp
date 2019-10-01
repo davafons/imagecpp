@@ -5,9 +5,6 @@
 EditMenu::EditMenu(QWidget *parent) : QMenu(tr("Edit"), parent) {
   createUndoActions();
 
-  connect(undo_act_, &QAction::triggered, this, &EditMenu::undo);
-  connect(redo_act_, &QAction::triggered, this, &EditMenu::redo);
-
   addAction(undo_act_);
   addAction(redo_act_);
 }
@@ -26,4 +23,7 @@ void EditMenu::createUndoActions(const QUndoStack *undo_stack) {
 
   undo_act_->setShortcut(QKeySequence::Undo);
   redo_act_->setShortcut(QKeySequence::Redo);
+
+  connect(undo_act_, &QAction::triggered, this, &EditMenu::undo);
+  connect(redo_act_, &QAction::triggered, this, &EditMenu::redo);
 }
