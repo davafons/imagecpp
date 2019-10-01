@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME}
     src/image/proimage.cpp
     src/menus/filemenu.cpp
     src/menus/imagemenu.cpp
+    src/menus/editmenu.cpp
     src/statusbar/mainstatusbar.cpp
     src/statusbar/pixelinformationwidget.cpp
     src/manager/imagemanager.cpp

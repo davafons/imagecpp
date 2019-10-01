@@ -5,8 +5,7 @@
 class ImageMenu : public QMenu {
   Q_OBJECT
 public:
-  explicit ImageMenu(const QString &title = tr("&Image"),
-                     QWidget *parent = nullptr);
+  explicit ImageMenu( QWidget *parent = nullptr);
   virtual ~ImageMenu() = default;
 
 signals:

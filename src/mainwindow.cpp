@@ -2,6 +2,7 @@
 #include "image/imagedisplayarea.hpp"
 #include "image/proimage.hpp"
 #include "manager/imagemanager.hpp"
+#include "menus/editmenu.hpp"
 #include "menus/filemenu.hpp"
 #include "menus/imagemenu.hpp"
 #include "statusbar/mainstatusbar.hpp"
@@ -66,6 +67,10 @@ void MainWindow::createMenus() {
   connect(file_menu_, &FileMenu::saveAs, &image_manager_,
           [this] { image_manager_.saveAs(active_image_); });
   connect(file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
+
+  // Edit menu
+  edit_menu_ = new EditMenu();
+  menuBar()->addMenu(edit_menu_);
 
   // Image menu
   image_menu_ = new ImageMenu();

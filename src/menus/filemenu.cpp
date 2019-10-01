@@ -1,9 +1,9 @@
 #include "filemenu.hpp"
 
 #include <QFileDialog>
+#include <QUndoStack>
 
-FileMenu::FileMenu(const QString &title, QWidget *parent)
-    : QMenu(title, parent) {
+FileMenu::FileMenu(QWidget *parent) : QMenu(tr("File"), parent) {
 
   open_act_ = new QAction(tr("&Open"), this);
   open_act_->setShortcut(QKeySequence::Open);
@@ -20,6 +20,7 @@ FileMenu::FileMenu(const QString &title, QWidget *parent)
   quit_act_ = new QAction(tr("&Quit"), this);
   quit_act_->setShortcut(QKeySequence::Quit);
   quit_act_->setStatusTip(tr("Quit from the application"));
+
   addSeparator();
 
   connect(open_act_, &QAction::triggered, this, &FileMenu::open);

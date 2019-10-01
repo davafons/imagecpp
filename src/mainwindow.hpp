@@ -5,6 +5,7 @@
 #include "manager/imagemanager.hpp"
 
 class FileMenu;
+class EditMenu;
 class ImageMenu;
 class ProImage;
 class QMdiArea;
@@ -32,6 +33,7 @@ private:
 
 private:
   FileMenu *file_menu_;
+  EditMenu *edit_menu_;
   ImageMenu *image_menu_;
 
   MainStatusBar *main_status_bar_;

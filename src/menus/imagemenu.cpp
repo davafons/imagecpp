@@ -2,8 +2,7 @@
 
 #include <QFileDialog>
 
-ImageMenu::ImageMenu(const QString &title, QWidget *parent)
-    : QMenu(title, parent) {
+ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   duplicate_img_act_ = new QAction(tr("Duplicate image"), this);
   duplicate_img_act_->setStatusTip(
