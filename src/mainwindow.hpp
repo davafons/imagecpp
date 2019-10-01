@@ -1,8 +1,13 @@
 #pragma once
 
 #include <QMainWindow>
+#include <QMdiArea>
 
 #include "manager/imagemanager.hpp"
+#include "menus/editmenu.hpp"
+#include "menus/filemenu.hpp"
+#include "menus/imagemenu.hpp"
+#include "statusbar/mainstatusbar.hpp"
 
 class FileMenu;
 class EditMenu;
@@ -32,14 +37,15 @@ private:
   ProImage *activeImage() const;
 
 private:
-  FileMenu *file_menu_;
-  EditMenu *edit_menu_;
-  ImageMenu *image_menu_;
+  FileMenu file_menu_;
+  EditMenu edit_menu_;
+  ImageMenu image_menu_;
 
-  MainStatusBar *main_status_bar_;
-
-  QMdiArea *mdi_area_;
-  ProImage *active_image_{nullptr};
+  MainStatusBar main_status_bar_;
 
   ImageManager image_manager_;
+
+  QMdiArea mdi_area_;
+
+  ProImage *active_image_{nullptr};
 };

@@ -16,16 +16,16 @@
 #include <QStatusBar>
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
-    : QMainWindow(parent, flags), mdi_area_(new QMdiArea()) {
+    : QMainWindow(parent, flags) {
   createMenus();
   createStatusBar();
 
-  mdi_area_->setTabsClosable(true);
-  mdi_area_->setTabsMovable(true);
+  mdi_area_.setTabsClosable(true);
+  mdi_area_.setTabsMovable(true);
 
-  setCentralWidget(mdi_area_);
+  setCentralWidget(&mdi_area_);
 
-  connect(mdi_area_, &QMdiArea::subWindowActivated, this,
+  connect(&mdi_area_, &QMdiArea::subWindowActivated, this,
           [this](const QMdiSubWindow *w) {
             active_image_ = activeImage();
             emit activeImageChanged(active_image_);
@@ -48,47 +48,41 @@ void MainWindow::showDisplayArea(const ProImage *image) {
   ImageDisplayArea *display_area = new ImageDisplayArea();
 
   display_area->setImage(image);
-  mdi_area_->addSubWindow(display_area);
+  mdi_area_.addSubWindow(display_area);
   display_area->show();
 
   connect(display_area, &ImageDisplayArea::pixelInformation,
-          main_status_bar_->pixelInfoWidget(),
+          main_status_bar_.pixelInfoWidget(),
           &PixelInformationWidget::onPixelInformationReceived);
 }
 
 void MainWindow::createMenus() {
   // File menu
-  file_menu_ = new FileMenu();
-  menuBar()->addMenu(file_menu_);
+  menuBar()->addMenu(&file_menu_);
 
-  connect(file_menu_, &FileMenu::open, &image_manager_, &ImageManager::open);
-  connect(file_menu_, &FileMenu::save, &image_manager_,
+  connect(&file_menu_, &FileMenu::open, &image_manager_, &ImageManager::open);
+  connect(&file_menu_, &FileMenu::save, &image_manager_,
           [this] { image_manager_.save(active_image_); });
-  connect(file_menu_, &FileMenu::saveAs, &image_manager_,
+  connect(&file_menu_, &FileMenu::saveAs, &image_manager_,
           [this] { image_manager_.saveAs(active_image_); });
-  connect(file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
+  connect(&file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
 
   // Edit menu
-  edit_menu_ = new EditMenu();
-  menuBar()->addMenu(edit_menu_);
+  menuBar()->addMenu(&edit_menu_);
 
   // Image menu
-  image_menu_ = new ImageMenu();
-  menuBar()->addMenu(image_menu_);
+  menuBar()->addMenu(&image_menu_);
 
-  connect(image_menu_, &ImageMenu::duplicateImage, &image_manager_,
+  connect(&image_menu_, &ImageMenu::duplicateImage, &image_manager_,
           [this] { image_manager_.duplicate(active_image_); });
 }
 
-void MainWindow::createStatusBar() {
-  main_status_bar_ = new MainStatusBar();
-  setStatusBar(main_status_bar_);
-}
+void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }
 
 ProImage *MainWindow::activeImage() const {
   ProImage *image = nullptr;
 
-  QMdiSubWindow *active_subwindow = mdi_area_->activeSubWindow();
+  QMdiSubWindow *active_subwindow = mdi_area_.activeSubWindow();
   if (active_subwindow) {
     ImageDisplayArea *display_area =
         dynamic_cast<ImageDisplayArea *>(active_subwindow->widget());
