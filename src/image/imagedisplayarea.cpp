@@ -36,6 +36,12 @@ void ImageDisplayArea::setImage(const ProImage *image) {
   // Connections
   connect(image_ref_, &ProImage::filePathChanged, this,
           &ImageDisplayArea::setWindowTitle);
+  // connect(image_ref_, &ProImage::imageChanged, this,
+  //         &ImageDisplayArea::onImageChanged);
+}
+
+void ImageDisplayArea::onImageChanged(const ProImage *image) {
+  setImage(image);
 }
 
 void ImageDisplayArea::resetSize() { setScaleFactor(1.0f); }

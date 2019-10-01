@@ -27,15 +27,16 @@ public:
   friend void swap(ProImage &first, ProImage &second) noexcept;
 
 signals:
-  void filePathChanged(const QString &file_path);
+  void filePathChanged(const QString &file_path) const;
+  // void imageChanged(const ProImage *image);
 
 public slots:
   void open(const QString &file_path);
   bool save() const;
   bool saveAs(const QString &file_path) const;
-  void setFilePath(const QString &file_path);
+  void setFilePath(const QString &file_path) const;
 
 private:
   QImage image_;
-  QString file_path_;
+  mutable QString file_path_;
 };

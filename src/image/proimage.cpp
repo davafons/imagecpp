@@ -50,10 +50,14 @@ void ProImage::open(const QString &file_path) {
 bool ProImage::save() const { return saveAs(file_path_); }
 
 bool ProImage::saveAs(const QString &file_path) const {
+  if (file_path != file_path_) {
+    setFilePath(file_path);
+  }
+
   return image_.save(file_path);
 }
 
-void ProImage::setFilePath(const QString &file_path) {
+void ProImage::setFilePath(const QString &file_path) const {
   file_path_ = file_path;
 
   emit filePathChanged(file_path);

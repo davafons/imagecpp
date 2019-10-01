@@ -12,6 +12,11 @@ ImageMenu::ImageMenu(const QString &title, QWidget *parent)
   to_grayscale_act_ = new QAction(tr("To grayscale"), this);
   to_grayscale_act_->setStatusTip(tr("Convert image to grayscale"));
 
+  connect(to_grayscale_act_, &QAction::triggered, this,
+          &ImageMenu::toGrayscale);
+  connect(duplicate_img_act_, &QAction::triggered, this,
+          &ImageMenu::duplicateImage);
+
   addAction(duplicate_img_act_);
   addSeparator();
   addAction(to_grayscale_act_);

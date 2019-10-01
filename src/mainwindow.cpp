@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 #include "image/imagedisplayarea.hpp"
 #include "image/proimage.hpp"
+#include "manager/imagemanager.hpp"
 #include "menus/filemenu.hpp"
 #include "menus/imagemenu.hpp"
 #include "statusbar/mainstatusbar.hpp"
@@ -25,63 +26,24 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   connect(mdi_area_, &QMdiArea::subWindowActivated, this,
           [this](const QMdiSubWindow *w) {
-            emit activeImageChanged(activeImage());
+            active_image_ = activeImage();
+            emit activeImageChanged(active_image_);
           });
+
+  connect(&image_manager_, &ImageManager::imageOpened, this,
+          &MainWindow::showDisplayArea);
+
+  connect(&image_manager_, &ImageManager::imageSaved, this,
+          [this](const ProImage *image) {
+            statusBar()->showMessage(
+                QString("Saved image on %1").arg(image->filePath()), 2000);
+          });
+
+  connect(&image_manager_, &ImageManager::imageDuplicated, this,
+          &MainWindow::showDisplayArea);
 }
 
-void MainWindow::open() {
-  QString file_path = QFileDialog::getOpenFileName(
-      this, tr("Open Image"), "~", tr("Image Files(*.png *.jpg *.jpeg *.bmp)"));
-
-  if (!file_path.isEmpty()) {
-    addImageDisplayArea(new ProImage(file_path));
-  }
-}
-
-void MainWindow::save() {
-  ProImage *active_image = activeImage();
-
-  // TODO: Remove code duplication
-  if (!active_image) {
-    QMessageBox::critical(this, tr("Save As... error"),
-                          tr("Select a window with an image!"));
-    return;
-  }
-
-  if (active_image->save()) {
-    statusBar()->showMessage(
-        QString("Saved image on %1").arg(active_image->filePath()));
-  } else {
-    // TODO: Specify why image couldn't be saved
-    QMessageBox::critical(this, tr("Save As... error"),
-                          tr("Couldn't save image!"));
-  }
-}
-
-void MainWindow::saveAs() {
-  ProImage *image = activeImage();
-
-  if (!image) {
-    QMessageBox::critical(this, tr("Save As... error"),
-                          tr("Select a window with an image!"));
-    return;
-  }
-
-  // TODO: Enforce save with image extension
-  QString file_path = QFileDialog::getSaveFileName(
-      this, tr("Save Image"), "~", tr("Image Files(*.png *.jpg *.jpeg *.bmp)"));
-
-  if (!file_path.isEmpty() && !image->saveAs(file_path)) {
-    // TODO: Specify why image couldn't be saved
-    QMessageBox::critical(this, tr("Save As... error"),
-                          tr("Couldn't save image!"));
-  } else {
-    statusBar()->showMessage(QString("Saved image on %1").arg(file_path));
-    image->setFilePath(file_path);
-  }
-}
-
-void MainWindow::addImageDisplayArea(const ProImage *image) {
+void MainWindow::showDisplayArea(const ProImage *image) {
   ImageDisplayArea *display_area = new ImageDisplayArea();
 
   display_area->setImage(image);
@@ -94,18 +56,23 @@ void MainWindow::addImageDisplayArea(const ProImage *image) {
 }
 
 void MainWindow::createMenus() {
+  // File menu
   file_menu_ = new FileMenu();
-  image_menu_ = new ImageMenu();
   menuBar()->addMenu(file_menu_);
+
+  connect(file_menu_, &FileMenu::open, &image_manager_, &ImageManager::open);
+  connect(file_menu_, &FileMenu::save, &image_manager_,
+          [this] { image_manager_.save(active_image_); });
+  connect(file_menu_, &FileMenu::saveAs, &image_manager_,
+          [this] { image_manager_.saveAs(active_image_); });
+  connect(file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
+
+  // Image menu
+  image_menu_ = new ImageMenu();
   menuBar()->addMenu(image_menu_);
 
-  // Connections
-  connect(file_menu_->openAct(), &QAction::triggered, this, &MainWindow::open);
-  connect(file_menu_->saveAct(), &QAction::triggered, this, &MainWindow::save);
-  connect(file_menu_->saveAsAct(), &QAction::triggered, this,
-          &MainWindow::saveAs);
-  connect(file_menu_->quitAct(), &QAction::triggered, qApp,
-          &QApplication::quit);
+  connect(image_menu_, &ImageMenu::duplicateImage, &image_manager_,
+          [this] { image_manager_.duplicate(active_image_); });
 }
 
 void MainWindow::createStatusBar() {

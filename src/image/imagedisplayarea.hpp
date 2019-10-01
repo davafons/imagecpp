@@ -27,6 +27,7 @@ signals:
 
 public slots:
   void setImage(const ProImage *image);
+  void onImageChanged(const ProImage *image);
 
   void resetSize();
   void setScaleFactor(float scale_factor);

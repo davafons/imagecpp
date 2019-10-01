@@ -3,14 +3,18 @@
 #include <QMenu>
 
 class FileMenu : public QMenu {
+  Q_OBJECT
+
 public:
-  explicit FileMenu(const QString &title = tr("&File"), QWidget *parent = nullptr);
+  explicit FileMenu(const QString &title = tr("&File"),
+                    QWidget *parent = nullptr);
   virtual ~FileMenu() = default;
 
-  QAction *openAct() const { return open_act_; }
-  QAction *saveAct() const { return save_act_; }
-  QAction *saveAsAct() const { return save_as_act_; }
-  QAction *quitAct() const { return quit_act_; }
+signals:
+  void open();
+  void save();
+  void saveAs();
+  void quit();
 
 private:
   QAction *open_act_;

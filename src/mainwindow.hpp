@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 
+#include "manager/imagemanager.hpp"
+
 class FileMenu;
 class ImageMenu;
 class ProImage;
@@ -20,11 +22,7 @@ signals:
   void activeImageChanged(ProImage *img);
 
 private slots:
-  void open();
-  void save();
-  void saveAs();
-
-  void addImageDisplayArea(const ProImage *image);
+  void showDisplayArea(const ProImage *image);
 
 private:
   void createMenus();
@@ -38,6 +36,8 @@ private:
 
   MainStatusBar *main_status_bar_;
 
-  ProImage *active_image_{nullptr};
   QMdiArea *mdi_area_;
+  ProImage *active_image_{nullptr};
+
+  ImageManager image_manager_;
 };

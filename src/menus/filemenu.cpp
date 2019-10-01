@@ -22,6 +22,11 @@ FileMenu::FileMenu(const QString &title, QWidget *parent)
   quit_act_->setStatusTip(tr("Quit from the application"));
   addSeparator();
 
+  connect(open_act_, &QAction::triggered, this, &FileMenu::open);
+  connect(save_act_, &QAction::triggered, this, &FileMenu::save);
+  connect(save_as_act_, &QAction::triggered, this, &FileMenu::saveAs);
+  connect(quit_act_, &QAction::triggered, this, &FileMenu::quit);
+
   addAction(open_act_);
   addAction(save_act_);
   addAction(save_as_act_);

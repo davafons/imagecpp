@@ -3,13 +3,15 @@
 #include <QMenu>
 
 class ImageMenu : public QMenu {
+  Q_OBJECT
 public:
   explicit ImageMenu(const QString &title = tr("&Image"),
                      QWidget *parent = nullptr);
   virtual ~ImageMenu() = default;
 
-  QAction *toGrayscale() const { return to_grayscale_act_; }
-  QAction *duplicateImage() const { return duplicate_img_act_; }
+signals:
+  void toGrayscale();
+  void duplicateImage();
 
 private:
   QAction *to_grayscale_act_;
