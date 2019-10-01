@@ -65,6 +65,9 @@ void MainWindow::createMenus() {
           [this] { image_manager_.save(active_image_); });
   connect(&file_menu_, &FileMenu::saveAs, &image_manager_,
           [this] { image_manager_.saveAs(active_image_); });
+
+  connect(&file_menu_, &FileMenu::closeView, &mdi_area_, &QMdiArea::closeActiveSubWindow);
+  connect(&file_menu_, &FileMenu::closeAll, &mdi_area_, &QMdiArea::closeAllSubWindows);
   connect(&file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
 
   // Edit menu
