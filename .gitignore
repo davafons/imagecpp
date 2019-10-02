@@ -14,7 +14,8 @@ CMakeCache.txt
 # Misc
 *.png
 *.jpg
-!res/
+!res/**/*.png
+!res/**/*.jpg
 
 # Qt
 *_autogen/
