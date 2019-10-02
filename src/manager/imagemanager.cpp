@@ -12,7 +12,7 @@ void ImageManager::open() {
   QString file_path =
       QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
 
-  emit imageOpened(new ProImage(file_path));
+  emit imageOpened(new ProImage(file_path, this));
 }
 
 void ImageManager::save(const ProImage *active_image) {

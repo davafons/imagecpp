@@ -11,8 +11,8 @@ class ProImage : public QObject {
   Q_OBJECT
 
 public:
-  explicit ProImage() = default;
-  explicit ProImage(const QString &file_path);
+  explicit ProImage(QObject *parent = nullptr);
+  explicit ProImage(const QString &file_path, QObject *parent = nullptr);
   ProImage(const ProImage &other);
   ProImage(ProImage &&other);
 
@@ -48,5 +48,5 @@ private:
   QImage image_;
   mutable QString file_path_;
 
-  QUndoStack undo_stack_; // TODO: Manage undo_stack memory
+  QUndoStack undo_stack_;
 };

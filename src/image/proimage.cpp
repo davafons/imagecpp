@@ -4,7 +4,11 @@
 #include <QUndoCommand>
 #include <QUndoStack>
 
-ProImage::ProImage(const QString &file_path) {
+ProImage::ProImage(QObject *parent) : QObject(parent) {}
+
+ProImage::ProImage(const QString &file_path, QObject *parent)
+    : ProImage(parent) {
+
   setFilePath(file_path);
 
   open(file_path_);
@@ -12,7 +16,6 @@ ProImage::ProImage(const QString &file_path) {
 
 ProImage::ProImage(const ProImage &other) {
   image_ = other.image_.copy();
-  // undo_stack_ = other.undo_stack_; // TODO: Manage memory
   file_path_ = other.file_path_;
 }
 
