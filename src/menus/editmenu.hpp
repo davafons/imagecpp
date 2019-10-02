@@ -2,7 +2,7 @@
 
 #include <QMenu>
 
-class QUndoStack;
+class QUndoGroup;
 
 class EditMenu : public QMenu {
   Q_OBJECT
@@ -16,7 +16,7 @@ signals:
   void redo();
 
 public slots:
-  void createUndoActions(const QUndoStack *undo_stack = nullptr);
+  void createUndoActions(const QUndoGroup *undo_group = nullptr);
 
 private:
   QAction *undo_act_;

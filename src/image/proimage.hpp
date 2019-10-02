@@ -15,7 +15,6 @@ public:
   explicit ProImage(const QString &file_path);
   ProImage(const ProImage &other);
   ProImage(ProImage &&other);
-  virtual ~ProImage() { delete undo_stack_; }
 
   ProImage &operator=(ProImage other);
 
@@ -27,7 +26,7 @@ public:
   QRgb pixel(const QPoint &position) const;
   QRect rect() const noexcept;
 
-  QUndoStack *undoStack() const;
+  QUndoStack &undoStack() { return undo_stack_; };
 
   friend void swap(ProImage &first, ProImage &second) noexcept;
 
@@ -49,5 +48,5 @@ private:
   QImage image_;
   mutable QString file_path_;
 
-  QUndoStack *undo_stack_{new QUndoStack()}; // TODO: Manage undo_stack memory
+  QUndoStack undo_stack_; // TODO: Manage undo_stack memory
 };

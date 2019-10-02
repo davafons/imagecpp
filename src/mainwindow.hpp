@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QMdiArea>
 
 #include "manager/imagemanager.hpp"
 #include "menus/editmenu.hpp"
@@ -9,6 +8,8 @@
 #include "menus/imagemenu.hpp"
 #include "statusbar/mainstatusbar.hpp"
 
+class QUndoGroup;
+class QMdiArea;
 class FileMenu;
 class EditMenu;
 class ImageMenu;
@@ -23,6 +24,7 @@ class MainWindow : public QMainWindow {
 public:
   MainWindow(QWidget *parent = nullptr,
              Qt::WindowFlags flags = Qt::WindowFlags());
+  virtual ~MainWindow();
 
 signals:
   void activeImageChanged(ProImage *img);
@@ -45,7 +47,8 @@ private:
 
   ImageManager image_manager_;
 
-  QMdiArea mdi_area_;
+  QMdiArea *mdi_area_;
+  QUndoGroup *undo_group_;
 
   ProImage *active_image_{nullptr};
 };

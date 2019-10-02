@@ -9,31 +9,50 @@
 #include "statusbar/mainstatusbar.hpp"
 
 #include <QApplication>
+#include <QDockWidget>
 #include <QFileDialog>
 #include <QMdiArea>
 #include <QMdiSubWindow>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QUndoGroup>
+#include <QUndoView>
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
-    : QMainWindow(parent, flags) {
+    : mdi_area_(new QMdiArea()), undo_group_(new QUndoGroup()),
+      QMainWindow(parent, flags) {
   createMenus();
   createStatusBar();
 
-  mdi_area_.setTabsClosable(true);
-  mdi_area_.setTabsMovable(true);
+  mdi_area_->setTabsClosable(true);
+  mdi_area_->setTabsMovable(true);
 
-  setCentralWidget(&mdi_area_);
+  QUndoView *undo_view = new QUndoView();
+  undo_view->setGroup(undo_group_);
 
-  connect(&mdi_area_, &QMdiArea::subWindowActivated, this,
+  setCentralWidget(mdi_area_);
+
+  QDockWidget *dock = new QDockWidget(tr("History"), this);
+  dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+  dock->setWidget(undo_view);
+  addDockWidget(Qt::RightDockWidgetArea, dock);
+
+  connect(mdi_area_, &QMdiArea::subWindowActivated, this,
           [this](const QMdiSubWindow *w) {
             active_image_ = activeImage();
+            if (active_image_) {
+              undo_group_->setActiveStack(&active_image_->undoStack());
+              qDebug() << undo_group_->activeStack();
+            }
             emit activeImageChanged(active_image_);
           });
 
   connect(&image_manager_, &ImageManager::imageOpened, this,
           &MainWindow::showDisplayArea);
+  connect(
+      &image_manager_, &ImageManager::imageOpened, this,
+      [this](ProImage *image) { undo_group_->addStack(&image->undoStack()); });
 
   connect(&image_manager_, &ImageManager::imageSaved, this,
           [this](const ProImage *image) {
@@ -45,11 +64,17 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
           &MainWindow::showDisplayArea);
 }
 
+MainWindow::~MainWindow() {
+
+  delete mdi_area_;
+  delete undo_group_;
+}
+
 void MainWindow::showDisplayArea(const ProImage *image) {
   ImageDisplayArea *display_area = new ImageDisplayArea();
 
   display_area->setImage(image);
-  mdi_area_.addSubWindow(display_area);
+  mdi_area_->addSubWindow(display_area);
   display_area->show();
 
   connect(display_area, &ImageDisplayArea::pixelInformation,
@@ -67,14 +92,18 @@ void MainWindow::createMenus() {
   connect(&file_menu_, &FileMenu::saveAs, &image_manager_,
           [this] { image_manager_.saveAs(active_image_); });
 
-  connect(&file_menu_, &FileMenu::closeView, &mdi_area_,
+  connect(&file_menu_, &FileMenu::closeView, mdi_area_,
           &QMdiArea::closeActiveSubWindow);
-  connect(&file_menu_, &FileMenu::closeAll, &mdi_area_,
+  connect(&file_menu_, &FileMenu::closeAll, mdi_area_,
           &QMdiArea::closeAllSubWindows);
   connect(&file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
 
   // Edit menu
   menuBar()->addMenu(&edit_menu_);
+  edit_menu_.createUndoActions(undo_group_);
+
+  connect(&edit_menu_, &EditMenu::undo, undo_group_, &QUndoGroup::undo);
+  connect(&edit_menu_, &EditMenu::redo, undo_group_, &QUndoGroup::redo);
 
   // Image menu
   menuBar()->addMenu(&image_menu_);
@@ -94,7 +123,7 @@ void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }
 ProImage *MainWindow::activeImage() const {
   ProImage *image = nullptr;
 
-  QMdiSubWindow *active_subwindow = mdi_area_.activeSubWindow();
+  QMdiSubWindow *active_subwindow = mdi_area_->activeSubWindow();
   if (active_subwindow) {
     ImageDisplayArea *display_area =
         dynamic_cast<ImageDisplayArea *>(active_subwindow->widget());
