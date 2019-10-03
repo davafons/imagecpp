@@ -74,17 +74,13 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::showDisplayArea(ImageData *data) {
-  // ImageDisplayArea *display_area = new ImageDisplayArea();
-
-  // display_area->setImage(image);
   ImageSubWindow *subwindow = new ImageSubWindow(data);
   mdi_area_->addSubWindow(subwindow);
   subwindow->show();
-  // display_area->show();
 
-  // connect(display_area, &ImageDisplayArea::pixelInformation,
-  //         main_status_bar_.pixelInfoWidget(),
-  //         &PixelInformationWidget::onPixelInformationReceived);
+  connect(subwindow, &ImageSubWindow::pixelInformation,
+          main_status_bar_.pixelInfoWidget(),
+          &PixelInformationWidget::onPixelInformationReceived);
 }
 
 void MainWindow::createMenus() {
