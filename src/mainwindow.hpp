@@ -7,6 +7,7 @@
 #include "menus/filemenu.hpp"
 #include "menus/imagemenu.hpp"
 #include "statusbar/mainstatusbar.hpp"
+#include "image/imagedata.hpp"
 
 class QUndoGroup;
 class QMdiArea;
@@ -27,16 +28,16 @@ public:
   virtual ~MainWindow();
 
 signals:
-  void activeImageChanged(ProImage *img);
+  void activeImageChanged(ImageData*img);
 
 private slots:
-  void showDisplayArea(const ProImage *image);
+  void showDisplayArea(ImageData *image);
 
 private:
   void createMenus();
   void createStatusBar();
 
-  ProImage *activeImage() const;
+  ImageData *activeImage() const;
 
 private:
   FileMenu file_menu_;
@@ -50,5 +51,5 @@ private:
   QMdiArea *mdi_area_;
   QUndoGroup *undo_group_;
 
-  ProImage *active_image_{nullptr};
+  ImageData *active_image_;
 };

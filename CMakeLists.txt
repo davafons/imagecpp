@@ -19,6 +19,8 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/mainwindow.cpp
     src/image/imagedisplayarea.cpp
+    src/image/imagesubwindow.cpp
+    src/image/imagedata.cpp
     src/image/proimage.cpp
     src/menus/filemenu.cpp
     src/menus/imagemenu.cpp

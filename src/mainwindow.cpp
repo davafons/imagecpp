@@ -1,5 +1,7 @@
 #include "mainwindow.hpp"
+#include "image/imagedata.hpp"
 #include "image/imagedisplayarea.hpp"
+#include "image/imagesubwindow.hpp"
 #include "image/proimage.hpp"
 #include "manager/imagemanager.hpp"
 #include "menus/editmenu.hpp"
@@ -42,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
           [this](const QMdiSubWindow *w) {
             active_image_ = activeImage();
             if (active_image_) {
-              undo_group_->setActiveStack(&active_image_->undoStack());
+              // undo_group_->setActiveStack(&active_image_->undoStack());
               qDebug() << undo_group_->activeStack();
             }
             emit activeImageChanged(active_image_);
@@ -52,12 +54,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
           &MainWindow::showDisplayArea);
   connect(
       &image_manager_, &ImageManager::imageOpened, this,
-      [this](ProImage *image) { undo_group_->addStack(&image->undoStack()); });
+      [this](ImageData
+                 *image) { /* undo_group_->addStack(&image->undoStack()); */ });
 
   connect(&image_manager_, &ImageManager::imageSaved, this,
-          [this](const ProImage *image) {
-            statusBar()->showMessage(
-                QString("Saved image on %1").arg(image->filePath()), 2000);
+          [this](ImageData *image) {
+            // statusBar()->showMessage(
+            //     QString("Saved image on %1").arg(image->filePath()), 2000);
           });
 
   connect(&image_manager_, &ImageManager::imageDuplicated, this,
@@ -70,16 +73,18 @@ MainWindow::~MainWindow() {
   delete undo_group_;
 }
 
-void MainWindow::showDisplayArea(const ProImage *image) {
-  ImageDisplayArea *display_area = new ImageDisplayArea();
+void MainWindow::showDisplayArea(ImageData *data) {
+  // ImageDisplayArea *display_area = new ImageDisplayArea();
 
-  display_area->setImage(image);
-  mdi_area_->addSubWindow(display_area);
-  display_area->show();
+  // display_area->setImage(image);
+  ImageSubWindow *subwindow = new ImageSubWindow(data);
+  mdi_area_->addSubWindow(subwindow);
+  subwindow->show();
+  // display_area->show();
 
-  connect(display_area, &ImageDisplayArea::pixelInformation,
-          main_status_bar_.pixelInfoWidget(),
-          &PixelInformationWidget::onPixelInformationReceived);
+  // connect(display_area, &ImageDisplayArea::pixelInformation,
+  //         main_status_bar_.pixelInfoWidget(),
+  //         &PixelInformationWidget::onPixelInformationReceived);
 }
 
 void MainWindow::createMenus() {
@@ -109,28 +114,21 @@ void MainWindow::createMenus() {
   menuBar()->addMenu(&image_menu_);
 
   connect(&image_menu_, &ImageMenu::duplicateImage, &image_manager_,
-          [this] { image_manager_.duplicate(active_image_); });
+          [this] { /* image_manager_.duplicate(active_image_); */ });
 
-  connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {
-    if (active_image_) {
-      active_image_->runCommand(new ToGrayscaleCommand(active_image_));
-    }
-  });
+  // TODO: Complete
+  connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {});
 }
 
 void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }
 
-ProImage *MainWindow::activeImage() const {
-  ProImage *image = nullptr;
+ImageData *MainWindow::activeImage() const {
+  ImageSubWindow *active_subwindow =
+      dynamic_cast<ImageSubWindow *>(mdi_area_->activeSubWindow());
 
-  QMdiSubWindow *active_subwindow = mdi_area_->activeSubWindow();
   if (active_subwindow) {
-    ImageDisplayArea *display_area =
-        dynamic_cast<ImageDisplayArea *>(active_subwindow->widget());
-    if (display_area) {
-      image = const_cast<ProImage *>(display_area->image());
-    }
+    return active_subwindow->data();
   }
 
-  return image;
+  return nullptr;
 }

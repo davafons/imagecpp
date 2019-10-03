@@ -1,27 +1,30 @@
 #pragma once
 
+#include <QMap>
 #include <QObject>
 
-class ProImage;
+#include "image/imagedata.hpp"
+#include "image/proimage.hpp"
 
 class ImageManager : public QObject {
   Q_OBJECT
 
 signals:
-  void imageOpened(ProImage *image);
-  void imageSaved(const ProImage *image);
-  void imageDuplicated(const ProImage *duplicated_image);
+  void imageOpened(ImageData *data);
+  void imageSaved(ImageData *data);
+  void imageDuplicated(ImageData *data);
 
 public slots:
   void open();
-  void save(const ProImage *image);
-  void saveAs(const ProImage *image, QString file_path = "");
+  void save(ImageData *image);
+  void saveAs(ImageData *image, QString file_path = "");
 
-  void duplicate(const ProImage *image);
+  void duplicate(ImageData *other);
 
   // private:
   //   static ProImage *active_image;
 
 private:
+  // QMap<int, ImageData*> loaded_images_;
   QString filters_ = tr("Image Files(*.png *.jpg *.jpeg *.bmp)");
 };
