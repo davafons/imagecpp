@@ -18,15 +18,16 @@ add_executable(${PROJECT_NAME}
     res/res.qrc
     src/main.cpp
     src/mainwindow.cpp
-    src/image/imagedisplayarea.cpp
-    src/image/imagesubwindow.cpp
     src/image/imagedata.cpp
     src/image/proimage.cpp
-    src/menus/filemenu.cpp
-    src/menus/imagemenu.cpp
-    src/menus/editmenu.cpp
-    src/statusbar/mainstatusbar.cpp
-    src/statusbar/pixelinformationwidget.cpp
+    src/widgets/image/imagedisplayarea.cpp
+    src/widgets/image/imagesubwindow.cpp
+    src/widgets/menus/filemenu.cpp
+    src/widgets/menus/imagemenu.cpp
+    src/widgets/menus/editmenu.cpp
+    src/widgets/statusbar/mainstatusbar.cpp
+    src/widgets/statusbar/pixelinformationwidget.cpp
+    src/widgets/image/subwindowsarea.cpp
     src/manager/imagemanager.cpp
 )
 

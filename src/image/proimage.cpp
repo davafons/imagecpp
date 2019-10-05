@@ -8,16 +8,10 @@ ProImage::ProImage(QObject *parent) : QObject(parent) {}
 
 ProImage::ProImage(const QString &file_path, QObject *parent)
     : ProImage(parent) {
-
-  setFilePath(file_path);
-
-  open(file_path_);
+  open(file_path);
 }
 
-ProImage::ProImage(const ProImage &other) {
-  image_ = other.image_.copy();
-  file_path_ = other.file_path_;
-}
+ProImage::ProImage(const ProImage &other) { image_ = other.image_.copy(); }
 
 ProImage::ProImage(ProImage &&other) { swap(*this, other); }
 
@@ -30,8 +24,6 @@ ProImage &ProImage::operator=(ProImage other) {
 QPixmap ProImage::getPixmap() const noexcept {
   return QPixmap::fromImage(image_);
 }
-
-QString ProImage::filePath() const noexcept { return file_path_; }
 
 QSize ProImage::size() const noexcept { return image_.size(); }
 
@@ -47,31 +39,10 @@ void swap(ProImage &first, ProImage &second) noexcept {
   using std::swap;
 
   swap(first.image_, second.image_);
-  swap(first.file_path_, second.file_path_);
 }
 
-void ProImage::open(const QString &file_path) {
-  setFilePath(file_path);
-  image_ = QImage(file_path);
-}
-
-bool ProImage::save() const { return saveAs(file_path_); }
+void ProImage::open(const QString &file_path) { image_ = QImage(file_path); }
 
 bool ProImage::saveAs(const QString &file_path) const {
-  if (file_path != file_path_) {
-    setFilePath(file_path);
-  }
-
   return image_.save(file_path);
 }
-
-void ProImage::setFilePath(const QString &file_path) const {
-  file_path_ = file_path;
-
-  emit filePathChanged(file_path);
-}
-
-void ProImage::runCommand(QUndoCommand *command) { undo_stack_.push(command); }
-
-void ProImage::undo() { undo_stack_.undo(); }
-void ProImage::redo() { undo_stack_.redo(); }

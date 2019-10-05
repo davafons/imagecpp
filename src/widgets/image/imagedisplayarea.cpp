@@ -1,5 +1,6 @@
 #include "imagedisplayarea.hpp"
-#include "proimage.hpp"
+
+#include "image/proimage.hpp"
 
 #include <QDebug>
 #include <QHoverEvent>
@@ -27,15 +28,12 @@ void ImageDisplayArea::setImage(const ProImage *image) {
   // Reset attributes
   image_ref_ = image;
   scale_factor_ = 1.0f;
-  setWindowTitle(image_ref_->filePath());
 
   // Display image at full size
   target_.setPixmap(image_ref_->getPixmap());
   target_.resize(image_ref_->size());
 
   // Connections
-  connect(image_ref_, &ProImage::filePathChanged, this,
-          &ImageDisplayArea::setWindowTitle);
   // connect(image_ref_, &ProImage::imageChanged, this,
   //         &ImageDisplayArea::onImageChanged);
 }

@@ -3,21 +3,12 @@
 #include <QMainWindow>
 
 #include "manager/imagemanager.hpp"
-#include "menus/editmenu.hpp"
-#include "menus/filemenu.hpp"
-#include "menus/imagemenu.hpp"
-#include "statusbar/mainstatusbar.hpp"
-#include "image/imagedata.hpp"
+#include "widgets/menus/editmenu.hpp"
+#include "widgets/menus/filemenu.hpp"
+#include "widgets/menus/imagemenu.hpp"
+#include "widgets/statusbar/mainstatusbar.hpp"
 
-class QUndoGroup;
-class QMdiArea;
-class FileMenu;
-class EditMenu;
-class ImageMenu;
-class ProImage;
-class QMdiArea;
-class ImageDisplayArea;
-class MainStatusBar;
+class SubWindowsArea;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -27,29 +18,23 @@ public:
              Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~MainWindow();
 
-signals:
-  void activeImageChanged(ImageData*img);
-
 private slots:
   void showDisplayArea(ImageData *image);
 
 private:
   void createMenus();
   void createStatusBar();
-
-  ImageData *activeImage() const;
+  void createSubWindowsArea();
 
 private:
+  // Visual widgets
   FileMenu file_menu_;
   EditMenu edit_menu_;
   ImageMenu image_menu_;
-
   MainStatusBar main_status_bar_;
 
+  SubWindowsArea *mdi_area_{nullptr};
+
   ImageManager image_manager_;
-
-  QMdiArea *mdi_area_;
-  QUndoGroup *undo_group_;
-
-  ImageData *active_image_;
+  QUndoGroup *undo_group_{nullptr};
 };

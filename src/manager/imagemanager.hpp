@@ -11,7 +11,7 @@ class ImageManager : public QObject {
 
 signals:
   void imageOpened(ImageData *data);
-  void imageSaved(ImageData *data);
+  void imageSaved(ImageData *data, const QString &file_path);
   void imageDuplicated(ImageData *data);
 
 public slots:

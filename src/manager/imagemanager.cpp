@@ -12,33 +12,35 @@ void ImageManager::open() {
   QString file_path =
       QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
 
-  emit imageOpened(new ImageData(new ProImage(file_path), this));
+  ImageData *image_data = new ImageData(new ProImage(file_path), this);
+  image_data->setFilePath(file_path);
+
+  emit imageOpened(image_data);
 }
 
-void ImageManager::save(ImageData *active_image) {
-  saveAs(active_image, active_image->image()->filePath());
+void ImageManager::save(ImageData *image_data) {
+  saveAs(image_data, image_data->filePath());
 }
 
-void ImageManager::saveAs(ImageData *active_image, QString file_path) {
-  if (file_path.isEmpty()) {
-    file_path =
-        QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
-  }
-
-  if (!active_image) {
-    // QMessageBox::critical(this, tr("Save As... error"),
-    //                       tr("Select a window with an image!"));
+void ImageManager::saveAs(ImageData *image_data, QString file_path) {
+  if (!image_data) {
     return;
   }
 
-  if (!active_image->image()->saveAs(file_path)) {
+  if (file_path.isEmpty()) {
+    file_path =
+        QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
+    image_data->setFilePath(file_path);
+  }
+
+  if (!image_data->image()->saveAs(file_path)) {
     // TODO: Specify why image couldn't be saved
     // QMessageBox::critical(this, tr("Save As... error"),
     //                       tr("Couldn't save image!"));
   } else {
     qDebug() << "Image saved";
 
-    emit imageSaved(active_image);
+    emit imageSaved(image_data, file_path);
   }
 }
 
