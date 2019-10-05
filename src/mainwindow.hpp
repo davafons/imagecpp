@@ -18,9 +18,6 @@ public:
              Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~MainWindow();
 
-private slots:
-  void showDisplayArea(ImageData *image);
-
 private:
   void createMenus();
   void createStatusBar();

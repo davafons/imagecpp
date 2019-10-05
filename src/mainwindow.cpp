@@ -1,10 +1,10 @@
 #include "mainwindow.hpp"
 
+#include <QApplication>
 #include <QDockWidget>
+#include <QMenuBar>
 #include <QUndoGroup>
 #include <QUndoView>
-#include <QMenuBar>
-#include <QApplication>
 
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/subwindowsarea.hpp"
@@ -15,20 +15,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
   createMenus();
   createStatusBar();
 
-  // UndoView
-  QUndoView *undo_view = new QUndoView();
-  undo_view->setGroup(undo_group_);
-
+  // MdiArea
   setCentralWidget(mdi_area_);
-
-  // Docks
-  QDockWidget *dock = new QDockWidget(tr("History"), this);
-  dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-  dock->setWidget(undo_view);
-  addDockWidget(Qt::RightDockWidgetArea, dock);
-
-  connect(&image_manager_, &ImageManager::imageOpened, mdi_area_,
-          &SubWindowsArea::addDisplayArea);
 
   connect(mdi_area_, &SubWindowsArea::displayAreaAdded, this,
           [this](ImageDisplayArea *d) {
@@ -37,29 +25,37 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
                     &PixelInformationWidget::onPixelInformationReceived);
           });
 
-  connect(
-      &image_manager_, &ImageManager::imageOpened, this,
-      [this](ImageData
-                 *image) { /* undo_group_->addStack(&image->undoStack()); */ });
+  // UndoView
+  QUndoView *undo_view = new QUndoView();
+  undo_view->setGroup(undo_group_);
+
+  // Docks
+  QDockWidget *dock = new QDockWidget(tr("History"), this);
+  dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+  dock->setWidget(undo_view);
+  addDockWidget(Qt::RightDockWidgetArea, dock);
+
+  // ImageManager
+  connect(&image_manager_, &ImageManager::imageOpened, mdi_area_,
+          &SubWindowsArea::addDisplayArea);
+
+  connect(&image_manager_, &ImageManager::imageOpened, this,
+          [this](ImageData *image_data) {
+            if (image_data) {
+              undo_group_->addStack(image_data->undoStack());
+            }
+          });
 
   connect(&image_manager_, &ImageManager::imageSaved, this,
-          [this](ImageData *image, const QString &file_path) {
+          [this](ImageData *, const QString &file_path) {
             statusBar()->showMessage(
                 QString("Saved image on %1").arg(file_path), 2000);
           });
-
-  connect(&image_manager_, &ImageManager::imageDuplicated, this,
-          &MainWindow::showDisplayArea);
 }
 
 MainWindow::~MainWindow() {
-
   delete mdi_area_;
   delete undo_group_;
-}
-
-void MainWindow::showDisplayArea(ImageData *data) {
-  mdi_area_->addDisplayArea(data);
 }
 
 void MainWindow::createMenus() {
@@ -79,9 +75,9 @@ void MainWindow::createMenus() {
   });
 
   connect(&file_menu_, &FileMenu::closeView, mdi_area_,
-          &QMdiArea::closeActiveSubWindow);
+          &SubWindowsArea::closeActiveSubWindow);
   connect(&file_menu_, &FileMenu::closeAll, mdi_area_,
-          &QMdiArea::closeAllSubWindows);
+          &SubWindowsArea::closeAllSubWindows);
   connect(&file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
 
   // Edit menu
@@ -94,8 +90,11 @@ void MainWindow::createMenus() {
   // Image menu
   menuBar()->addMenu(&image_menu_);
 
-  connect(&image_menu_, &ImageMenu::duplicateImage, &image_manager_,
-          [this] { /* image_manager_.duplicate(active_image_); */ });
+  connect(&image_menu_, &ImageMenu::duplicateImage, &image_manager_, [this] {
+    if (mdi_area_->activeImage()) {
+      image_manager_.duplicate(mdi_area_->activeImage());
+    }
+  });
 
   // TODO: Complete
   connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {});

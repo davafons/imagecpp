@@ -47,5 +47,5 @@ void ImageManager::saveAs(ImageData *image_data, QString file_path) {
 void ImageManager::duplicate(ImageData *other) {
   ImageData *duplicated_image = new ImageData(*other);
 
-  emit imageDuplicated(duplicated_image);
+  emit imageOpened(duplicated_image);
 }

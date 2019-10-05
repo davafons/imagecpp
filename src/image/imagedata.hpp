@@ -17,9 +17,11 @@ public:
   ImageData(const ImageData &data);
   virtual ~ImageData() = default;
 
-  ProImage *image() { return image_; }
   int id() const noexcept { return id_; }
   QString filePath() const { return file_path_; }
+
+  ProImage *image() { return image_; }
+  QUndoStack *undoStack() { return undo_stack_; }
 
 signals:
   void filePathChanged(const QString &file_path);
@@ -39,5 +41,5 @@ private:
   QString file_path_;
 
   ProImage *image_{nullptr};
-  QUndoStack undo_stack_;
+  QUndoStack *undo_stack_{new QUndoStack()};
 };
