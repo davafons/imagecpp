@@ -14,13 +14,13 @@ void EditMenu::createUndoActions(const QUndoGroup *undo_group) {
   if (undo_group) {
     undo_act_ = undo_group->createUndoAction(this, tr("&Undo"));
     redo_act_ = undo_group->createUndoAction(this, tr("&Redo"));
-    qDebug() << "With undo group";
+
   } else {
     undo_act_ = new QAction(tr("&Undo"), this);
     redo_act_ = new QAction(tr("&Redo"), this);
 
-    // undo_act_->setDisabled(true);
-    // redo_act_->setDisabled(true);
+    undo_act_->setDisabled(true);
+    redo_act_->setDisabled(true);
   }
 
   undo_act_->setShortcut(QKeySequence::Undo);

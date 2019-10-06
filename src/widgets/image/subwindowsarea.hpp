@@ -20,6 +20,7 @@ public:
 
 public slots:
   void addDisplayArea(ImageData *data);
+  void toggleTabsView(bool toggled);
 
 private:
   ImageData *imageFromSubwindow(QMdiSubWindow *subwindow);

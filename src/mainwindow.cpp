@@ -111,13 +111,18 @@ void MainWindow::createMenus() {
     }
   });
 
-  // TODO: Complete
   connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {
     if (mdi_area_->activeImage()) {
       undo_group_->activeStack()->push(
           new ToGrayscaleCommand(mdi_area_->activeImage()));
     }
   });
+
+  // Settings menu
+  menuBar()->addMenu(&settings_menu_);
+
+  connect(&settings_menu_, &SettingsMenu::toggleTabsView, mdi_area_,
+          &SubWindowsArea::toggleTabsView);
 }
 
 void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }

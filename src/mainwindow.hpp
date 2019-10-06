@@ -6,6 +6,7 @@
 #include "widgets/menus/editmenu.hpp"
 #include "widgets/menus/filemenu.hpp"
 #include "widgets/menus/imagemenu.hpp"
+#include "widgets/menus/settingsmenu.hpp"
 #include "widgets/statusbar/mainstatusbar.hpp"
 
 class SubWindowsArea;
@@ -28,6 +29,7 @@ private:
   FileMenu file_menu_;
   EditMenu edit_menu_;
   ImageMenu image_menu_;
+  SettingsMenu settings_menu_;
   MainStatusBar main_status_bar_;
 
   SubWindowsArea *mdi_area_{nullptr};

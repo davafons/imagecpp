@@ -27,6 +27,14 @@ void SubWindowsArea::addDisplayArea(ImageData *data) {
   emit displayAreaAdded(subwindow->display());
 }
 
+void SubWindowsArea::toggleTabsView(bool toggled) {
+  if (toggled) {
+    setViewMode(QMdiArea::TabbedView);
+  } else {
+    setViewMode(QMdiArea::SubWindowView);
+  }
+}
+
 ImageData *SubWindowsArea::imageFromSubwindow(QMdiSubWindow *subwindow) {
   ImageSubWindow *active_subwindow =
       dynamic_cast<ImageSubWindow *>(activeSubWindow());
