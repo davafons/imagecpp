@@ -12,7 +12,6 @@ class ProImage : public QObject {
 
 public:
   explicit ProImage(const QString &file_path);
-
   ProImage(int width, int height, QImage::Format format);
 
   ProImage(const ProImage &other);

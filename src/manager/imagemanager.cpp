@@ -6,8 +6,6 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-// ProImage* ImageManager::iamge
-
 void ImageManager::open() {
   qInfo() << "Selecting an image path to open";
 
@@ -55,6 +53,10 @@ void ImageManager::saveAs(ImageData *image_data, QString file_path) {
 }
 
 void ImageManager::duplicate(ImageData *other) {
+  if (!other) {
+    return;
+  }
+
   ImageData *duplicated_image = new ImageData(*other);
 
   emit imageOpened(duplicated_image);

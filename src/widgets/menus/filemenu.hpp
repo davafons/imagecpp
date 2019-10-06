@@ -2,11 +2,13 @@
 
 #include <QMenu>
 
+class QUndoGroup;
+
 class FileMenu : public QMenu {
   Q_OBJECT
 
 public:
-  explicit FileMenu( QWidget *parent = nullptr);
+  explicit FileMenu(QWidget *parent = nullptr);
   virtual ~FileMenu() = default;
 
 signals:

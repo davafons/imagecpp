@@ -14,8 +14,9 @@
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : mdi_area_(new SubWindowsArea()), undo_group_(new QUndoGroup()),
       undo_view_(new QUndoView()), QMainWindow(parent, flags) {
-  qInfo() << "Creating MainWindow";
-  createMenus();
+
+  // Bars
+  createMenuBar();
   createStatusBar();
 
   // UndoView
@@ -69,65 +70,49 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 MainWindow::~MainWindow() {
   delete mdi_area_;
   delete undo_group_;
+  delete undo_view_;
 }
 
-void MainWindow::createMenus() {
-  // File menu
-  menuBar()->addMenu(&file_menu_);
+void MainWindow::createMenuBar() {
+  setMenuBar(&main_menu_bar_);
 
-  connect(&file_menu_, &FileMenu::open, &image_manager_, &ImageManager::open);
-  connect(&file_menu_, &FileMenu::save, &image_manager_, [this] {
-    if (mdi_area_->activeImage()) {
+  connect(&main_menu_bar_, &MainMenuBar::open, &image_manager_,
+          &ImageManager::open);
+  connect(&main_menu_bar_, &MainMenuBar::save, &image_manager_, [this] {
+    if (mdi_area_->activeImage())
       image_manager_.save(mdi_area_->activeImage());
-    }
   });
-  connect(&file_menu_, &FileMenu::saveAs, &image_manager_, [this] {
-    if (mdi_area_->activeImage()) {
+  connect(&main_menu_bar_, &MainMenuBar::saveAs, &image_manager_, [this] {
+    if (mdi_area_->activeImage())
       image_manager_.saveAs(mdi_area_->activeImage());
-    }
   });
 
-  // TODO: Remove from undo_group after closing
-  connect(&file_menu_, &FileMenu::closeView, mdi_area_,
+  // TODO: Add "Save copy"
+
+  connect(&main_menu_bar_, &MainMenuBar::closeView, mdi_area_,
           &SubWindowsArea::closeActiveSubWindow);
-  connect(&file_menu_, &FileMenu::closeAll, mdi_area_,
+  connect(&main_menu_bar_, &MainMenuBar::closeAll, mdi_area_,
           &SubWindowsArea::closeAllSubWindows);
-  connect(&file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
+  connect(&main_menu_bar_, &MainMenuBar::quit, qApp, &QApplication::quit);
 
-  // Edit menu
-  menuBar()->addMenu(&edit_menu_);
-  edit_menu_.createUndoActions(undo_group_);
+  connect(&main_menu_bar_, &MainMenuBar::undo, undo_group_, &QUndoGroup::undo);
+  connect(&main_menu_bar_, &MainMenuBar::redo, undo_group_, &QUndoGroup::redo);
 
-  connect(&edit_menu_, &EditMenu::undo, undo_group_, &QUndoGroup::undo);
-  connect(&edit_menu_, &EditMenu::redo, undo_group_, &QUndoGroup::redo);
+  connect(&main_menu_bar_, &MainMenuBar::duplicateImage, &image_manager_,
+          [this] { image_manager_.duplicate(mdi_area_->activeImage()); });
 
-  // Image menu
-  menuBar()->addMenu(&image_menu_);
-
-  connect(&image_menu_, &ImageMenu::duplicateImage, &image_manager_, [this] {
-    if (mdi_area_->activeImage()) {
-      image_manager_.duplicate(mdi_area_->activeImage());
-    }
-  });
-
-  connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {
+  // TODO: Make better
+  connect(&main_menu_bar_, &MainMenuBar::toGrayscale, &image_manager_, [this] {
     if (mdi_area_->activeImage()) {
       undo_group_->activeStack()->push(
           new ToGrayscaleCommand(mdi_area_->activeImage()));
     }
   });
 
-  // Settings menu
-  menuBar()->addMenu(&settings_menu_);
-
-  connect(&settings_menu_, &SettingsMenu::toggleTabsView, mdi_area_,
+  connect(&main_menu_bar_, &MainMenuBar::toggleTabsView, mdi_area_,
           &SubWindowsArea::toggleTabsView);
-
-  // Windows menu
-  menuBar()->addMenu(&windows_menu_);
-
-  connect(&windows_menu_, &WindowsMenu::toggleHistoryWindow, undo_view_,
-          &QUndoView::setVisible);
+  connect(&main_menu_bar_, &MainMenuBar::toggleHistoryWindow, undo_view_,
+          &SubWindowsArea::setVisible);
 }
 
 void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }
