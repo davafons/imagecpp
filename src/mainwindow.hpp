@@ -7,9 +7,12 @@
 #include "widgets/menus/filemenu.hpp"
 #include "widgets/menus/imagemenu.hpp"
 #include "widgets/menus/settingsmenu.hpp"
+#include "widgets/menus/windowsmenu.hpp"
 #include "widgets/statusbar/mainstatusbar.hpp"
 
 class SubWindowsArea;
+class QUndoView;
+class QUndoGroup;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -30,10 +33,13 @@ private:
   EditMenu edit_menu_;
   ImageMenu image_menu_;
   SettingsMenu settings_menu_;
+  WindowsMenu windows_menu_;
   MainStatusBar main_status_bar_;
 
   SubWindowsArea *mdi_area_{nullptr};
 
   ImageManager image_manager_;
+
   QUndoGroup *undo_group_{nullptr};
+  QUndoView *undo_view_{nullptr};
 };

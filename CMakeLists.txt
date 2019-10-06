@@ -26,6 +26,7 @@ add_executable(${PROJECT_NAME}
     src/widgets/menus/filemenu.cpp
     src/widgets/menus/imagemenu.cpp
     src/widgets/menus/editmenu.cpp
+    src/widgets/menus/windowsmenu.cpp
     src/widgets/menus/settingsmenu.cpp
     src/widgets/statusbar/mainstatusbar.cpp
     src/widgets/statusbar/pixelinformationwidget.cpp

@@ -13,14 +13,13 @@
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : mdi_area_(new SubWindowsArea()), undo_group_(new QUndoGroup()),
-      QMainWindow(parent, flags) {
+      undo_view_(new QUndoView()), QMainWindow(parent, flags) {
   qInfo() << "Creating MainWindow";
   createMenus();
   createStatusBar();
 
   // UndoView
-  QUndoView *undo_view = new QUndoView();
-  undo_view->setGroup(undo_group_);
+  undo_view_->setGroup(undo_group_);
 
   // MdiArea
   setCentralWidget(mdi_area_);
@@ -42,9 +41,9 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
           });
 
   // Docks
-  QDockWidget *dock = new QDockWidget(tr("History"), this);
+  QDockWidget *dock = new QDockWidget(tr("Tools"), this);
   dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-  dock->setWidget(undo_view);
+  dock->setWidget(undo_view_);
   addDockWidget(Qt::RightDockWidgetArea, dock);
 
   // ImageManager
@@ -123,6 +122,12 @@ void MainWindow::createMenus() {
 
   connect(&settings_menu_, &SettingsMenu::toggleTabsView, mdi_area_,
           &SubWindowsArea::toggleTabsView);
+
+  // Windows menu
+  menuBar()->addMenu(&windows_menu_);
+
+  connect(&windows_menu_, &WindowsMenu::toggleHistoryWindow, undo_view_,
+          &QUndoView::setVisible);
 }
 
 void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }
