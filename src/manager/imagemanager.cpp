@@ -16,13 +16,16 @@ void ImageManager::open() {
 
   qInfo() << "File selected: " << file_path;
 
-  ImageData *image_data = new ImageData(new ProImage(file_path), this);
-  Q_CHECK_PTR(image_data);
-  image_data->setFilePath(file_path);
+  if (!file_path.isEmpty()) {
+    ImageData *image_data = new ImageData(new ProImage(file_path), this);
+    Q_CHECK_PTR(image_data);
 
-  qInfo() << "ImageData object created:" << image_data;
+    image_data->setFilePath(file_path);
 
-  emit imageOpened(image_data);
+    qInfo() << "ImageData object created:" << image_data;
+
+    emit imageOpened(image_data);
+  }
 }
 
 void ImageManager::save(ImageData *image_data) {
