@@ -1,19 +1,26 @@
 #include "mainwindow.hpp"
 
 #include <QApplication>
+#include <QDebug>
 #include <QDockWidget>
 #include <QMenuBar>
 #include <QUndoGroup>
 #include <QUndoView>
 
+#include "operations/color.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/subwindowsarea.hpp"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : mdi_area_(new SubWindowsArea()), undo_group_(new QUndoGroup()),
       QMainWindow(parent, flags) {
+  qInfo() << "Creating MainWindow";
   createMenus();
   createStatusBar();
+
+  // UndoView
+  QUndoView *undo_view = new QUndoView();
+  undo_view->setGroup(undo_group_);
 
   // MdiArea
   setCentralWidget(mdi_area_);
@@ -25,9 +32,14 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
                     &PixelInformationWidget::onPixelInformationReceived);
           });
 
-  // UndoView
-  QUndoView *undo_view = new QUndoView();
-  undo_view->setGroup(undo_group_);
+  connect(mdi_area_, &SubWindowsArea::activeImageChanged, this,
+          [this](ImageData *image_data) {
+            qInfo() << "Active image: " << image_data;
+            if (image_data) {
+              qInfo() << "Active stack: " << image_data->undoStack();
+              undo_group_->setActiveStack(image_data->undoStack());
+            }
+          });
 
   // Docks
   QDockWidget *dock = new QDockWidget(tr("History"), this);
@@ -41,8 +53,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   connect(&image_manager_, &ImageManager::imageOpened, this,
           [this](ImageData *image_data) {
+            Q_CHECK_PTR(image_data);
             if (image_data) {
               undo_group_->addStack(image_data->undoStack());
+              qInfo() << "Add new undo stack: " << image_data->undoStack();
             }
           });
 
@@ -74,6 +88,7 @@ void MainWindow::createMenus() {
     }
   });
 
+  // TODO: Remove from undo_group after closing
   connect(&file_menu_, &FileMenu::closeView, mdi_area_,
           &SubWindowsArea::closeActiveSubWindow);
   connect(&file_menu_, &FileMenu::closeAll, mdi_area_,
@@ -97,7 +112,12 @@ void MainWindow::createMenus() {
   });
 
   // TODO: Complete
-  connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {});
+  connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {
+    if (mdi_area_->activeImage()) {
+      undo_group_->activeStack()->push(
+          new ToGrayscaleCommand(mdi_area_->activeImage()));
+    }
+  });
 }
 
 void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }

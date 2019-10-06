@@ -6,9 +6,6 @@
 
 class ImageData;
 
-/*
- * Links an image with its window representation
- */
 class ImageSubWindow : public QMdiSubWindow {
   Q_OBJECT
 public:
@@ -22,5 +19,5 @@ signals:
 
 private:
   ImageDisplayArea *display_{nullptr};
-  ImageData *data_{nullptr}; // Make const pointer? (not pointer to const)
+  ImageData *data_{nullptr}; // Make a const pointer?
 };

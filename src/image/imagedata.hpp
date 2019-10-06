@@ -4,6 +4,7 @@
 #include <QUndoStack>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QDebug>
 
 class ProImage;
 
@@ -25,12 +26,11 @@ public:
 
 signals:
   void filePathChanged(const QString &file_path);
+  void imageChanged(const ProImage *image);
 
 public slots:
-  void setFilePath(QString file_path) {
-    file_path_ = file_path;
-    emit filePathChanged(file_path);
-  }
+  void setFilePath(QString file_path);
+  void setImage(ProImage *image);
 
 protected:
   static int next_id_;

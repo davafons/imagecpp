@@ -1,5 +1,6 @@
 #include "subwindowsarea.hpp"
 
+#include "image/imagedata.hpp"
 #include "widgets/image/imagesubwindow.hpp"
 
 SubWindowsArea::SubWindowsArea(QWidget *parent) : QMdiArea(parent) {
@@ -14,7 +15,12 @@ SubWindowsArea::SubWindowsArea(QWidget *parent) : QMdiArea(parent) {
 }
 
 void SubWindowsArea::addDisplayArea(ImageData *data) {
+  Q_CHECK_PTR(data);
+  qInfo() << "Add new display area for data: " << data;
+
   ImageSubWindow *subwindow = new ImageSubWindow(data);
+  Q_CHECK_PTR(subwindow);
+
   addSubWindow(subwindow);
   subwindow->show();
 

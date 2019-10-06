@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME}
     src/mainwindow.cpp
     src/image/imagedata.cpp
     src/image/proimage.cpp
+    src/operations/color.cpp
     src/widgets/image/imagedisplayarea.cpp
     src/widgets/image/imagesubwindow.cpp
     src/widgets/menus/filemenu.cpp

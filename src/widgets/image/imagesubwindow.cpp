@@ -1,6 +1,7 @@
 #include "imagesubwindow.hpp"
 
 #include "image/imagedata.hpp"
+#include "image/proimage.hpp"
 
 ImageSubWindow::ImageSubWindow(ImageData *data)
     : display_(new ImageDisplayArea()), data_(data) {
@@ -14,4 +15,7 @@ ImageSubWindow::ImageSubWindow(ImageData *data)
 
   connect(data_, &ImageData::filePathChanged, this,
           &ImageSubWindow::setWindowTitle);
+
+  connect(data_, &ImageData::imageChanged, display_,
+          &ImageDisplayArea::onImageChanged);
 }

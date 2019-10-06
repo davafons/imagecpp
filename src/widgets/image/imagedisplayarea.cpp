@@ -25,6 +25,7 @@ float ImageDisplayArea::scaleFactor() const { return scale_factor_; }
 const ProImage *ImageDisplayArea::image() const { return image_ref_; }
 
 void ImageDisplayArea::setImage(const ProImage *image) {
+  qInfo() << "Setting image" << image << "on the display";
   // Reset attributes
   image_ref_ = image;
   scale_factor_ = 1.0f;
@@ -33,9 +34,8 @@ void ImageDisplayArea::setImage(const ProImage *image) {
   target_.setPixmap(image_ref_->getPixmap());
   target_.resize(image_ref_->size());
 
-  // Connections
-  // connect(image_ref_, &ProImage::imageChanged, this,
-  //         &ImageDisplayArea::onImageChanged);
+  qInfo() << "Display new properties - Size:" << target_.size()
+          << "Pixmap: " << target_.pixmap();
 }
 
 void ImageDisplayArea::onImageChanged(const ProImage *image) {

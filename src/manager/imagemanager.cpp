@@ -9,11 +9,18 @@
 // ProImage* ImageManager::iamge
 
 void ImageManager::open() {
+  qInfo() << "Selecting an image path to open";
+
   QString file_path =
       QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
 
+  qInfo() << "File selected: " << file_path;
+
   ImageData *image_data = new ImageData(new ProImage(file_path), this);
+  Q_CHECK_PTR(image_data);
   image_data->setFilePath(file_path);
+
+  qInfo() << "ImageData object created:" << image_data;
 
   emit imageOpened(image_data);
 }
