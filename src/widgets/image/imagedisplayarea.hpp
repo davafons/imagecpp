@@ -25,9 +25,12 @@ signals:
   void scaleFactorChanged(float scale_factor);
   void imageSizeChanged(const QSize &new_size);
 
+  void imageOpened(const ProImage *image);
+  void imageUpdated(const ProImage *image);
+
 public slots:
-  void setImage(const ProImage *image);
-  void onImageChanged(const ProImage *image);
+  void onImageOpened(const ProImage *image);
+  void onImageUpdated(const ProImage *image);
 
   void resetSize();
   void setScaleFactor(float scale_factor);

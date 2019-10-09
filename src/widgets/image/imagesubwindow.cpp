@@ -7,7 +7,7 @@ ImageSubWindow::ImageSubWindow(ImageData *data)
     : display_(new ImageDisplayArea()), data_(data) {
   setWidget(display_);
 
-  display_->setImage(data->image());
+  display_->onImageOpened(data->image());
   setWindowTitle(data->filePath());
 
   connect(display_, &ImageDisplayArea::pixelInformation, this,
@@ -16,6 +16,6 @@ ImageSubWindow::ImageSubWindow(ImageData *data)
   connect(data_, &ImageData::filePathChanged, this,
           &ImageSubWindow::setWindowTitle);
 
-  connect(data_, &ImageData::imageChanged, display_,
-          &ImageDisplayArea::onImageChanged);
+  connect(data_, &ImageData::imageUpdated, display_,
+          &ImageDisplayArea::onImageUpdated);
 }

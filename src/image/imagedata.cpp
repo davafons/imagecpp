@@ -12,7 +12,10 @@ ImageData::ImageData(ProImage *image, QObject *parent) : QObject(parent) {
   image_ = image;
 }
 
-// TODO: Delete undo stack
+ImageData::~ImageData() {
+  delete image_;
+  delete undo_stack_;
+}
 
 // TODO: Memory management
 ImageData::ImageData(const ImageData &other) {
@@ -33,5 +36,5 @@ void ImageData::setImage(ProImage *image) {
   qInfo() << "Replacing image" << image_ << "with" << image;
 
   image_ = image;
-  emit imageChanged(image);
+  emit imageUpdated(image);
 }

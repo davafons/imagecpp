@@ -1,10 +1,10 @@
 #pragma once
 
+#include <QDebug>
 #include <QObject>
 #include <QUndoStack>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QDebug>
 
 class ProImage;
 
@@ -16,7 +16,7 @@ class ImageData : public QObject {
 public:
   ImageData(ProImage *image = nullptr, QObject *parent = nullptr);
   ImageData(const ImageData &data);
-  virtual ~ImageData() = default;
+  virtual ~ImageData();
 
   int id() const noexcept { return id_; }
   QString filePath() const { return file_path_; }
@@ -26,7 +26,7 @@ public:
 
 signals:
   void filePathChanged(const QString &file_path);
-  void imageChanged(const ProImage *image);
+  void imageUpdated(const ProImage *image);
 
 public slots:
   void setFilePath(QString file_path);

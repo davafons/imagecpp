@@ -24,7 +24,7 @@ ImageDisplayArea::ImageDisplayArea(QWidget *parent) : QScrollArea(parent) {
 float ImageDisplayArea::scaleFactor() const { return scale_factor_; }
 const ProImage *ImageDisplayArea::image() const { return image_ref_; }
 
-void ImageDisplayArea::setImage(const ProImage *image) {
+void ImageDisplayArea::onImageOpened(const ProImage *image) {
   qInfo() << "Setting image" << image << "on the display";
   // Reset attributes
   image_ref_ = image;
@@ -34,12 +34,16 @@ void ImageDisplayArea::setImage(const ProImage *image) {
   target_.setPixmap(image_ref_->getPixmap());
   target_.resize(image_ref_->size());
 
-  qInfo() << "Display new properties - Size:" << target_.size()
-          << "Pixmap: " << target_.pixmap();
+  emit imageOpened(image_ref_);
 }
 
-void ImageDisplayArea::onImageChanged(const ProImage *image) {
-  setImage(image);
+void ImageDisplayArea::onImageUpdated(const ProImage *image) {
+  image_ref_ = image;
+
+  target_.setPixmap(image_ref_->getPixmap());
+  target_.resize(scale_factor_ * image_ref_->size());
+
+  emit imageUpdated(image_ref_);
 }
 
 void ImageDisplayArea::resetSize() { setScaleFactor(1.0f); }

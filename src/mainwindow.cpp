@@ -76,6 +76,8 @@ MainWindow::~MainWindow() {
 void MainWindow::createMenuBar() {
   setMenuBar(&main_menu_bar_);
 
+  main_menu_bar_.createUndoActions(undo_group_);
+
   connect(&main_menu_bar_, &MainMenuBar::open, &image_manager_,
           &ImageManager::open);
   connect(&main_menu_bar_, &MainMenuBar::save, &image_manager_, [this] {
@@ -87,7 +89,7 @@ void MainWindow::createMenuBar() {
       image_manager_.saveAs(mdi_area_->activeImage());
   });
 
-  // TODO: Add "Save copy"
+  // TODO: Add "Save copy connection"
 
   connect(&main_menu_bar_, &MainMenuBar::closeView, mdi_area_,
           &SubWindowsArea::closeActiveSubWindow);
