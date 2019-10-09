@@ -7,7 +7,7 @@
 #include "image/proimage.hpp"
 
 ToGrayscaleOperation::ToGrayscaleOperation(ImageData *data,
-                                           const Format &format = Format::PAL)
+                                           const Format &format)
     : ImageOperation(data) {
   setFormat(format);
 }

@@ -106,8 +106,8 @@ void MainWindow::createMenuBar() {
   // TODO: Make better
   connect(&main_menu_bar_, &MainMenuBar::toGrayscale, &image_manager_, [this] {
     if (mdi_area_->activeImage()) {
-      // undo_group_->activeStack()->push(new ToGrayscaleCommand(
-      //     mdi_area_->activeImage(), ToGrayscaleCommand::Format::PAL));
+      undo_group_->activeStack()->push(
+          toGrayscaleCommandDialog(mdi_area_->activeImage()));
     }
   });
 
