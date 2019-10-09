@@ -24,6 +24,8 @@ public:
   ProImage *image() { return image_; }
   QUndoStack *undoStack() { return undo_stack_; }
 
+  ProImage *copyImage() const;
+
 signals:
   void filePathChanged(const QString &file_path);
   void imageUpdated(const ProImage *image);

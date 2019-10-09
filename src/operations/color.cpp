@@ -6,33 +6,24 @@
 #include "image/proimage.hpp"
 
 ToGrayscaleCommand::ToGrayscaleCommand(ImageData *data)
-    : QUndoCommand(QIODevice::tr("To grayscale")), data_(data),
-      old_image_(new ProImage(*data->image())) {}
+    : ImageOperation(data) {
+  // Show dialog to select between Pal and Ntsc
+  Format format = Format::PAL;
 
-void ToGrayscaleCommand::redo() {
-  if (!modified_image_) {
-    modified_image_ = new ProImage(old_image_->width(), old_image_->height(),
-                                   old_image_->format());
+  red_factor_ = (format == Format::PAL) ? 0.222f : 0.299f;
+  green_factor_ = (format == Format::PAL) ? 0.707f : 0.587f;
+  blue_factor_ = (format == Format::PAL) ? 0.071f : 0.114f;
 
-    qDebug() << "Modified image info:" << modified_image_->size()
-             << modified_image_->getPixmap();
-
-    for (int y = 0; y < modified_image_->height(); ++y) {
-      for (int x = 0; x < modified_image_->width(); ++x) {
-        // NTSC Formula
-        QColor color = old_image_->pixelColor(x, y);
-
-        int gray = color.red() * 0.299f + color.green() * 0.587f +
-                   color.blue() * 0.144f;
-
-        gray = std::min(255, gray);
-
-        modified_image_->setPixelColor(x, y,
-                                       QColor(gray, gray, gray, color.alpha()));
-      }
-    }
-  }
-
-  data_->setImage(modified_image_);
+  setOperationName(QString("To Grayscale (%1)")
+                       .arg((format == Format::PAL) ? "PAL" : "NTSC"));
 }
-void ToGrayscaleCommand::undo() { data_->setImage(old_image_); }
+
+QRgb ToGrayscaleCommand::pixelOperation(int, int, QRgb color) const {
+  uint8_t red = qRed(color) * red_factor_;
+  uint8_t green = qGreen(color) * green_factor_;
+  uint8_t blue = qBlue(color) * blue_factor_;
+
+  uint8_t gray = std::min(red + green + blue, 255);
+
+  return qRgba(gray, gray, gray, qAlpha(color));
+}

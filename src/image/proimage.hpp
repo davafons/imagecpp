@@ -21,6 +21,8 @@ public:
 
   QPixmap getPixmap() const noexcept;
 
+  ProImage *copy() const;
+
   int width() const noexcept { return image_.width(); }
   int height() const noexcept { return image_.height(); }
   QSize size() const noexcept { return image_.size(); }
@@ -51,6 +53,8 @@ public:
   }
 
   friend void swap(ProImage &first, ProImage &second) noexcept;
+
+  static ProImage *empty(const ProImage &other);
 
 signals:
   // void imageChanged(const ProImage *image);

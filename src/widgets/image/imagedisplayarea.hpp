@@ -33,7 +33,7 @@ public slots:
   void onImageUpdated(const ProImage *image);
 
   void resetSize();
-  void setScaleFactor(float scale_factor);
+  void resize(float scale_factor);
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event) override;
@@ -48,4 +48,7 @@ private:
   float scale_factor_{1.0f};
   QPoint last_clicked_point_{0, 0};
   int numScheduledScalings_{0};
+
+  int margin_x_ = 100;
+  int margin_y_ = 100;
 };

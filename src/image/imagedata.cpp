@@ -27,6 +27,8 @@ ImageData::ImageData(const ImageData &other) {
   undo_stack_ = new QUndoStack();
 }
 
+ProImage *ImageData::copyImage() const { return image_->copy(); }
+
 void ImageData::setFilePath(QString file_path) {
   file_path_ = file_path;
   emit filePathChanged(file_path);

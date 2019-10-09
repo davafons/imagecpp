@@ -13,6 +13,7 @@ ImageDisplayArea::ImageDisplayArea(QWidget *parent) : QScrollArea(parent) {
 
   // Set widgets style
   setBackgroundRole(QPalette::Dark);
+  setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
   target_.setStyleSheet("background: url(:/img/png_pat_dark.png) repeat;");
 
   // Instal event filters
@@ -40,15 +41,27 @@ void ImageDisplayArea::onImageOpened(const ProImage *image) {
 void ImageDisplayArea::onImageUpdated(const ProImage *image) {
   image_ref_ = image;
 
+  // Save current position of the image on the area
+  QPoint target_old_pos = target_.pos();
+  qDebug() << target_old_pos;
+
   target_.setPixmap(image_ref_->getPixmap());
   target_.resize(scale_factor_ * image_ref_->size());
+
+  // Restore the image position
+  target_.move(target_old_pos);
 
   emit imageUpdated(image_ref_);
 }
 
-void ImageDisplayArea::resetSize() { setScaleFactor(1.0f); }
+void ImageDisplayArea::resetSize() { resize(1.0f); }
 
-void ImageDisplayArea::setScaleFactor(float scale_factor) {
+void ImageDisplayArea::resize(float scale_factor) {
+  if (scale_factor <= 0) {
+    scale_factor_ = 0;
+    return;
+  }
+
   scale_factor_ = scale_factor;
 
   target_.resize(scale_factor_ * image_ref_->size());
@@ -96,8 +109,7 @@ void ImageDisplayArea::wheelEvent(QWheelEvent *event) {
 
     connect(anim, &QTimeLine::valueChanged, this, [this](qreal x) {
       qreal factor = 1.0 + qreal(numScheduledScalings_) / 50.0;
-      scale_factor_ = factor;
-      target_.resize(image_ref_->size() * factor);
+      resize(factor);
     });
 
     connect(anim, &QTimeLine::finished, this, [this] { sender()->~QObject(); });

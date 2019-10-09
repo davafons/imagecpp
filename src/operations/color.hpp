@@ -1,23 +1,21 @@
 #pragma once
 
 #include <QDebug>
-#include <QObject>
-#include <QUndoCommand>
 
-class ImageData;
-class ProImage;
+#include "operations/imageoperation.hpp"
 
-class ToGrayscaleCommand : public QUndoCommand {
+class ToGrayscaleCommand : public ImageOperation {
 
 public:
+  enum class Format { NTSC, PAL };
+
   ToGrayscaleCommand(ImageData *data);
 
-  virtual void redo() override;
-  virtual void undo() override;
+protected:
+  virtual QRgb pixelOperation(int x, int y, QRgb color) const override;
 
 private:
-  ImageData *data_{nullptr}; // Make a const pointer?
-
-  ProImage *modified_image_{nullptr};
-  ProImage *old_image_{nullptr};
+  float red_factor_{0};
+  float green_factor_{0};
+  float blue_factor_{0};
 };
