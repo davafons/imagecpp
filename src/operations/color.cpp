@@ -1,24 +1,33 @@
 #include "color.hpp"
 
 #include <QColor>
+#include <QDialog>
 
 #include "image/imagedata.hpp"
 #include "image/proimage.hpp"
 
-ToGrayscaleCommand::ToGrayscaleCommand(ImageData *data)
+ToGrayscaleOperation::ToGrayscaleOperation(ImageData *data,
+                                           const Format &format = Format::PAL)
     : ImageOperation(data) {
-  // Show dialog to select between Pal and Ntsc
-  Format format = Format::PAL;
-
-  red_factor_ = (format == Format::PAL) ? 0.222f : 0.299f;
-  green_factor_ = (format == Format::PAL) ? 0.707f : 0.587f;
-  blue_factor_ = (format == Format::PAL) ? 0.071f : 0.114f;
-
-  setOperationName(QString("To Grayscale (%1)")
-                       .arg((format == Format::PAL) ? "PAL" : "NTSC"));
+  setFormat(format);
 }
 
-QRgb ToGrayscaleCommand::pixelOperation(int, int, QRgb color) const {
+ToGrayscaleOperation &ToGrayscaleOperation::setFormat(const Format &format) {
+  format_ = format;
+
+  red_factor_ = (format_ == Format::PAL) ? 0.222f : 0.299f;
+  green_factor_ = (format_ == Format::PAL) ? 0.707f : 0.587f;
+  blue_factor_ = (format_ == Format::PAL) ? 0.071f : 0.114f;
+
+  setName(QString("To Grayscale (%1)")
+              .arg((format == Format::PAL) ? "PAL" : "NTSC"));
+
+  emit propertyChanged();
+
+  return *this;
+}
+
+QRgb ToGrayscaleOperation::pixelOperation(int, int, QRgb color) const {
   uint8_t red = qRed(color) * red_factor_;
   uint8_t green = qGreen(color) * green_factor_;
   uint8_t blue = qBlue(color) * blue_factor_;
