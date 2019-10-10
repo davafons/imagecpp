@@ -5,8 +5,7 @@
 PixelInformationWidget::PixelInformationWidget(QWidget *parent)
     : QWidget(parent) {
   color_square_label_.setFixedSize(16, 16);
-  color_square_label_.setStyleSheet(
-      "background-color: white; border: 1px solid black; ");
+  changeSquareLabelColor("white");
 
   QHBoxLayout *layout = new QHBoxLayout;
   layout->setContentsMargins(0, 0, 0, 0);
@@ -27,8 +26,10 @@ void PixelInformationWidget::onPixelInformationReceived(const QPoint &point,
                                 .arg(color.blue())
                                 .arg(color.alpha()));
 
+  changeSquareLabelColor(color.name());
+}
+
+void PixelInformationWidget::changeSquareLabelColor(const QString &name) {
   color_square_label_.setStyleSheet(
-      QString("background-color: %1; border: 1px solid black;")
-          .arg(color.name()));
-  // TODO: Don't repeat "border" property again
+      QString("background-color: %1; border: 1px solid black;").arg(name));
 }

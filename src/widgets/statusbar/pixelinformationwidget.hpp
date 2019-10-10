@@ -12,6 +12,9 @@ public slots:
   void onPixelInformationReceived(const QPoint &point, const QColor &color);
 
 private:
+  void changeSquareLabelColor(const QString &name = "white");
+
+private:
   QLabel color_square_label_;
   QLabel pixel_info_label_;
 };
