@@ -3,21 +3,21 @@
 #include <QMainWindow>
 
 #include "manager/imagemanager.hpp"
-#include "menus/editmenu.hpp"
-#include "menus/filemenu.hpp"
-#include "menus/imagemenu.hpp"
-#include "statusbar/mainstatusbar.hpp"
+#include "widgets/menus/mainmenubar.hpp"
+#include "widgets/statusbar/mainstatusbar.hpp"
 
+// Forward declarations
+class QUndoView;
 class QUndoGroup;
-class QMdiArea;
-class FileMenu;
-class EditMenu;
-class ImageMenu;
-class ProImage;
-class QMdiArea;
-class ImageDisplayArea;
-class MainStatusBar;
 
+namespace imagecpp {
+
+// Forward declarations
+class SubWindowsArea;
+
+/*
+ *
+ */
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -26,29 +26,21 @@ public:
              Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~MainWindow();
 
-signals:
-  void activeImageChanged(ProImage *img);
-
-private slots:
-  void showDisplayArea(const ProImage *image);
-
 private:
-  void createMenus();
+  void createMenuBar();
   void createStatusBar();
-
-  ProImage *activeImage() const;
+  void createSubWindowsArea();
 
 private:
-  FileMenu file_menu_;
-  EditMenu edit_menu_;
-  ImageMenu image_menu_;
-
+  MainMenuBar main_menu_bar_;
   MainStatusBar main_status_bar_;
 
   ImageManager image_manager_;
 
-  QMdiArea *mdi_area_;
-  QUndoGroup *undo_group_;
+  SubWindowsArea *mdi_area_{nullptr};
 
-  ProImage *active_image_{nullptr};
+  QUndoGroup *undo_group_{nullptr};
+  QUndoView *undo_view_{nullptr};
 };
+
+} // namespace imagecpp

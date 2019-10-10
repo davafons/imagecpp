@@ -2,11 +2,15 @@
 
 #include <QMenu>
 
+namespace imagecpp {
+
+/*
+ */
 class FileMenu : public QMenu {
   Q_OBJECT
 
 public:
-  explicit FileMenu( QWidget *parent = nullptr);
+  explicit FileMenu(QWidget *parent = nullptr);
   virtual ~FileMenu() = default;
 
 signals:
@@ -27,3 +31,5 @@ private:
   QAction *close_all_act_;
   QAction *quit_act_;
 };
+
+} // namespace imagecpp

@@ -1,27 +1,34 @@
 #pragma once
 
+// #include <QMap>
 #include <QObject>
 
-class ProImage;
+namespace imagecpp {
 
+// Forward declarations
+class Image;
+class Document;
+
+/*
+ *
+ */
 class ImageManager : public QObject {
   Q_OBJECT
 
 signals:
-  void imageOpened(ProImage *image);
-  void imageSaved(const ProImage *image);
-  void imageDuplicated(const ProImage *duplicated_image);
+  void imageOpened(Document *data);
+  void imageSaved(Document *data, const QString &file_path);
 
 public slots:
   void open();
-  void save(const ProImage *image);
-  void saveAs(const ProImage *image, QString file_path = "");
+  void save(Document *image);
+  void saveAs(Document *image, QString file_path = "");
 
-  void duplicate(const ProImage *image);
-
-  // private:
-  //   static ProImage *active_image;
+  void duplicate(Document *other);
 
 private:
+  // QMap<int, Document*> loaded_images_;
   QString filters_ = tr("Image Files(*.png *.jpg *.jpeg *.bmp)");
 };
+
+} // namespace imagecpp

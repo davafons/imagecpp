@@ -1,49 +1,68 @@
 #include "imagemanager.hpp"
 
-#include "image/proimage.hpp"
-
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 
-// ProImage* ImageManager::iamge
+#include "image/document.hpp"
+#include "image/image.hpp"
+
+namespace imagecpp {
 
 void ImageManager::open() {
+  qInfo() << "Selecting an image path to open";
+
   QString file_path =
       QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
 
-  emit imageOpened(new ProImage(file_path, this));
-}
+  qInfo() << "File selected: " << file_path;
 
-void ImageManager::save(const ProImage *active_image) {
-  saveAs(active_image, active_image->filePath());
-}
+  if (!file_path.isEmpty()) {
+    Document *image_data = new Document(new Image(file_path), this);
+    Q_CHECK_PTR(image_data);
 
-void ImageManager::saveAs(const ProImage *active_image, QString file_path) {
-  if (file_path.isEmpty()) {
-    file_path =
-        QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
+    image_data->setFilePath(file_path);
+
+    qInfo() << "Document object created:" << image_data;
+
+    emit imageOpened(image_data);
   }
+}
 
-  if (!active_image) {
-    // QMessageBox::critical(this, tr("Save As... error"),
-    //                       tr("Select a window with an image!"));
+void ImageManager::save(Document *image_data) {
+  saveAs(image_data, image_data->filePath());
+}
+
+void ImageManager::saveAs(Document *image_data, QString file_path) {
+  if (!image_data) {
     return;
   }
 
-  if (!active_image->saveAs(file_path)) {
+  if (file_path.isEmpty()) {
+    file_path =
+        QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
+    image_data->setFilePath(file_path);
+  }
+
+  if (!image_data->image()->saveAs(file_path)) {
     // TODO: Specify why image couldn't be saved
     // QMessageBox::critical(this, tr("Save As... error"),
     //                       tr("Couldn't save image!"));
   } else {
     qDebug() << "Image saved";
 
-    emit imageSaved(active_image);
+    emit imageSaved(image_data, file_path);
   }
 }
 
-void ImageManager::duplicate(const ProImage *image) {
-  ProImage *duplicated_image = new ProImage(*image);
+void ImageManager::duplicate(Document *other) {
+  if (!other) {
+    return;
+  }
 
-  emit imageDuplicated(duplicated_image);
+  Document *duplicated_image = new Document(*other);
+
+  emit imageOpened(duplicated_image);
 }
+
+} // namespace imagecpp

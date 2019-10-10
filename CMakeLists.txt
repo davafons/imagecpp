@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7.0)
 
-project(img_viz)
+project(imagecpp)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -18,13 +18,22 @@ add_executable(${PROJECT_NAME}
     res/res.qrc
     src/main.cpp
     src/mainwindow.cpp
-    src/image/imagedisplayarea.cpp
-    src/image/proimage.cpp
-    src/menus/filemenu.cpp
-    src/menus/imagemenu.cpp
-    src/menus/editmenu.cpp
-    src/statusbar/mainstatusbar.cpp
-    src/statusbar/pixelinformationwidget.cpp
+    src/image/document.cpp
+    src/image/image.cpp
+    src/operations/grayscale.cpp
+    src/operations/private/pixeloperation.cpp
+    src/operations/private/imageoperation.cpp
+    src/widgets/image/imagedisplayarea.cpp
+    src/widgets/image/imagesubwindow.cpp
+    src/widgets/menus/filemenu.cpp
+    src/widgets/menus/imagemenu.cpp
+    src/widgets/menus/editmenu.cpp
+    src/widgets/menus/windowsmenu.cpp
+    src/widgets/menus/settingsmenu.cpp
+    src/widgets/menus/mainmenubar.cpp
+    src/widgets/statusbar/mainstatusbar.cpp
+    src/widgets/statusbar/pixelinformationwidget.cpp
+    src/widgets/image/subwindowsarea.cpp
     src/manager/imagemanager.cpp
 )
 

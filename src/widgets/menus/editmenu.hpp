@@ -2,8 +2,13 @@
 
 #include <QMenu>
 
+// Forward declarations
 class QUndoGroup;
 
+namespace imagecpp {
+
+/*
+ */
 class EditMenu : public QMenu {
   Q_OBJECT
 
@@ -22,3 +27,5 @@ private:
   QAction *undo_act_;
   QAction *redo_act_;
 };
+
+} // namespace imagecpp

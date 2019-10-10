@@ -1,136 +1,131 @@
 #include "mainwindow.hpp"
-#include "image/imagedisplayarea.hpp"
-#include "image/proimage.hpp"
-#include "manager/imagemanager.hpp"
-#include "menus/editmenu.hpp"
-#include "menus/filemenu.hpp"
-#include "menus/imagemenu.hpp"
-#include "operations/color.hpp"
-#include "statusbar/mainstatusbar.hpp"
 
 #include <QApplication>
+#include <QDebug>
 #include <QDockWidget>
-#include <QFileDialog>
-#include <QMdiArea>
-#include <QMdiSubWindow>
 #include <QMenuBar>
-#include <QMessageBox>
-#include <QStatusBar>
 #include <QUndoGroup>
 #include <QUndoView>
 
+#include "image/document.hpp"
+#include "operations/grayscale.hpp"
+#include "operations/private/operationconfigdialog.hpp"
+#include "widgets/image/imagedisplayarea.hpp"
+#include "widgets/image/subwindowsarea.hpp"
+#include "widgets/statusbar/pixelinformationwidget.hpp"
+
+namespace imagecpp {
+
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
-    : mdi_area_(new QMdiArea()), undo_group_(new QUndoGroup()),
-      QMainWindow(parent, flags) {
-  createMenus();
+    : mdi_area_(new SubWindowsArea()), undo_group_(new QUndoGroup()),
+      undo_view_(new QUndoView()), QMainWindow(parent, flags) {
+
+  // Bars
+  createMenuBar();
   createStatusBar();
 
-  mdi_area_->setTabsClosable(true);
-  mdi_area_->setTabsMovable(true);
+  // UndoView
+  undo_view_->setGroup(undo_group_);
 
-  QUndoView *undo_view = new QUndoView();
-  undo_view->setGroup(undo_group_);
-
+  // MdiArea
   setCentralWidget(mdi_area_);
 
-  QDockWidget *dock = new QDockWidget(tr("History"), this);
+  connect(mdi_area_, &SubWindowsArea::displayAreaAdded, this,
+          [this](ImageDisplayArea *d) {
+            connect(d, &ImageDisplayArea::pixelInformation,
+                    main_status_bar_.pixelInfoWidget(),
+                    &PixelInformationWidget::onPixelInformationReceived);
+          });
+
+  connect(mdi_area_, &SubWindowsArea::activeImageChanged, this,
+          [this](Document *image_data) {
+            qInfo() << "Active image: " << image_data;
+            if (image_data) {
+              qInfo() << "Active stack: " << image_data->undoStack();
+              undo_group_->setActiveStack(image_data->undoStack());
+            }
+          });
+
+  // Docks
+  QDockWidget *dock = new QDockWidget(tr("Tools"), this);
   dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-  dock->setWidget(undo_view);
+  dock->setWidget(undo_view_);
   addDockWidget(Qt::RightDockWidgetArea, dock);
 
-  connect(mdi_area_, &QMdiArea::subWindowActivated, this,
-          [this](const QMdiSubWindow *w) {
-            active_image_ = activeImage();
-            if (active_image_) {
-              undo_group_->setActiveStack(&active_image_->undoStack());
-              qDebug() << undo_group_->activeStack();
-            }
-            emit activeImageChanged(active_image_);
-          });
+  // ImageManager
+  connect(&image_manager_, &ImageManager::imageOpened, mdi_area_,
+          &SubWindowsArea::addDisplayArea);
 
   connect(&image_manager_, &ImageManager::imageOpened, this,
-          &MainWindow::showDisplayArea);
-  connect(
-      &image_manager_, &ImageManager::imageOpened, this,
-      [this](ProImage *image) { undo_group_->addStack(&image->undoStack()); });
-
-  connect(&image_manager_, &ImageManager::imageSaved, this,
-          [this](const ProImage *image) {
-            statusBar()->showMessage(
-                QString("Saved image on %1").arg(image->filePath()), 2000);
+          [this](Document *image_data) {
+            Q_CHECK_PTR(image_data);
+            if (image_data) {
+              undo_group_->addStack(image_data->undoStack());
+              qInfo() << "Add new undo stack: " << image_data->undoStack();
+            }
           });
 
-  connect(&image_manager_, &ImageManager::imageDuplicated, this,
-          &MainWindow::showDisplayArea);
+  connect(&image_manager_, &ImageManager::imageSaved, this,
+          [this](Document *, const QString &file_path) {
+            statusBar()->showMessage(
+                QString("Saved image on %1").arg(file_path), 2000);
+          });
 }
 
 MainWindow::~MainWindow() {
-
   delete mdi_area_;
   delete undo_group_;
+  delete undo_view_;
 }
 
-void MainWindow::showDisplayArea(const ProImage *image) {
-  ImageDisplayArea *display_area = new ImageDisplayArea();
+void MainWindow::createMenuBar() {
+  setMenuBar(&main_menu_bar_);
 
-  display_area->setImage(image);
-  mdi_area_->addSubWindow(display_area);
-  display_area->show();
+  main_menu_bar_.createUndoActions(undo_group_);
 
-  connect(display_area, &ImageDisplayArea::pixelInformation,
-          main_status_bar_.pixelInfoWidget(),
-          &PixelInformationWidget::onPixelInformationReceived);
-}
+  connect(&main_menu_bar_, &MainMenuBar::open, &image_manager_,
+          &ImageManager::open);
+  connect(&main_menu_bar_, &MainMenuBar::save, &image_manager_, [this] {
+    if (mdi_area_->activeImage())
+      image_manager_.save(mdi_area_->activeImage());
+  });
+  connect(&main_menu_bar_, &MainMenuBar::saveAs, &image_manager_, [this] {
+    if (mdi_area_->activeImage())
+      image_manager_.saveAs(mdi_area_->activeImage());
+  });
 
-void MainWindow::createMenus() {
-  // File menu
-  menuBar()->addMenu(&file_menu_);
+  // TODO: Add "Save copy connection"
 
-  connect(&file_menu_, &FileMenu::open, &image_manager_, &ImageManager::open);
-  connect(&file_menu_, &FileMenu::save, &image_manager_,
-          [this] { image_manager_.save(active_image_); });
-  connect(&file_menu_, &FileMenu::saveAs, &image_manager_,
-          [this] { image_manager_.saveAs(active_image_); });
+  connect(&main_menu_bar_, &MainMenuBar::closeView, mdi_area_,
+          &SubWindowsArea::closeActiveSubWindow);
+  connect(&main_menu_bar_, &MainMenuBar::closeAll, mdi_area_,
+          &SubWindowsArea::closeAllSubWindows);
+  connect(&main_menu_bar_, &MainMenuBar::quit, qApp, &QApplication::quit);
 
-  connect(&file_menu_, &FileMenu::closeView, mdi_area_,
-          &QMdiArea::closeActiveSubWindow);
-  connect(&file_menu_, &FileMenu::closeAll, mdi_area_,
-          &QMdiArea::closeAllSubWindows);
-  connect(&file_menu_, &FileMenu::quit, qApp, &QApplication::quit);
+  connect(&main_menu_bar_, &MainMenuBar::undo, undo_group_, &QUndoGroup::undo);
+  connect(&main_menu_bar_, &MainMenuBar::redo, undo_group_, &QUndoGroup::redo);
 
-  // Edit menu
-  menuBar()->addMenu(&edit_menu_);
-  edit_menu_.createUndoActions(undo_group_);
+  connect(&main_menu_bar_, &MainMenuBar::duplicateImage, &image_manager_,
+          [this] { image_manager_.duplicate(mdi_area_->activeImage()); });
 
-  connect(&edit_menu_, &EditMenu::undo, undo_group_, &QUndoGroup::undo);
-  connect(&edit_menu_, &EditMenu::redo, undo_group_, &QUndoGroup::redo);
-
-  // Image menu
-  menuBar()->addMenu(&image_menu_);
-
-  connect(&image_menu_, &ImageMenu::duplicateImage, &image_manager_,
-          [this] { image_manager_.duplicate(active_image_); });
-
-  connect(&image_menu_, &ImageMenu::toGrayscale, this, [this] {
-    if (active_image_) {
-      active_image_->runCommand(new ToGrayscaleCommand(active_image_));
+  // TODO: Make better
+  connect(&main_menu_bar_, &MainMenuBar::toGrayscale, &image_manager_, [this] {
+    if (mdi_area_->activeImage()) {
+      QUndoCommand *command = createCommandFromDialog<GrayscaleConfigDialog>(
+          mdi_area_->activeImage());
+      if (command) {
+        undo_group_->activeStack()->push(command);
+      }
+      // undo_group_->activeStack()->push();
     }
   });
+
+  connect(&main_menu_bar_, &MainMenuBar::toggleTabsView, mdi_area_,
+          &SubWindowsArea::toggleTabsView);
+  connect(&main_menu_bar_, &MainMenuBar::toggleHistoryWindow, undo_view_,
+          &SubWindowsArea::setVisible);
 }
 
 void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }
 
-ProImage *MainWindow::activeImage() const {
-  ProImage *image = nullptr;
-
-  QMdiSubWindow *active_subwindow = mdi_area_->activeSubWindow();
-  if (active_subwindow) {
-    ImageDisplayArea *display_area =
-        dynamic_cast<ImageDisplayArea *>(active_subwindow->widget());
-    if (display_area) {
-      image = const_cast<ProImage *>(display_area->image());
-    }
-  }
-
-  return image;
-}
+} // namespace imagecpp
