@@ -13,7 +13,6 @@ ImageData::ImageData(ProImage *image, QObject *parent) : QObject(parent) {
 }
 
 ImageData::~ImageData() {
-  delete image_;
   delete undo_stack_;
 }
 

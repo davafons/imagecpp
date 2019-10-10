@@ -26,5 +26,5 @@ private:
   ImageData *imageFromSubwindow(QMdiSubWindow *subwindow);
 
 private:
-  ImageData *active_image_{nullptr};
+  ImageData *active_image_;
 };

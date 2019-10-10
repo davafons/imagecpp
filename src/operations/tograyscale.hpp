@@ -1,21 +1,11 @@
 #pragma once
 
-#include <QDebug>
-#include <QDialog>
-#include <QDialogButtonBox>
-#include <QGroupBox>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QRadioButton>
-#include <QSpacerItem>
-#include <QUndoCommand>
-#include <QVBoxLayout>
+#include "operations/private/imageoperation.hpp"
+#include "operations/private/imageoperationdialog.hpp"
 
-#include "operations/imageoperation.hpp"
-#include "operations/imageoperationdialog.hpp"
-#include "widgets/image/imagedisplayarea.hpp"
+class QRadioButton;
 
-class QLayout;
+// --- Implementation ---
 
 class ToGrayscaleOperation : public ImageOperation {
   Q_OBJECT
@@ -23,6 +13,7 @@ public:
   enum class Format { NTSC, PAL };
 
   ToGrayscaleOperation(ImageData *data, const Format &format = Format::PAL);
+  virtual ~ToGrayscaleOperation() = default;
 
 public slots:
   ToGrayscaleOperation &setFormat(const Format &format);
@@ -38,33 +29,12 @@ private:
   float blue_factor_{0};
 };
 
+// --- Dialog ---
+
 class ToGrayscaleDialog : public ImageOperationDialog<ToGrayscaleOperation> {
 public:
-  ToGrayscaleDialog(ImageData *data, QWidget *parent = nullptr)
-      : ImageOperationDialog(data, parent) {
-    QGroupBox *group_box = new QGroupBox("Format");
-    QVBoxLayout *vbox = new QVBoxLayout();
-
-    pal_radio_ = new QRadioButton("PAL");
-    ntsc_radio_ = new QRadioButton("NTSC");
-
-    pal_radio_->setChecked(true);
-
-    vbox->addWidget(pal_radio_);
-    vbox->addWidget(ntsc_radio_);
-    vbox->addSpacerItem(new QSpacerItem(200, 400));
-    group_box->setLayout(vbox);
-
-    settings_layout_->addWidget(group_box);
-
-    connect(pal_radio_, &QRadioButton::toggled, &operation_, [this] {
-      operation_.setFormat(ToGrayscaleOperation::Format::PAL);
-    });
-
-    connect(ntsc_radio_, &QRadioButton::toggled, &operation_, [this] {
-      operation_.setFormat(ToGrayscaleOperation::Format::NTSC);
-    });
-  }
+  ToGrayscaleDialog(ImageData *data, QWidget *parent = nullptr);
+  virtual ~ToGrayscaleDialog() = default;
 
 private:
   QRadioButton *pal_radio_;

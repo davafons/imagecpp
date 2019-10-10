@@ -6,7 +6,8 @@
 #include <QHoverEvent>
 #include <QTimeLine>
 
-ImageDisplayArea::ImageDisplayArea(QWidget *parent) : QScrollArea(parent) {
+ImageDisplayArea::ImageDisplayArea(QWidget *parent)
+    : QScrollArea(parent), image_ref_(nullptr) {
   // Set widgets attributes and options
   target_.setAttribute(Qt::WA_Hover); // Allow hover events
   target_.setScaledContents(true);

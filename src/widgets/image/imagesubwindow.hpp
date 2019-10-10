@@ -18,6 +18,6 @@ signals:
   void pixelInformation(const QPoint &point, const QColor &color);
 
 private:
-  ImageDisplayArea *display_{nullptr};
-  ImageData *data_{nullptr}; // Make a const pointer?
+  ImageDisplayArea *const display_;
+  ImageData *const data_;
 };

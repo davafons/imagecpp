@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QMap>
+// #include <QMap>
 #include <QObject>
 
 #include "image/imagedata.hpp"
@@ -19,9 +19,6 @@ public slots:
   void saveAs(ImageData *image, QString file_path = "");
 
   void duplicate(ImageData *other);
-
-  // private:
-  //   static ProImage *active_image;
 
 private:
   // QMap<int, ImageData*> loaded_images_;

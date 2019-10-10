@@ -3,7 +3,9 @@
 #include "image/imagedata.hpp"
 #include "widgets/image/imagesubwindow.hpp"
 
-SubWindowsArea::SubWindowsArea(QWidget *parent) : QMdiArea(parent) {
+SubWindowsArea::SubWindowsArea(QWidget *parent)
+    : QMdiArea(parent), active_image_(nullptr) {
+
   setTabsClosable(true);
   setTabsMovable(true);
 

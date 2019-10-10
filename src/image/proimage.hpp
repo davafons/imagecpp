@@ -56,9 +56,6 @@ public:
 
   static ProImage *empty(const ProImage &other);
 
-signals:
-  // void imageChanged(const ProImage *image);
-
 public slots:
   void open(const QString &file_path);
   bool saveAs(const QString &file_path) const;

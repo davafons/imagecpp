@@ -5,6 +5,8 @@
 ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   duplicate_img_act_ = new QAction(tr("Duplicate image"), this);
+  duplicate_img_act_->setShortcut(
+      QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_D));
   duplicate_img_act_->setStatusTip(
       tr("Duplicate current image and create a new window"));
 

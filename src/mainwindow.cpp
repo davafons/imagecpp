@@ -7,7 +7,7 @@
 #include <QUndoGroup>
 #include <QUndoView>
 
-#include "operations/imageoperationdialog.hpp"
+#include "operations/private/imageoperationdialog.hpp"
 #include "operations/tograyscale.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/subwindowsarea.hpp"

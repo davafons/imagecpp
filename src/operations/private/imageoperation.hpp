@@ -44,7 +44,6 @@ private:
   bool up_to_date_ = false;
   bool real_time_ = true;
 
-private:
   class ImageCommand : public QUndoCommand {
   public:
     ImageCommand(const QString &name, ImageData *data,
