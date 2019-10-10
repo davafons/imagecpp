@@ -1,22 +1,27 @@
 #pragma once
 
-#include <QDebug>
 #include <QObject>
-#include <QUndoStack>
-#include <QVBoxLayout>
-#include <QWidget>
 
+// Forward declarations
+class QUndoStack;
+
+namespace imagecpp {
+
+// Forward declarations
 class ProImage;
 
 /*
- * Cant have ProImage ownership
+ * The intent of this class is to represent a document, an object that ties
+ * together an image, a histogram and a history of changes. Also has information
+ * about the image (name, filepath, format...)
  */
-class ImageData : public QObject {
+class Document : public QObject {
   Q_OBJECT
+
 public:
-  ImageData(ProImage *image = nullptr, QObject *parent = nullptr);
-  ImageData(const ImageData &data);
-  virtual ~ImageData();
+  Document(ProImage *image = nullptr, QObject *parent = nullptr);
+  Document(const Document &data);
+  virtual ~Document();
 
   int id() const noexcept { return id_; }
   QString filePath() const { return file_path_; }
@@ -25,6 +30,9 @@ public:
   QUndoStack *undoStack() { return undo_stack_; }
 
   ProImage *copyImage() const;
+
+  // TODO: get image format
+  // TODO: get image size
 
 signals:
   void filePathChanged(const QString &file_path);
@@ -42,6 +50,8 @@ private:
 
   QString file_path_;
 
-  ProImage *image_{nullptr};
-  QUndoStack *undo_stack_{new QUndoStack()};
+  ProImage *image_;
+  QUndoStack *undo_stack_;
 };
+
+} // namespace imagecpp

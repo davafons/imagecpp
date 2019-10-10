@@ -1,9 +1,12 @@
 #include "imagesubwindow.hpp"
 
-#include "image/imagedata.hpp"
+#include "image/document.hpp"
 #include "image/proimage.hpp"
+#include "widgets/image/imagedisplayarea.hpp"
 
-ImageSubWindow::ImageSubWindow(ImageData *data)
+namespace imagecpp {
+
+ImageSubWindow::ImageSubWindow(Document *data)
     : display_(new ImageDisplayArea()), data_(data) {
   setWidget(display_);
 
@@ -13,9 +16,11 @@ ImageSubWindow::ImageSubWindow(ImageData *data)
   connect(display_, &ImageDisplayArea::pixelInformation, this,
           &ImageSubWindow::pixelInformation);
 
-  connect(data_, &ImageData::filePathChanged, this,
+  connect(data_, &Document::filePathChanged, this,
           &ImageSubWindow::setWindowTitle);
 
-  connect(data_, &ImageData::imageUpdated, display_,
+  connect(data_, &Document::imageUpdated, display_,
           &ImageDisplayArea::onImageUpdated);
 }
+
+} // namespace imagecpp

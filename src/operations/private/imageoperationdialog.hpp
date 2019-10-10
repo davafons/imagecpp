@@ -5,12 +5,13 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include "image/imagedata.hpp"
 #include "operations/private/imageoperation.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 
+namespace imagecpp {
+
 template <class DialogType>
-static QUndoCommand *createCommand(ImageData *data) {
+static QUndoCommand *createCommandFromDialog(Document *data) {
   DialogType dialog(data);
 
   int return_value = dialog.exec();
@@ -22,9 +23,12 @@ static QUndoCommand *createCommand(ImageData *data) {
   return nullptr;
 }
 
+/*
+ *
+ */
 template <class OperationType> class ImageOperationDialog : public QDialog {
 public:
-  ImageOperationDialog(ImageData *data, QWidget *parent);
+  ImageOperationDialog(Document *data, QWidget *parent);
   virtual ~ImageOperationDialog() { delete preview_display_; }
 
   QUndoCommand *command() { return operation_.command(); }
@@ -40,7 +44,7 @@ private:
 };
 
 template <class DialogType>
-ImageOperationDialog<DialogType>::ImageOperationDialog(ImageData *data,
+ImageOperationDialog<DialogType>::ImageOperationDialog(Document *data,
                                                        QWidget *parent)
     : QDialog(parent), operation_(data),
       preview_display_(new ImageDisplayArea()),
@@ -67,3 +71,5 @@ ImageOperationDialog<DialogType>::ImageOperationDialog(ImageData *data,
   connect(button_box_, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(button_box_, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
+
+} // namespace imagecpp

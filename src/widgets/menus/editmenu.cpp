@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QUndoGroup>
 
+namespace imagecpp {
+
 EditMenu::EditMenu(QWidget *parent) : QMenu(tr("Edit"), parent) {
   createUndoActions();
 
@@ -26,3 +28,5 @@ void EditMenu::createUndoActions(const QUndoGroup *undo_group) {
   connect(undo_act_, &QAction::triggered, this, &EditMenu::undo);
   connect(redo_act_, &QAction::triggered, this, &EditMenu::redo);
 }
+
+} // namespace imagecpp

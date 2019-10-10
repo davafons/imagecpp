@@ -3,6 +3,9 @@
 #include <QLabel>
 #include <QScrollArea>
 
+namespace imagecpp {
+
+// Forward declarations
 class ProImage;
 
 /*!
@@ -49,3 +52,5 @@ private:
   QPoint last_clicked_point_{0, 0};
   int numScheduledScalings_{0};
 };
+
+} // namespace imagecpp

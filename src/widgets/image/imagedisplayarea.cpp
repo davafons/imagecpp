@@ -1,10 +1,12 @@
 #include "imagedisplayarea.hpp"
 
-#include "image/proimage.hpp"
-
 #include <QDebug>
 #include <QHoverEvent>
 #include <QTimeLine>
+
+#include "image/proimage.hpp"
+
+namespace imagecpp {
 
 ImageDisplayArea::ImageDisplayArea(QWidget *parent)
     : QScrollArea(parent), image_ref_(nullptr) {
@@ -122,3 +124,5 @@ void ImageDisplayArea::wheelEvent(QWheelEvent *event) {
 
   QScrollArea::wheelEvent(event);
 }
+
+} // namespace imagecpp

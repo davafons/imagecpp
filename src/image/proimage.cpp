@@ -1,8 +1,8 @@
 #include "proimage.hpp"
 
 #include <QDebug>
-#include <QUndoCommand>
-#include <QUndoStack>
+
+namespace imagecpp {
 
 ProImage::ProImage(const QString &file_path) { open(file_path); }
 
@@ -40,3 +40,5 @@ bool ProImage::saveAs(const QString &file_path) const {
 ProImage *ProImage::empty(const ProImage &other) {
   return new ProImage(other.width(), other.height(), other.format());
 }
+
+} // namespace imagecpp

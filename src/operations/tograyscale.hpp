@@ -3,16 +3,22 @@
 #include "operations/private/imageoperation.hpp"
 #include "operations/private/imageoperationdialog.hpp"
 
+// Forward declarations
 class QRadioButton;
+
+namespace imagecpp {
 
 // --- Implementation ---
 
+/*
+ */
 class ToGrayscaleOperation : public ImageOperation {
   Q_OBJECT
+
 public:
   enum class Format { NTSC, PAL };
 
-  ToGrayscaleOperation(ImageData *data, const Format &format = Format::PAL);
+  ToGrayscaleOperation(Document *data, const Format &format = Format::PAL);
   virtual ~ToGrayscaleOperation() = default;
 
 public slots:
@@ -31,12 +37,16 @@ private:
 
 // --- Dialog ---
 
+/*
+ */
 class ToGrayscaleDialog : public ImageOperationDialog<ToGrayscaleOperation> {
 public:
-  ToGrayscaleDialog(ImageData *data, QWidget *parent = nullptr);
+  ToGrayscaleDialog(Document *data, QWidget *parent = nullptr);
   virtual ~ToGrayscaleDialog() = default;
 
 private:
   QRadioButton *pal_radio_;
   QRadioButton *ntsc_radio_;
 };
+
+} // namespace imagecpp

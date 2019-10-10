@@ -2,6 +2,8 @@
 
 #include <QHBoxLayout>
 
+namespace imagecpp {
+
 PixelInformationWidget::PixelInformationWidget(QWidget *parent)
     : QWidget(parent) {
   color_square_label_.setFixedSize(16, 16);
@@ -33,3 +35,5 @@ void PixelInformationWidget::changeSquareLabelColor(const QString &name) {
   color_square_label_.setStyleSheet(
       QString("background-color: %1; border: 1px solid black;").arg(name));
 }
+
+} // namespace imagecpp

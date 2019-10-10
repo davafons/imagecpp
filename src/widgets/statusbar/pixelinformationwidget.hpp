@@ -3,6 +3,11 @@
 #include <QLabel>
 #include <QWidget>
 
+namespace imagecpp {
+
+/*
+ *
+ */
 class PixelInformationWidget : public QWidget {
 public:
   explicit PixelInformationWidget(QWidget *parent = nullptr);
@@ -18,3 +23,5 @@ private:
   QLabel color_square_label_;
   QLabel pixel_info_label_;
 };
+
+} // namespace imagecpp

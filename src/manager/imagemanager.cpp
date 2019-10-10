@@ -1,10 +1,13 @@
 #include "imagemanager.hpp"
 
-#include "image/proimage.hpp"
-
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
+
+#include "image/document.hpp"
+#include "image/proimage.hpp"
+
+namespace imagecpp {
 
 void ImageManager::open() {
   qInfo() << "Selecting an image path to open";
@@ -15,22 +18,22 @@ void ImageManager::open() {
   qInfo() << "File selected: " << file_path;
 
   if (!file_path.isEmpty()) {
-    ImageData *image_data = new ImageData(new ProImage(file_path), this);
+    Document *image_data = new Document(new ProImage(file_path), this);
     Q_CHECK_PTR(image_data);
 
     image_data->setFilePath(file_path);
 
-    qInfo() << "ImageData object created:" << image_data;
+    qInfo() << "Document object created:" << image_data;
 
     emit imageOpened(image_data);
   }
 }
 
-void ImageManager::save(ImageData *image_data) {
+void ImageManager::save(Document *image_data) {
   saveAs(image_data, image_data->filePath());
 }
 
-void ImageManager::saveAs(ImageData *image_data, QString file_path) {
+void ImageManager::saveAs(Document *image_data, QString file_path) {
   if (!image_data) {
     return;
   }
@@ -52,12 +55,14 @@ void ImageManager::saveAs(ImageData *image_data, QString file_path) {
   }
 }
 
-void ImageManager::duplicate(ImageData *other) {
+void ImageManager::duplicate(Document *other) {
   if (!other) {
     return;
   }
 
-  ImageData *duplicated_image = new ImageData(*other);
+  Document *duplicated_image = new Document(*other);
 
   emit imageOpened(duplicated_image);
 }
+
+} // namespace imagecpp

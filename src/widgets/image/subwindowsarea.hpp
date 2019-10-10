@@ -2,29 +2,36 @@
 
 #include <QMdiArea>
 
-class ImageData;
+namespace imagecpp {
+
+// Forward declarations
+class Document;
 class ImageDisplayArea;
 
+/*
+ */
 class SubWindowsArea : public QMdiArea {
   Q_OBJECT
 
 signals:
-  void activeImageChanged(ImageData *image_data);
+  void activeImageChanged(Document *image_data);
   void displayAreaAdded(ImageDisplayArea *display_area);
 
 public:
   SubWindowsArea(QWidget *parent = nullptr);
   virtual ~SubWindowsArea() = default;
 
-  ImageData *activeImage() const { return active_image_; }
+  Document *activeImage() const { return active_image_; }
 
 public slots:
-  void addDisplayArea(ImageData *data);
+  void addDisplayArea(Document *data);
   void toggleTabsView(bool toggled);
 
 private:
-  ImageData *imageFromSubwindow(QMdiSubWindow *subwindow);
+  Document *imageFromSubwindow(QMdiSubWindow *subwindow);
 
 private:
-  ImageData *active_image_;
+  Document *active_image_;
 };
+
+} // namespace imagecpp

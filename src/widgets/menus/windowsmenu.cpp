@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QKeySequence>
 
+namespace imagecpp {
+
 WindowsMenu::WindowsMenu(QWidget *parent) : QMenu(tr("Windows"), parent) {
 
   toggle_history_w_act_ = new QAction(tr("History window"), this);
@@ -16,3 +18,5 @@ WindowsMenu::WindowsMenu(QWidget *parent) : QMenu(tr("Windows"), parent) {
 
   addAction(toggle_history_w_act_);
 }
+
+} // namespace imagecpp

@@ -7,10 +7,14 @@
 #include <QUndoGroup>
 #include <QUndoView>
 
+#include "image/document.hpp"
 #include "operations/private/imageoperationdialog.hpp"
 #include "operations/tograyscale.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/subwindowsarea.hpp"
+#include "widgets/statusbar/pixelinformationwidget.hpp"
+
+namespace imagecpp {
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
     : mdi_area_(new SubWindowsArea()), undo_group_(new QUndoGroup()),
@@ -34,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
           });
 
   connect(mdi_area_, &SubWindowsArea::activeImageChanged, this,
-          [this](ImageData *image_data) {
+          [this](Document *image_data) {
             qInfo() << "Active image: " << image_data;
             if (image_data) {
               qInfo() << "Active stack: " << image_data->undoStack();
@@ -53,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
           &SubWindowsArea::addDisplayArea);
 
   connect(&image_manager_, &ImageManager::imageOpened, this,
-          [this](ImageData *image_data) {
+          [this](Document *image_data) {
             Q_CHECK_PTR(image_data);
             if (image_data) {
               undo_group_->addStack(image_data->undoStack());
@@ -62,7 +66,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
           });
 
   connect(&image_manager_, &ImageManager::imageSaved, this,
-          [this](ImageData *, const QString &file_path) {
+          [this](Document *, const QString &file_path) {
             statusBar()->showMessage(
                 QString("Saved image on %1").arg(file_path), 2000);
           });
@@ -108,7 +112,7 @@ void MainWindow::createMenuBar() {
   connect(&main_menu_bar_, &MainMenuBar::toGrayscale, &image_manager_, [this] {
     if (mdi_area_->activeImage()) {
       QUndoCommand *command =
-          createCommand<ToGrayscaleDialog>(mdi_area_->activeImage());
+          createCommandFromDialog<ToGrayscaleDialog>(mdi_area_->activeImage());
       if (command) {
         undo_group_->activeStack()->push(command);
       }
@@ -123,3 +127,5 @@ void MainWindow::createMenuBar() {
 }
 
 void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }
+
+} // namespace imagecpp

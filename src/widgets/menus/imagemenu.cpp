@@ -2,6 +2,8 @@
 
 #include <QFileDialog>
 
+namespace imagecpp {
+
 ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   duplicate_img_act_ = new QAction(tr("Duplicate image"), this);
@@ -22,3 +24,5 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addSeparator();
   addAction(to_grayscale_act_);
 }
+
+} // namespace imagecpp

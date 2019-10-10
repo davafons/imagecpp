@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.7.0)
 
-project(img_viz)
+project(imagecpp)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -18,7 +18,7 @@ add_executable(${PROJECT_NAME}
     res/res.qrc
     src/main.cpp
     src/mainwindow.cpp
-    src/image/imagedata.cpp
+    src/image/document.cpp
     src/image/proimage.cpp
     src/operations/tograyscale.cpp
     src/operations/private/imageoperation.cpp

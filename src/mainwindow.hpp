@@ -6,10 +6,18 @@
 #include "widgets/menus/mainmenubar.hpp"
 #include "widgets/statusbar/mainstatusbar.hpp"
 
-class SubWindowsArea;
+// Forward declarations
 class QUndoView;
 class QUndoGroup;
 
+namespace imagecpp {
+
+// Forward declarations
+class SubWindowsArea;
+
+/*
+ *
+ */
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -34,3 +42,5 @@ private:
   QUndoGroup *undo_group_{nullptr};
   QUndoView *undo_view_{nullptr};
 };
+
+} // namespace imagecpp

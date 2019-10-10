@@ -2,16 +2,21 @@
 
 #include <QMdiSubWindow>
 
-#include "widgets/image/imagedisplayarea.hpp"
+namespace imagecpp {
 
-class ImageData;
+// Forward declarations
+class Document;
+class ImageDisplayArea;
 
+/*
+ *
+ */
 class ImageSubWindow : public QMdiSubWindow {
   Q_OBJECT
 public:
-  ImageSubWindow(ImageData *data);
+  ImageSubWindow(Document *data);
 
-  ImageData *data() { return data_; }
+  Document *data() { return data_; }
   ImageDisplayArea *display() { return display_; }
 
 signals:
@@ -19,5 +24,7 @@ signals:
 
 private:
   ImageDisplayArea *const display_;
-  ImageData *const data_;
+  Document *const data_;
 };
+
+} // namespace imagecpp

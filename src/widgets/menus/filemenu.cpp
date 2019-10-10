@@ -3,6 +3,8 @@
 #include <QFileDialog>
 #include <QUndoStack>
 
+namespace imagecpp {
+
 FileMenu::FileMenu(QWidget *parent) : QMenu(tr("File"), parent) {
 
   open_act_ = new QAction(tr("&Open"), this);
@@ -45,3 +47,5 @@ FileMenu::FileMenu(QWidget *parent) : QMenu(tr("File"), parent) {
   addAction(close_all_act_);
   addAction(quit_act_);
 }
+
+} // namespace imagecpp

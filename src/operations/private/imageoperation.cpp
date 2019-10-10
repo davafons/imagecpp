@@ -1,9 +1,11 @@
 #include "imageoperation.hpp"
 
-#include "image/imagedata.hpp"
+#include "image/document.hpp"
 #include "image/proimage.hpp"
 
-ImageOperation::ImageOperation(ImageData *data, const QString &name)
+namespace imagecpp {
+
+ImageOperation::ImageOperation(Document *data, const QString &name)
     : name_(name), data_(data), old_image_(data->copyImage()),
       modified_image_(ProImage::empty(*data->image())) {
 
@@ -43,3 +45,19 @@ void ImageOperation::generateImage() {
     emit imageChanged(modified_image_);
   }
 }
+
+ImageOperation::ImageCommand::ImageCommand(const QString &name, Document *data,
+                                           const ProImage *modified_image,
+                                           const ProImage *old_image)
+    : QUndoCommand(name), data_(data), modified_image_(modified_image),
+      old_image_(old_image) {}
+
+void ImageOperation::ImageCommand::redo() {
+  data_->setImage(modified_image_->copy());
+}
+
+void ImageOperation::ImageCommand::undo() {
+  data_->setImage(old_image_->copy());
+}
+
+} // namespace imagecpp

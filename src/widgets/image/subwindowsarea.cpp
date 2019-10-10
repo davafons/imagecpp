@@ -1,7 +1,11 @@
 #include "subwindowsarea.hpp"
 
-#include "image/imagedata.hpp"
+#include <QDebug>
+
+#include "image/document.hpp"
 #include "widgets/image/imagesubwindow.hpp"
+
+namespace imagecpp {
 
 SubWindowsArea::SubWindowsArea(QWidget *parent)
     : QMdiArea(parent), active_image_(nullptr) {
@@ -16,7 +20,7 @@ SubWindowsArea::SubWindowsArea(QWidget *parent)
   });
 }
 
-void SubWindowsArea::addDisplayArea(ImageData *data) {
+void SubWindowsArea::addDisplayArea(Document *data) {
   Q_CHECK_PTR(data);
   qInfo() << "Add new display area for data: " << data;
 
@@ -37,7 +41,7 @@ void SubWindowsArea::toggleTabsView(bool toggled) {
   }
 }
 
-ImageData *SubWindowsArea::imageFromSubwindow(QMdiSubWindow *subwindow) {
+Document *SubWindowsArea::imageFromSubwindow(QMdiSubWindow *subwindow) {
   ImageSubWindow *active_subwindow =
       dynamic_cast<ImageSubWindow *>(activeSubWindow());
 
@@ -47,3 +51,5 @@ ImageData *SubWindowsArea::imageFromSubwindow(QMdiSubWindow *subwindow) {
 
   return nullptr;
 }
+
+} // namespace imagecpp

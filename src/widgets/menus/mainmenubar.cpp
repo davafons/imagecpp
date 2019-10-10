@@ -1,5 +1,7 @@
 #include "mainmenubar.hpp"
 
+namespace imagecpp {
+
 MainMenuBar::MainMenuBar(QWidget *parent) {
   createFileMenu();
   createEditMenu();
@@ -53,3 +55,5 @@ void MainMenuBar::createWindowsMenu() {
   connect(&windows_menu_, &WindowsMenu::toggleHistoryWindow, this,
           &MainMenuBar::toggleHistoryWindow);
 }
+
+} // namespace imagecpp

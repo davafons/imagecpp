@@ -2,8 +2,14 @@
 
 #include <QMenu>
 
+namespace imagecpp {
+
+/*
+ *
+ */
 class SettingsMenu : public QMenu {
   Q_OBJECT
+
 public:
   explicit SettingsMenu(QWidget *parent = nullptr);
   virtual ~SettingsMenu() = default;
@@ -14,3 +20,5 @@ signals:
 private:
   QAction *toggle_tabs_act_;
 };
+
+} // namespace imagecpp

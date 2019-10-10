@@ -2,11 +2,15 @@
 
 #include <QImage>
 #include <QPixmap>
-#include <QSharedData>
-#include <QUndoStack>
 
+// Forward declarations
 class QUndoCommand;
 
+namespace imagecpp {
+
+/*
+ *
+ */
 class ProImage : public QObject {
   Q_OBJECT
 
@@ -63,3 +67,4 @@ public slots:
 private:
   QImage image_;
 };
+} // namespace imagecpp

@@ -2,8 +2,10 @@
 
 #include <QMenu>
 
-class QUndoGroup;
+namespace imagecpp {
 
+/*
+ */
 class FileMenu : public QMenu {
   Q_OBJECT
 
@@ -29,3 +31,5 @@ private:
   QAction *close_all_act_;
   QAction *quit_act_;
 };
+
+} // namespace imagecpp

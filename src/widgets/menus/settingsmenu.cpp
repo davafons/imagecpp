@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QKeySequence>
 
+namespace imagecpp {
+
 SettingsMenu::SettingsMenu(QWidget *parent) : QMenu(tr("Settings"), parent) {
 
   toggle_tabs_act_ = new QAction(tr("View as tabs instead of windows"), this);
@@ -16,3 +18,5 @@ SettingsMenu::SettingsMenu(QWidget *parent) : QMenu(tr("Settings"), parent) {
 
   addAction(toggle_tabs_act_);
 }
+
+} // namespace imagecpp

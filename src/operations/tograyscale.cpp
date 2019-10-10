@@ -3,10 +3,11 @@
 #include <QGroupBox>
 #include <QRadioButton>
 
+namespace imagecpp {
+
 // --- Implementation ---
 
-ToGrayscaleOperation::ToGrayscaleOperation(ImageData *data,
-                                           const Format &format)
+ToGrayscaleOperation::ToGrayscaleOperation(Document *data, const Format &format)
     : ImageOperation(data) {
   setFormat(format);
 }
@@ -38,7 +39,7 @@ QRgb ToGrayscaleOperation::pixelOperation(int, int, QRgb color) const {
 
 // --- Dialog ---
 
-ToGrayscaleDialog::ToGrayscaleDialog(ImageData *data, QWidget *parent)
+ToGrayscaleDialog::ToGrayscaleDialog(Document *data, QWidget *parent)
     : ImageOperationDialog(data, parent) {
   QGroupBox *group_box = new QGroupBox("Format");
   QVBoxLayout *vbox = new QVBoxLayout();
@@ -61,3 +62,5 @@ ToGrayscaleDialog::ToGrayscaleDialog(ImageData *data, QWidget *parent)
   connect(ntsc_radio_, &QRadioButton::toggled, &operation_,
           [this] { operation_.setFormat(ToGrayscaleOperation::Format::NTSC); });
 }
+
+} // namespace imagecpp

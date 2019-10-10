@@ -2,6 +2,11 @@
 
 #include <QMenu>
 
+namespace imagecpp {
+
+/*
+ *
+ */
 class WindowsMenu : public QMenu {
   Q_OBJECT
 
@@ -15,3 +20,5 @@ signals:
 private:
   QAction *toggle_history_w_act_;
 };
+
+} // namespace imagecpp

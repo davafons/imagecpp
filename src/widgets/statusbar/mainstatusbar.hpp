@@ -1,9 +1,15 @@
 #pragma once
 
-#include "pixelinformationwidget.hpp"
-
 #include <QStatusBar>
 
+namespace imagecpp {
+
+// Forward declarations
+class PixelInformationWidget;
+
+/*
+ *
+ */
 class MainStatusBar : public QStatusBar {
 public:
   explicit MainStatusBar(QWidget *parent = nullptr);
@@ -14,3 +20,5 @@ public:
 private:
   PixelInformationWidget *pixel_info_widget_;
 };
+
+} // namespace imagecpp

@@ -8,6 +8,11 @@
 #include "widgets/menus/settingsmenu.hpp"
 #include "widgets/menus/windowsmenu.hpp"
 
+namespace imagecpp {
+
+/*
+ *
+ */
 class MainMenuBar : public QMenuBar {
   Q_OBJECT
 
@@ -50,3 +55,5 @@ private:
   SettingsMenu settings_menu_;
   WindowsMenu windows_menu_;
 };
+
+} // namespace imagecpp

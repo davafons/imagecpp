@@ -1,19 +1,24 @@
 #pragma once
 
 #include <QColor>
+#include <QObject>
 #include <QUndoCommand>
 
-#include "image/imagedata.hpp"
 #include "image/proimage.hpp"
 
-class ImageData;
-class ProImage;
+namespace imagecpp {
 
+// Forward declarations
+class Document;
+
+/*
+ *
+ */
 class ImageOperation : public QObject {
   Q_OBJECT
 
 public:
-  ImageOperation(ImageData *data, const QString &name = "");
+  ImageOperation(Document *data, const QString &name = "");
   virtual ~ImageOperation() = default;
 
   QString name() const { return name_; }
@@ -36,7 +41,7 @@ protected:
 private:
   QString name_;
 
-  ImageData *const data_;
+  Document *const data_;
 
   ProImage *const modified_image_;
   const ProImage *const old_image_;
@@ -44,19 +49,21 @@ private:
   bool up_to_date_ = false;
   bool real_time_ = true;
 
-  class ImageCommand : public QUndoCommand {
-  public:
-    ImageCommand(const QString &name, ImageData *data,
-                 const ProImage *modified_image, const ProImage *old_image)
-        : QUndoCommand(name), data_(data), modified_image_(modified_image),
-          old_image_(old_image) {}
-
-    virtual void redo() override { data_->setImage(modified_image_->copy()); }
-    virtual void undo() override { data_->setImage(old_image_->copy()); }
-
-  private:
-    ImageData *const data_;
-    const ProImage *const modified_image_;
-    const ProImage *const old_image_;
-  };
+  class ImageCommand;
 };
+
+class ImageOperation::ImageCommand : public QUndoCommand {
+public:
+  ImageCommand(const QString &name, Document *data,
+               const ProImage *modified_image, const ProImage *old_image);
+
+  virtual void redo() override;
+  virtual void undo() override;
+
+private:
+  Document *const data_;
+  const ProImage *const modified_image_;
+  const ProImage *const old_image_;
+};
+
+} // namespace imagecpp
