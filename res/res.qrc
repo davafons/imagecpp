@@ -1,4 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+  <file>img/png_pat_dark.png</file>
+  <file>img/png_pat_light.png</file>
 </qresource>
 </RCC>
