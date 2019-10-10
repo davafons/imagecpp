@@ -4,7 +4,10 @@
 #include <QObject>
 #include <QUndoCommand>
 
-#include "image/proimage.hpp"
+#include "image/image.hpp"
+
+// TODO: Remove
+#include <QDebug>
 
 namespace imagecpp {
 
@@ -22,32 +25,38 @@ public:
   virtual ~ImageOperation() = default;
 
   QString name() const { return name_; }
-  const ProImage *preview();
 
+  const Image *preview();
   QUndoCommand *command();
+  bool isLiveUpdateActive() const { return live_update_; }
 
 signals:
-  void imageChanged(const ProImage *image);
+  void imageUpdated(const Image *image);
   void propertyChanged();
 
-private slots:
-  void generateImage();
+public slots:
+  void toggleLiveUpdate(bool toggled);
+
+protected slots:
+  virtual void applyImageOperation() = 0;
 
 protected:
-  virtual QRgb pixelOperation(int x, int y, QRgb color) const = 0;
-
   void setName(const QString &name) { name_ = name; }
 
 private:
-  QString name_;
+  void generateTargetImage();
 
+protected:
+  Image *const target_image_;
+  const Image *const old_image_;
+
+private:
   Document *const data_;
 
-  ProImage *const modified_image_;
-  const ProImage *const old_image_;
+  QString name_;
 
   bool up_to_date_ = false;
-  bool real_time_ = true;
+  bool live_update_ = true;
 
   class ImageCommand;
 };
@@ -55,15 +64,15 @@ private:
 class ImageOperation::ImageCommand : public QUndoCommand {
 public:
   ImageCommand(const QString &name, Document *data,
-               const ProImage *modified_image, const ProImage *old_image);
+               const Image *property_modified_image, const Image *old_image);
 
   virtual void redo() override;
   virtual void undo() override;
 
 private:
   Document *const data_;
-  const ProImage *const modified_image_;
-  const ProImage *const old_image_;
+  const Image *const target_image_;
+  const Image *const old_image_;
 };
 
 } // namespace imagecpp

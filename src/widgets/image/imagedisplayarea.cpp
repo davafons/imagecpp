@@ -4,7 +4,7 @@
 #include <QHoverEvent>
 #include <QTimeLine>
 
-#include "image/proimage.hpp"
+#include "image/image.hpp"
 
 namespace imagecpp {
 
@@ -26,9 +26,9 @@ ImageDisplayArea::ImageDisplayArea(QWidget *parent)
 }
 
 float ImageDisplayArea::scaleFactor() const { return scale_factor_; }
-const ProImage *ImageDisplayArea::image() const { return image_ref_; }
+const Image *ImageDisplayArea::image() const { return image_ref_; }
 
-void ImageDisplayArea::onImageOpened(const ProImage *image) {
+void ImageDisplayArea::onImageOpened(const Image *image) {
   qInfo() << "Setting image" << image << "on the display";
   // Reset attributes
   image_ref_ = image;
@@ -41,7 +41,7 @@ void ImageDisplayArea::onImageOpened(const ProImage *image) {
   emit imageOpened(image_ref_);
 }
 
-void ImageDisplayArea::onImageUpdated(const ProImage *image) {
+void ImageDisplayArea::onImageUpdated(const Image *image) {
   image_ref_ = image;
 
   // Save current position of the image on the area

@@ -6,7 +6,7 @@
 namespace imagecpp {
 
 // Forward declarations
-class ProImage;
+class Image;
 class Document;
 
 /*

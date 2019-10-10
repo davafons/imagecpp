@@ -5,7 +5,7 @@
 #include <QMessageBox>
 
 #include "image/document.hpp"
-#include "image/proimage.hpp"
+#include "image/image.hpp"
 
 namespace imagecpp {
 
@@ -18,7 +18,7 @@ void ImageManager::open() {
   qInfo() << "File selected: " << file_path;
 
   if (!file_path.isEmpty()) {
-    Document *image_data = new Document(new ProImage(file_path), this);
+    Document *image_data = new Document(new Image(file_path), this);
     Q_CHECK_PTR(image_data);
 
     image_data->setFilePath(file_path);

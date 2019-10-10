@@ -6,7 +6,7 @@
 namespace imagecpp {
 
 // Forward declarations
-class ProImage;
+class Image;
 
 /*!
  * \class ImageDisplayArea
@@ -21,19 +21,19 @@ public:
   virtual ~ImageDisplayArea() = default;
 
   float scaleFactor() const;
-  const ProImage *image() const;
+  const Image *image() const;
 
 signals:
   void pixelInformation(const QPoint &point, const QColor &color);
   void scaleFactorChanged(float scale_factor);
   void imageSizeChanged(const QSize &new_size);
 
-  void imageOpened(const ProImage *image);
-  void imageUpdated(const ProImage *image);
+  void imageOpened(const Image *image);
+  void imageUpdated(const Image *image);
 
 public slots:
-  void onImageOpened(const ProImage *image);
-  void onImageUpdated(const ProImage *image);
+  void onImageOpened(const Image *image);
+  void onImageUpdated(const Image *image);
 
   void resetSize();
   void resize(float scale_factor);
@@ -45,7 +45,7 @@ protected:
   virtual void wheelEvent(QWheelEvent *event) override;
 
 private:
-  const ProImage *image_ref_;
+  const Image *image_ref_;
   QLabel target_;
 
   float scale_factor_{1.0f};

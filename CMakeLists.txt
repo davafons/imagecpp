@@ -19,8 +19,9 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/mainwindow.cpp
     src/image/document.cpp
-    src/image/proimage.cpp
-    src/operations/tograyscale.cpp
+    src/image/image.cpp
+    src/operations/grayscale.cpp
+    src/operations/private/pixeloperation.cpp
     src/operations/private/imageoperation.cpp
     src/widgets/image/imagedisplayarea.cpp
     src/widgets/image/imagesubwindow.cpp

@@ -8,7 +8,7 @@ class QUndoStack;
 namespace imagecpp {
 
 // Forward declarations
-class ProImage;
+class Image;
 
 /*
  * The intent of this class is to represent a document, an object that ties
@@ -19,28 +19,28 @@ class Document : public QObject {
   Q_OBJECT
 
 public:
-  Document(ProImage *image = nullptr, QObject *parent = nullptr);
+  Document(Image *image = nullptr, QObject *parent = nullptr);
   Document(const Document &data);
   virtual ~Document();
 
   int id() const noexcept { return id_; }
   QString filePath() const { return file_path_; }
 
-  ProImage *image() { return image_; }
+  Image *image() { return image_; }
   QUndoStack *undoStack() { return undo_stack_; }
 
-  ProImage *copyImage() const;
+  Image *copyImage() const;
 
   // TODO: get image format
   // TODO: get image size
 
 signals:
   void filePathChanged(const QString &file_path);
-  void imageUpdated(const ProImage *image);
+  void imageUpdated(const Image *image);
 
 public slots:
   void setFilePath(QString file_path);
-  void setImage(ProImage *image);
+  void setImage(Image *image);
 
 protected:
   static int next_id_;
@@ -50,7 +50,7 @@ private:
 
   QString file_path_;
 
-  ProImage *image_;
+  Image *image_;
   QUndoStack *undo_stack_;
 };
 

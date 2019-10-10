@@ -11,21 +11,21 @@ namespace imagecpp {
 /*
  *
  */
-class ProImage : public QObject {
+class Image : public QObject {
   Q_OBJECT
 
 public:
-  explicit ProImage(const QString &file_path);
-  ProImage(int width, int height, QImage::Format format);
+  explicit Image(const QString &file_path);
+  Image(int width, int height, QImage::Format format);
 
-  ProImage(const ProImage &other);
-  ProImage(ProImage &&other);
+  Image(const Image &other);
+  Image(Image &&other);
 
-  ProImage &operator=(ProImage other);
+  Image &operator=(Image other);
 
   QPixmap getPixmap() const noexcept;
 
-  ProImage *copy() const;
+  Image *copy() const;
 
   int width() const noexcept { return image_.width(); }
   int height() const noexcept { return image_.height(); }
@@ -56,9 +56,9 @@ public:
     image_.setPixelColor(position, color);
   }
 
-  friend void swap(ProImage &first, ProImage &second) noexcept;
+  friend void swap(Image &first, Image &second) noexcept;
 
-  static ProImage *empty(const ProImage &other);
+  static Image *empty(const Image &other);
 
 public slots:
   void open(const QString &file_path);

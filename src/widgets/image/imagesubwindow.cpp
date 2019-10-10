@@ -1,7 +1,7 @@
 #include "imagesubwindow.hpp"
 
 #include "image/document.hpp"
-#include "image/proimage.hpp"
+#include "image/image.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 
 namespace imagecpp {

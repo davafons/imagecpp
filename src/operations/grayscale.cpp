@@ -1,4 +1,4 @@
-#include "tograyscale.hpp"
+#include "grayscale.hpp"
 
 #include <QGroupBox>
 #include <QRadioButton>
@@ -7,12 +7,12 @@ namespace imagecpp {
 
 // --- Implementation ---
 
-ToGrayscaleOperation::ToGrayscaleOperation(Document *data, const Format &format)
-    : ImageOperation(data) {
+Grayscale::Grayscale(Document *data, const Format &format)
+    : PixelOperation(data) {
   setFormat(format);
 }
 
-ToGrayscaleOperation &ToGrayscaleOperation::setFormat(const Format &format) {
+Grayscale &Grayscale::setFormat(const Format &format) {
   format_ = format;
 
   red_factor_ = (format_ == Format::PAL) ? 0.222f : 0.299f;
@@ -27,7 +27,7 @@ ToGrayscaleOperation &ToGrayscaleOperation::setFormat(const Format &format) {
   return *this;
 }
 
-QRgb ToGrayscaleOperation::pixelOperation(int, int, QRgb color) const {
+QRgb Grayscale::pixelOperation(int, int, QRgb color) const {
   uint8_t red = qRed(color) * red_factor_;
   uint8_t green = qGreen(color) * green_factor_;
   uint8_t blue = qBlue(color) * blue_factor_;
@@ -39,8 +39,8 @@ QRgb ToGrayscaleOperation::pixelOperation(int, int, QRgb color) const {
 
 // --- Dialog ---
 
-ToGrayscaleDialog::ToGrayscaleDialog(Document *data, QWidget *parent)
-    : ImageOperationDialog(data, parent) {
+GrayscaleConfigDialog::GrayscaleConfigDialog(Document *data, QWidget *parent)
+    : OperationConfigDialog(data, parent) {
   QGroupBox *group_box = new QGroupBox("Format");
   QVBoxLayout *vbox = new QVBoxLayout();
 
@@ -57,10 +57,18 @@ ToGrayscaleDialog::ToGrayscaleDialog(Document *data, QWidget *parent)
   settings_layout_->addWidget(group_box);
 
   connect(pal_radio_, &QRadioButton::toggled, &operation_,
-          [this] { operation_.setFormat(ToGrayscaleOperation::Format::PAL); });
+          [this](bool checked) {
+            if (checked) {
+              operation_.setFormat(Grayscale::Format::PAL);
+            }
+          });
 
   connect(ntsc_radio_, &QRadioButton::toggled, &operation_,
-          [this] { operation_.setFormat(ToGrayscaleOperation::Format::NTSC); });
+          [this](bool checked) {
+            if (checked) {
+              operation_.setFormat(Grayscale::Format::NTSC);
+            }
+          });
 }
 
 } // namespace imagecpp

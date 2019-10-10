@@ -1,59 +1,63 @@
 #include "imageoperation.hpp"
 
 #include "image/document.hpp"
-#include "image/proimage.hpp"
+#include "image/image.hpp"
 
 namespace imagecpp {
 
 ImageOperation::ImageOperation(Document *data, const QString &name)
     : name_(name), data_(data), old_image_(data->copyImage()),
-      modified_image_(ProImage::empty(*data->image())) {
+      target_image_(Image::empty(*data->image())) {
 
   connect(this, &ImageOperation::propertyChanged, this, [this] {
     up_to_date_ = false;
-    if (real_time_)
-      generateImage();
+
+    if (live_update_) {
+      generateTargetImage();
+    }
   });
 
-  connect(this, &ImageOperation::imageChanged, this,
+  connect(this, &ImageOperation::imageUpdated, this,
           [this] { up_to_date_ = true; });
 }
 
-const ProImage *ImageOperation::preview() {
-  if (!up_to_date_)
-    generateImage();
+const Image *ImageOperation::preview() {
+  generateTargetImage();
 
-  return modified_image_;
+  return target_image_;
 }
 
 QUndoCommand *ImageOperation::command() {
-  if (!up_to_date_) {
-    generateImage();
-  }
-  return new ImageCommand(name_, data_, modified_image_, old_image_);
+  generateTargetImage();
+
+  return new ImageCommand(name_, data_, target_image_, old_image_);
 }
 
-void ImageOperation::generateImage() {
-  if (!up_to_date_) {
-    for (int y = 0; y < modified_image_->height(); ++y) {
-      for (int x = 0; x < modified_image_->width(); ++x) {
-        modified_image_->setPixel(
-            x, y, pixelOperation(x, y, old_image_->pixel(x, y)));
-      }
-    }
+void ImageOperation::toggleLiveUpdate(bool toggled) {
+  live_update_ = toggled;
 
-    emit imageChanged(modified_image_);
+  if (live_update_) {
+    generateTargetImage();
+  }
+}
+
+void ImageOperation::generateTargetImage() {
+  if (!up_to_date_) {
+    qDebug() << "Generate target image";
+    applyImageOperation();
+
+    emit imageUpdated(target_image_);
   }
 }
 
 ImageOperation::ImageCommand::ImageCommand(const QString &name, Document *data,
-                                           const ProImage *modified_image,
-                                           const ProImage *old_image)
-    : QUndoCommand(name), data_(data), modified_image_(modified_image),
+                                           const Image *target_image,
+                                           const Image *old_image)
+    : QUndoCommand(name), data_(data), target_image_(target_image),
       old_image_(old_image) {}
 
 void ImageOperation::ImageCommand::redo() {
-  data_->setImage(modified_image_->copy());
+  data_->setImage(target_image_->copy());
 }
 
 void ImageOperation::ImageCommand::undo() {
