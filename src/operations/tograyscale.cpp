@@ -1,4 +1,4 @@
-#include "color.hpp"
+#include "tograyscale.hpp"
 
 #include <QColor>
 #include <QDialog>

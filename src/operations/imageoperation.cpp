@@ -17,6 +17,20 @@ ImageOperation::ImageOperation(ImageData *data, const QString &name)
           [this] { up_to_date_ = true; });
 }
 
+const ProImage *ImageOperation::preview() {
+  if (!up_to_date_)
+    generateImage();
+
+  return modified_image_;
+}
+
+QUndoCommand *ImageOperation::command() {
+  if (!up_to_date_) {
+    generateImage();
+  }
+  return new ImageCommand(name_, data_, modified_image_, old_image_);
+}
+
 void ImageOperation::generateImage() {
   if (!up_to_date_) {
     for (int y = 0; y < modified_image_->height(); ++y) {

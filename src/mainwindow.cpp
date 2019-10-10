@@ -7,7 +7,8 @@
 #include <QUndoGroup>
 #include <QUndoView>
 
-#include "operations/color.hpp"
+#include "operations/imageoperationdialog.hpp"
+#include "operations/tograyscale.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/subwindowsarea.hpp"
 
@@ -106,8 +107,12 @@ void MainWindow::createMenuBar() {
   // TODO: Make better
   connect(&main_menu_bar_, &MainMenuBar::toGrayscale, &image_manager_, [this] {
     if (mdi_area_->activeImage()) {
-      undo_group_->activeStack()->push(
-          toGrayscaleCommandDialog(mdi_area_->activeImage()));
+      QUndoCommand *command =
+          createCommand<ToGrayscaleDialog>(mdi_area_->activeImage());
+      if (command) {
+        undo_group_->activeStack()->push(command);
+      }
+      // undo_group_->activeStack()->push();
     }
   });
 
