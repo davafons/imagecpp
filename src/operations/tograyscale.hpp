@@ -41,9 +41,7 @@ private:
 class ToGrayscaleDialog : public ImageOperationDialog<ToGrayscaleOperation> {
 public:
   ToGrayscaleDialog(ImageData *data, QWidget *parent = nullptr)
-      : ImageOperationDialog(data, parent) {}
-
-  virtual void setupLayoutWidgets() override {
+      : ImageOperationDialog(data, parent) {
     QGroupBox *group_box = new QGroupBox("Format");
     QVBoxLayout *vbox = new QVBoxLayout();
 

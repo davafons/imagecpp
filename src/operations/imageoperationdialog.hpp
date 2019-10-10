@@ -39,8 +39,6 @@ public:
   }
   virtual ~ImageOperationDialog() { delete preview_display_; }
 
-  virtual void setupLayoutWidgets() = 0;
-
   QUndoCommand *command() { return operation_.command(); }
 
 protected:
@@ -57,7 +55,6 @@ private:
 template <class DialogType>
 static QUndoCommand *createCommand(ImageData *data) {
   DialogType dialog(data);
-  dialog.setupLayoutWidgets(); // TODO: NO me gusta pero es lo que hay
 
   int return_value = dialog.exec();
 
