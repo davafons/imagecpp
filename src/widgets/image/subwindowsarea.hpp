@@ -24,7 +24,7 @@ signals:
   void subwindowAdded(ImageSubWindow *subwindow);
 
 public slots:
-  void addDisplayArea(Document *document);
+  void addDocumentWindow(Document *document);
   void toggleTabsView(bool toggled);
 
 private:

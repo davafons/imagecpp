@@ -18,6 +18,9 @@ Document::Document(Image *image, QObject *parent)
   connect(this, &Document::imageChanged, histogram_,
           &Histogram::generateHistogram);
 
+  connect(histogram_, &Histogram::histogramChanged, this,
+          &Document::histogramChanged);
+
   setImage(image);
 }
 
@@ -31,8 +34,9 @@ Document::Document(const Document &other) {
   file_path_ = QString(other_file_path.completeBaseName() + "_copy." +
                        other_file_path.completeSuffix());
 
-  image_ = new Image(*other.image_);
+  image_ = new Image(*other.image());
   undo_stack_ = new QUndoStack();
+  histogram_ = new Histogram(*other.histogram());
 }
 
 Image *Document::copyImage() const { return image_->copy(); }

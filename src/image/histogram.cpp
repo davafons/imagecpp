@@ -7,10 +7,20 @@
 
 namespace imagecpp {
 
-Histogram::Histogram(QObject *parent) : QObject(parent) {
+Histogram::Histogram(const Image *image, QObject *parent) : QObject(parent) {
   r_h_.fill(0);
   g_h_.fill(0);
   b_h_.fill(0);
+
+  if (image) {
+    generateHistogram(image);
+  }
+}
+
+Histogram::Histogram(const Histogram &other) {
+  r_h_ = other.r_h_;
+  g_h_ = other.g_h_;
+  b_h_ = other.b_h_;
 }
 
 QtCharts::QBarSet *Histogram::redBars() const {
@@ -43,7 +53,7 @@ void Histogram::generateHistogram(const Image *image) {
 
   qDebug() << "The histogram took" << timer.elapsed() << "ms to generate";
 
-  emit histogramUpdated(this);
+  emit histogramChanged(this);
 }
 
 QtCharts::QBarSet *
@@ -53,10 +63,7 @@ Histogram::createBarSet(const std::array<int, HISTOGRAM_SIZE> &histogram,
   barset->setColor(color);
   barset->setBorderColor(color);
 
-  qDebug() << "Starting to duplicate";
-  qDebug() << histogram.size();
   for (const auto &part : histogram) {
-    qDebug() << part;
     *barset << part;
   }
 

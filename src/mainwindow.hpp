@@ -3,7 +3,7 @@
 #include <QMainWindow>
 
 #include "image/histogramview.hpp"
-#include "manager/imagemanager.hpp"
+#include "manager/documentsmanager.hpp"
 #include "widgets/menus/mainmenubar.hpp"
 #include "widgets/statusbar/mainstatusbar.hpp"
 
@@ -27,29 +27,30 @@ public:
              Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~MainWindow();
 
+private slots:
+  void updateViews(Document *document); // TODO: Pass const
+
 private:
   void createMenuBar();
   void createStatusBar();
   void createSubWindowsArea();
   void createDocks();
 
-private slots:
-  void updateViews(Document *document); // TODO: Pass const
+  template <class Operation> void executeOperation(Document *document);
 
 private:
   MainMenuBar main_menu_bar_;
   MainStatusBar main_status_bar_;
 
-  ImageManager image_manager_;
+  DocumentsManager documents_manager_;
 
-  SubWindowsArea *mdi_area_{nullptr};
-
-  QUndoGroup *undo_group_{nullptr};
-  QUndoView *undo_view_{nullptr};
+  SubWindowsArea *mdi_area_;
+  QUndoGroup *undo_group_;
+  QUndoView *undo_view_;
 
   HistogramView *hist_view_;
 
-  // Add list with all documents
+  // TODO: Add list with all documents?
 };
 
 } // namespace imagecpp

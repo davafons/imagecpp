@@ -17,6 +17,10 @@ public:
 
   PixelInformationWidget *pixelInfoWidget() const { return pixel_info_widget_; }
 
+public slots:
+  void showSavedFilePathMessage(const QString& file_path);
+
+
 private:
   PixelInformationWidget *pixel_info_widget_;
 };

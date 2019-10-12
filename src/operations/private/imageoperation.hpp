@@ -21,14 +21,19 @@ class ImageOperation : public QObject {
   Q_OBJECT
 
 public:
-  ImageOperation(Document *data, const QString &name = "");
+  // Constuction
+  ImageOperation(Document *document, const QString &name = "");
   virtual ~ImageOperation() = default;
 
+  // Getters
   QString name() const { return name_; }
-
   const Image *preview();
   QUndoCommand *command();
+
   bool isLiveUpdateActive() const { return live_update_; }
+
+  // TODO: Explain that its added for compatibility with the Dialog API
+  int exec() const { return 1; }
 
 signals:
   void imageUpdated(const Image *image);
@@ -40,7 +45,6 @@ public slots:
 protected slots:
   virtual void applyImageOperation() = 0;
 
-protected:
   void setName(const QString &name) { name_ = name; }
 
 private:
@@ -51,7 +55,7 @@ protected:
   const Image *const old_image_;
 
 private:
-  Document *const data_;
+  Document *const document_;
 
   QString name_;
 
@@ -63,14 +67,14 @@ private:
 
 class ImageOperation::ImageCommand : public QUndoCommand {
 public:
-  ImageCommand(const QString &name, Document *data,
+  ImageCommand(const QString &name, Document *document,
                const Image *property_modified_image, const Image *old_image);
 
   virtual void redo() override;
   virtual void undo() override;
 
 private:
-  Document *const data_;
+  Document *const document_;
   const Image *const target_image_;
   const Image *const old_image_;
 };

@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
       undo_group_(new QUndoGroup()), undo_view_(new QUndoView()),
       hist_view_(new HistogramView()) {
 
-  // Bars
+  // MenuBar and StatusBar
   createMenuBar();
   createStatusBar();
 
@@ -38,25 +38,25 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
   // Docks
   createDocks();
 
-  // ImageManager
-  connect(&image_manager_, &ImageManager::imageOpened, mdi_area_,
-          &SubWindowsArea::addDisplayArea);
+  // DocumentsManager
 
-  connect(&image_manager_, &ImageManager::imageOpened, this,
+  // Add new window when opening a document
+  connect(&documents_manager_, &DocumentsManager::newDocumentOpened, mdi_area_,
+          &SubWindowsArea::addDocumentWindow);
+
+  connect(&documents_manager_, &DocumentsManager::newDocumentOpened, this,
           [this](Document *document) {
-            Q_CHECK_PTR(document);
             if (document) {
-              qInfo() << "Add new undo stack: " << document->undoStack();
               undo_group_->addStack(document->undoStack());
-              connect(document->histogram(), &Histogram::histogramUpdated,
-                      hist_view_, &HistogramView::setHistogram);
+
+              connect(document, &Document::histogramChanged, hist_view_,
+                      &HistogramView::setHistogram);
             }
           });
 
-  connect(&image_manager_, &ImageManager::imageSaved, this,
+  connect(&documents_manager_, &DocumentsManager::documentSaved, this,
           [this](Document *, const QString &file_path) {
-            statusBar()->showMessage(
-                QString("Saved image on %1").arg(file_path), 2000);
+            main_status_bar_.showSavedFilePathMessage(file_path);
           });
 }
 
@@ -71,16 +71,14 @@ void MainWindow::createMenuBar() {
 
   main_menu_bar_.createUndoActions(undo_group_);
 
-  connect(&main_menu_bar_, &MainMenuBar::open, &image_manager_,
-          &ImageManager::open);
-  connect(&main_menu_bar_, &MainMenuBar::save, &image_manager_, [this] {
-    if (mdi_area_->activeDocument())
-      image_manager_.save(mdi_area_->activeDocument());
-  });
-  connect(&main_menu_bar_, &MainMenuBar::saveAs, &image_manager_, [this] {
-    if (mdi_area_->activeDocument())
-      image_manager_.saveAs(mdi_area_->activeDocument());
-  });
+  connect(&main_menu_bar_, &MainMenuBar::open, &documents_manager_,
+          &DocumentsManager::open);
+
+  connect(&main_menu_bar_, &MainMenuBar::save, &documents_manager_,
+          [this] { documents_manager_.save(mdi_area_->activeDocument()); });
+
+  connect(&main_menu_bar_, &MainMenuBar::saveAs, &documents_manager_,
+          [this] { documents_manager_.saveAs(mdi_area_->activeDocument()); });
 
   // TODO: Add "Save copy connection"
 
@@ -93,20 +91,16 @@ void MainWindow::createMenuBar() {
   connect(&main_menu_bar_, &MainMenuBar::undo, undo_group_, &QUndoGroup::undo);
   connect(&main_menu_bar_, &MainMenuBar::redo, undo_group_, &QUndoGroup::redo);
 
-  connect(&main_menu_bar_, &MainMenuBar::duplicateImage, &image_manager_,
-          [this] { image_manager_.duplicate(mdi_area_->activeDocument()); });
+  connect(
+      &main_menu_bar_, &MainMenuBar::duplicateImage, &documents_manager_,
+      [this] { documents_manager_.duplicate(mdi_area_->activeDocument()); });
 
-  // TODO: Make better
-  connect(&main_menu_bar_, &MainMenuBar::toGrayscale, &image_manager_, [this] {
-    if (mdi_area_->activeDocument()) {
-      QUndoCommand *command = createCommandFromDialog<GrayscaleConfigDialog>(
-          mdi_area_->activeDocument());
-      if (command) {
-        undo_group_->activeStack()->push(command);
-      }
-      // undo_group_->activeStack()->push();
-    }
-  });
+  // Operations
+
+  connect(
+      &main_menu_bar_, &MainMenuBar::toGrayscale, &documents_manager_, [this] {
+        executeOperation<GrayscaleConfigDialog>(mdi_area_->activeDocument());
+      });
 
   connect(&main_menu_bar_, &MainMenuBar::toggleTabsView, mdi_area_,
           &SubWindowsArea::toggleTabsView);
@@ -155,5 +149,22 @@ void MainWindow::updateViews(Document *document) {
     hist_view_->setHistogram(document->histogram());
   }
 }
+
+template <class Operation>
+void MainWindow::executeOperation(Document *document) {
+  if (document == nullptr) {
+    return;
+  }
+
+  Operation op(document);
+  int return_value = op.exec();
+
+  if (return_value) {
+    document->undoStack()->push(op.command());
+  }
+
+  // TODO: Signal?
+  updateViews(document);
+};
 
 } // namespace imagecpp

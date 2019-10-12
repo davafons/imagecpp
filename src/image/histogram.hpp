@@ -12,8 +12,10 @@ class Histogram : public QObject {
   Q_OBJECT
 
 public:
-  Histogram(QObject *parent = nullptr);
+  explicit Histogram(const Image *image = nullptr, QObject *parent = nullptr);
   virtual ~Histogram() = default;
+
+  Histogram(const Histogram& other);
 
   // TODO: Alternative to return const
   QtCharts::QBarSet *redBars() const;
@@ -21,7 +23,7 @@ public:
   QtCharts::QBarSet *blueBars() const;
 
 signals:
-  void histogramUpdated(const Histogram *histogram);
+  void histogramChanged(const Histogram *histogram);
 
 public slots:
   void generateHistogram(const Image *image);

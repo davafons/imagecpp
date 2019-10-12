@@ -2,11 +2,12 @@
 
 #include <QFileDialog>
 #include <QObject>
+#include <QUndoCommand>
+#include <QUndoStack>
 
 #include "histogram.hpp"
 
 // Forward declarations
-class QUndoStack;
 
 namespace imagecpp {
 
@@ -24,7 +25,7 @@ class Document : public QObject {
 public:
   explicit Document(Image *image = nullptr, QObject *parent = nullptr);
 
-  Document(const Document &data);
+  Document(const Document &document);
   virtual ~Document();
 
   // Property getters
@@ -49,6 +50,7 @@ public:
 signals:
   void filePathChanged(const QString &file_path);
   void imageChanged(const Image *image);
+  void histogramChanged(const Histogram *histogram);
 
 public slots:
   void setFilePath(QString file_path);

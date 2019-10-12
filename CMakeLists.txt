@@ -37,7 +37,7 @@ add_executable(${PROJECT_NAME}
     src/widgets/statusbar/mainstatusbar.cpp
     src/widgets/statusbar/pixelinformationwidget.cpp
     src/widgets/image/subwindowsarea.cpp
-    src/manager/imagemanager.cpp
+    src/manager/documentsmanager.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

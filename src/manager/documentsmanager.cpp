@@ -1,4 +1,4 @@
-#include "imagemanager.hpp"
+#include "documentsmanager.hpp"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -9,7 +9,7 @@
 
 namespace imagecpp {
 
-void ImageManager::open() {
+void DocumentsManager::open() {
   qInfo() << "Selecting an image path to open";
 
   QString file_path =
@@ -18,22 +18,26 @@ void ImageManager::open() {
   qInfo() << "File selected: " << file_path;
 
   if (!file_path.isEmpty()) {
-    Document *document = new Document(new Image(file_path), this);
+    Document *document = new Document(new Image(file_path));
     Q_CHECK_PTR(document);
 
     document->setFilePath(file_path);
 
     qInfo() << "Document object created:" << document;
 
-    emit imageOpened(document);
+    emit newDocumentOpened(document);
   }
 }
 
-void ImageManager::save(Document *document) {
+void DocumentsManager::save(Document *document) const {
+  if (!document) {
+    return;
+  }
+
   saveAs(document, document->filePath());
 }
 
-void ImageManager::saveAs(Document *document, QString file_path) {
+void DocumentsManager::saveAs(Document *document, QString file_path) const {
   if (!document) {
     return;
   }
@@ -51,18 +55,18 @@ void ImageManager::saveAs(Document *document, QString file_path) {
   } else {
     qDebug() << "Image saved";
 
-    emit imageSaved(document, file_path);
+    emit documentSaved(document, file_path);
   }
 }
 
-void ImageManager::duplicate(Document *other) {
+void DocumentsManager::duplicate(Document *other) const {
   if (!other) {
     return;
   }
 
-  Document *duplicated_image = new Document(*other);
+  Document *duplicated_document = new Document(*other);
 
-  emit imageOpened(duplicated_image);
+  emit newDocumentOpened(duplicated_document);
 }
 
 } // namespace imagecpp

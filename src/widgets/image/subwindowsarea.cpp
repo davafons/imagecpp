@@ -20,7 +20,7 @@ SubWindowsArea::SubWindowsArea(QWidget *parent)
   });
 }
 
-void SubWindowsArea::addDisplayArea(Document *document) {
+void SubWindowsArea::addDocumentWindow(Document *document) {
   Q_CHECK_PTR(document);
   qInfo() << "Add new display area for document: " << document;
 

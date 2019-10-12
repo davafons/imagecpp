@@ -5,9 +5,9 @@
 
 namespace imagecpp {
 
-ImageOperation::ImageOperation(Document *data, const QString &name)
-    : name_(name), data_(data), old_image_(data->copyImage()),
-      target_image_(Image::empty(*data->image())) {
+ImageOperation::ImageOperation(Document *document, const QString &name)
+    : name_(name), document_(document), old_image_(document->copyImage()),
+      target_image_(Image::empty(*document->image())) {
 
   connect(this, &ImageOperation::propertyChanged, this, [this] {
     up_to_date_ = false;
@@ -30,7 +30,7 @@ const Image *ImageOperation::preview() {
 QUndoCommand *ImageOperation::command() {
   generateTargetImage();
 
-  return new ImageCommand(name_, data_, target_image_, old_image_);
+  return new ImageCommand(name_, document_, target_image_, old_image_);
 }
 
 void ImageOperation::toggleLiveUpdate(bool toggled) {
@@ -50,18 +50,19 @@ void ImageOperation::generateTargetImage() {
   }
 }
 
-ImageOperation::ImageCommand::ImageCommand(const QString &name, Document *data,
+ImageOperation::ImageCommand::ImageCommand(const QString &name,
+                                           Document *document,
                                            const Image *target_image,
                                            const Image *old_image)
-    : QUndoCommand(name), data_(data), target_image_(target_image),
+    : QUndoCommand(name), document_(document), target_image_(target_image),
       old_image_(old_image) {}
 
 void ImageOperation::ImageCommand::redo() {
-  data_->setImage(target_image_->copy());
+  document_->setImage(target_image_->copy());
 }
 
 void ImageOperation::ImageCommand::undo() {
-  data_->setImage(old_image_->copy());
+  document_->setImage(old_image_->copy());
 }
 
 } // namespace imagecpp
