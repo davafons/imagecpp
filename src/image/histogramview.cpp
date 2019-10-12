@@ -5,7 +5,10 @@
 #include <QChart>
 #include <QDebug>
 #include <QGraphicsLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
 #include <QMargins>
+#include <QVBoxLayout>
 #include <QValueAxis>
 
 using namespace QtCharts;
@@ -13,10 +16,12 @@ using namespace QtCharts;
 namespace imagecpp {
 
 HistogramView::HistogramView(QWidget *parent)
-    : QChartView(nullptr, parent), chart_(new QChart()),
-      x_axis_(new QValueAxis()), y_axis_(new QValueAxis()) {
-  setRenderHint(QPainter::Antialiasing);
+    : QWidget(parent), chart_(new QChart()), x_axis_(new QValueAxis()),
+      y_axis_(new QValueAxis()), red_chart_radio_(new QRadioButton("Red")),
+      green_chart_radio_(new QRadioButton("Green")),
+      blue_chart_radio_(new QRadioButton("Blue")) {
 
+  // Setup chart properties
   QStringList categories;
   for (int i = 0; i < 256; ++i) {
     categories << QString(i);
@@ -36,12 +41,53 @@ HistogramView::HistogramView(QWidget *parent)
   chart_->setBackgroundRoundness(0);
   chart_->setMargins(QMargins(0, 0, 0, 0));
 
-  setChart(chart_);
+  // Setup widgets
+  QVBoxLayout *vbox_layout = new QVBoxLayout();
+
+  QGroupBox *rgb_box = new QGroupBox();
+  QHBoxLayout *rgb_box_layout = new QHBoxLayout();
+
+  red_chart_radio_->setChecked(true);
+
+  rgb_box_layout->addWidget(red_chart_radio_);
+  rgb_box_layout->addWidget(blue_chart_radio_);
+  rgb_box_layout->addWidget(green_chart_radio_);
+
+  rgb_box->setLayout(rgb_box_layout);
+
+  QtCharts::QChartView *chart_view = new QtCharts::QChartView(chart_);
+  chart_view->setRenderHint(QPainter::Antialiasing);
+
+  vbox_layout->addWidget(chart_view);
+  vbox_layout->addWidget(rgb_box);
+
+  setLayout(vbox_layout);
+
+  connect(red_chart_radio_, &QRadioButton::toggled, this,
+          [this](bool checked) { setHistogram(active_histogram_); });
+  connect(green_chart_radio_, &QRadioButton::toggled, this,
+          [this](bool checked) { setHistogram(active_histogram_); });
+  connect(blue_chart_radio_, &QRadioButton::toggled, this,
+          [this](bool checked) { setHistogram(active_histogram_); });
 }
 
 void HistogramView::setHistogram(const Histogram *histogram) {
+  if (histogram) {
+    active_histogram_ = histogram;
+
+    if (red_chart_radio_->isChecked()) {
+      changeDisplayedBars(active_histogram_->redBars());
+    } else if (green_chart_radio_->isChecked()) {
+      changeDisplayedBars(active_histogram_->greenBars());
+    } else if (blue_chart_radio_->isChecked()) {
+      changeDisplayedBars(active_histogram_->blueBars());
+    }
+  }
+}
+
+void HistogramView::changeDisplayedBars(QtCharts::QBarSet *bars) {
   QBarSeries *series = new QBarSeries();
-  series->append(histogram->redBars());
+  series->append(bars);
 
   series->setBarWidth(1);
 
