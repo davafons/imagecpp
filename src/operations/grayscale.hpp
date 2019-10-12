@@ -11,6 +11,7 @@ namespace imagecpp {
 // --- Implementation ---
 
 /*
+ *
  */
 class Grayscale : public PixelOperation {
   Q_OBJECT
@@ -38,6 +39,7 @@ private:
 // --- Dialog ---
 
 /*
+ *
  */
 class GrayscaleConfigDialog : public OperationConfigDialog<Grayscale> {
 public:

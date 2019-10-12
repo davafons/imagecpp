@@ -12,9 +12,6 @@ public:
   LutOperation(Document *document, const QString &name = "");
   virtual ~LutOperation() = default;
 
-protected slots:
-  virtual void fillLutTables();
-
 private:
   virtual QRgb pixelOperation(int x, int y, QRgb color) const override;
 

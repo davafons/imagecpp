@@ -12,6 +12,4 @@ Inverse::Inverse(Document *document) : LutOperation(document, "Inverse") {
   }
 }
 
-void Inverse::fillLutTables() {}
-
 } // namespace imagecpp

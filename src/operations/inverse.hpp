@@ -16,9 +16,6 @@ class Inverse : public LutOperation {
 public:
   Inverse(Document *document);
   virtual ~Inverse() = default;
-
-protected slots:
-  virtual void fillLutTables() override;
 };
 
 } // namespace imagecpp
