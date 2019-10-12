@@ -15,6 +15,7 @@ class Image : public QObject {
   Q_OBJECT
 
 public:
+  // Construction and copy
   explicit Image(const QString &file_path);
   Image(int width, int height, QImage::Format format);
 
@@ -23,42 +24,48 @@ public:
 
   Image &operator=(Image other);
 
-  QPixmap getPixmap() const noexcept;
+  // Iterators
+  // QRgb *begin();
+  // const QRgb *begin() const;
+  // const QRgb *cbegin() const;
+  //
+  // QRgb *end();
+  // const QRgb *end() const;
+  // const QRgb *cend() const;
 
+  // Image Operations
+  QPixmap getPixmap() const noexcept;
   Image *copy() const;
 
-  int width() const noexcept { return image_.width(); }
-  int height() const noexcept { return image_.height(); }
-  QSize size() const noexcept { return image_.size(); }
-  QRect rect() const noexcept { return image_.rect(); }
-  QImage::Format format() const noexcept { return image_.format(); }
+  // Properties
+  int width() const noexcept;
+  int height() const noexcept;
+  QSize size() const noexcept;
+  QRect rect() const noexcept;
+  QImage::Format format() const noexcept;
+  size_t pixelCount() const noexcept;
 
-  QRgb pixel(int x, int y) const { return image_.pixel(x, y); }
-  QRgb pixel(const QPoint &position) const { return image_.pixel(position); }
+  // Pixel Operations
+  QRgb *bits();
+  QRgb *scanLine(int i);
+  const QRgb *constBits() const;
+  const QRgb *constScanLine(int i) const;
 
-  void setPixel(int x, int y, uint index_or_rgb) {
-    image_.setPixel(x, y, index_or_rgb);
-  }
+  QRgb pixel(int x, int y) const;
+  QRgb pixel(const QPoint &position) const;
+  void setPixel(int x, int y, uint index_or_rgb);
+  void setPixel(const QPoint &position, uint index_or_rgb);
 
-  void setPixel(const QPoint &position, uint index_or_rgb) {
-    image_.setPixel(position, index_or_rgb);
-  }
+  QColor pixelColor(const QPoint &position) const;
+  QColor pixelColor(int x, int y) const;
+  void setPixelColor(int x, int y, const QColor &color);
+  void setPixelColor(const QPoint &position, const QColor &color);
 
-  QColor pixelColor(const QPoint &position) const {
-    return image_.pixelColor(position);
-  }
-  QColor pixelColor(int x, int y) const { return image_.pixelColor(x, y); }
-
-  void setPixelColor(int x, int y, const QColor &color) {
-    image_.setPixelColor(x, y, color);
-  }
-  void setPixelColor(const QPoint &position, const QColor &color) {
-    image_.setPixelColor(position, color);
-  }
-
-  friend void swap(Image &first, Image &second) noexcept;
-
+  // Static functions
   static Image *empty(const Image &other);
+
+  // Friend functions
+  friend void swap(Image &first, Image &second) noexcept;
 
 public slots:
   void open(const QString &file_path);
@@ -67,4 +74,5 @@ public slots:
 private:
   QImage image_;
 };
+
 } // namespace imagecpp

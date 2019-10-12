@@ -2,6 +2,8 @@
 
 #include <QObject>
 
+#include "histogram.hpp"
+
 // Forward declarations
 class QUndoStack;
 
@@ -28,6 +30,7 @@ public:
 
   Image *image() { return image_; }
   QUndoStack *undoStack() { return undo_stack_; }
+  Histogram &histogram() { return histogram_; }
 
   Image *copyImage() const;
 
@@ -52,6 +55,8 @@ private:
 
   Image *image_;
   QUndoStack *undo_stack_;
+
+  Histogram histogram_;
 };
 
 } // namespace imagecpp

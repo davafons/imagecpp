@@ -5,6 +5,7 @@
 #include "manager/imagemanager.hpp"
 #include "widgets/menus/mainmenubar.hpp"
 #include "widgets/statusbar/mainstatusbar.hpp"
+#include "image/histogramview.hpp"
 
 // Forward declarations
 class QUndoView;
@@ -41,6 +42,8 @@ private:
 
   QUndoGroup *undo_group_{nullptr};
   QUndoView *undo_view_{nullptr};
+
+  HistogramView *hist_view_;
 };
 
 } // namespace imagecpp

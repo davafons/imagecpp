@@ -11,7 +11,12 @@ namespace imagecpp {
 int Document::next_id_ = 0;
 
 Document::Document(Image *image, QObject *parent)
-    : QObject(parent), image_(image), undo_stack_(new QUndoStack()) {}
+    : QObject(parent), image_(image), undo_stack_(new QUndoStack()) {
+  connect(this, &Document::imageUpdated, &histogram_,
+          &Histogram::generateHistogram);
+
+  setImage(image);
+}
 
 Document::~Document() { delete undo_stack_; }
 

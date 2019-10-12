@@ -19,7 +19,9 @@ add_executable(${PROJECT_NAME}
     src/main.cpp
     src/mainwindow.cpp
     src/image/document.cpp
+    src/image/histogram.cpp
     src/image/image.cpp
+    src/image/histogramview.cpp
     src/operations/grayscale.cpp
     src/operations/private/pixeloperation.cpp
     src/operations/private/imageoperation.cpp

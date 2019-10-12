@@ -17,8 +17,9 @@
 namespace imagecpp {
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
-    : mdi_area_(new SubWindowsArea()), undo_group_(new QUndoGroup()),
-      undo_view_(new QUndoView()), QMainWindow(parent, flags) {
+    : QMainWindow(parent, flags), mdi_area_(new SubWindowsArea()),
+      undo_group_(new QUndoGroup()), undo_view_(new QUndoView()),
+      hist_view_(new HistogramView()) {
 
   // Bars
   createMenuBar();
@@ -43,14 +44,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
             if (image_data) {
               qInfo() << "Active stack: " << image_data->undoStack();
               undo_group_->setActiveStack(image_data->undoStack());
+              hist_view_->setHistogram(image_data->histogram());
             }
           });
 
   // Docks
-  QDockWidget *dock = new QDockWidget(tr("Tools"), this);
-  dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-  dock->setWidget(undo_view_);
-  addDockWidget(Qt::RightDockWidgetArea, dock);
+  QDockWidget *a = new QDockWidget(tr("Tools"), this);
+  a->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+  a->setWidget(undo_view_);
+  addDockWidget(Qt::RightDockWidgetArea, a);
+
+  QDockWidget *b = new QDockWidget(tr("Histogram"), this);
+  b->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+  b->setWidget(hist_view_);
+  addDockWidget(Qt::RightDockWidgetArea, b);
 
   // ImageManager
   connect(&image_manager_, &ImageManager::imageOpened, mdi_area_,
