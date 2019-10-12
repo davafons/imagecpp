@@ -8,29 +8,29 @@
 namespace imagecpp {
 
 SubWindowsArea::SubWindowsArea(QWidget *parent)
-    : QMdiArea(parent), active_image_(nullptr) {
+    : QMdiArea(parent), active_document_(nullptr) {
 
   setTabsClosable(true);
   setTabsMovable(true);
 
   connect(this, &QMdiArea::subWindowActivated, this, [this](QMdiSubWindow *w) {
-    active_image_ = imageFromSubwindow(w);
+    active_document_ = imageFromSubwindow(w);
 
-    emit activeImageChanged(active_image_);
+    emit activeDocumentChanged(active_document_);
   });
 }
 
-void SubWindowsArea::addDisplayArea(Document *data) {
-  Q_CHECK_PTR(data);
-  qInfo() << "Add new display area for data: " << data;
+void SubWindowsArea::addDisplayArea(Document *document) {
+  Q_CHECK_PTR(document);
+  qInfo() << "Add new display area for document: " << document;
 
-  ImageSubWindow *subwindow = new ImageSubWindow(data);
+  ImageSubWindow *subwindow = new ImageSubWindow(document);
   Q_CHECK_PTR(subwindow);
 
   addSubWindow(subwindow);
   subwindow->show();
 
-  emit displayAreaAdded(subwindow->display());
+  emit subwindowAdded(subwindow);
 }
 
 void SubWindowsArea::toggleTabsView(bool toggled) {
@@ -46,7 +46,7 @@ Document *SubWindowsArea::imageFromSubwindow(QMdiSubWindow *subwindow) {
       dynamic_cast<ImageSubWindow *>(activeSubWindow());
 
   if (active_subwindow) {
-    return active_subwindow->data();
+    return active_subwindow->document();
   }
 
   return nullptr;

@@ -6,20 +6,25 @@
 
 namespace imagecpp {
 
-ImageSubWindow::ImageSubWindow(Document *data)
-    : display_(new ImageDisplayArea()), data_(data) {
+ImageSubWindow::ImageSubWindow(Document *document)
+    : display_(new ImageDisplayArea()), document_(document) {
+
+  // Setup properties
+  setWindowTitle(document->filePath());
   setWidget(display_);
 
-  display_->onImageOpened(data->image());
-  setWindowTitle(data->filePath());
+  display_->onImageOpened(document->image());
+
+  // Make connections with the loaded objects
 
   connect(display_, &ImageDisplayArea::pixelInformation, this,
           &ImageSubWindow::pixelInformation);
 
-  connect(data_, &Document::filePathChanged, this,
+  // Set the title of the window according to the name of the open document
+  connect(document_, &Document::filePathChanged, this,
           &ImageSubWindow::setWindowTitle);
 
-  connect(data_, &Document::imageUpdated, display_,
+  connect(document_, &Document::imageChanged, display_,
           &ImageDisplayArea::onImageUpdated);
 }
 

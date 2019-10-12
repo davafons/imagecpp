@@ -21,8 +21,8 @@ signals:
 
 public slots:
   void open();
-  void save(Document *image);
-  void saveAs(Document *image, QString file_path = "");
+  void save(Document *document);
+  void saveAs(Document *document, QString file_path = "");
 
   void duplicate(Document *other);
 

@@ -14,13 +14,17 @@ Document::Document(Image *image, QObject *parent)
     : QObject(parent), image_(image), undo_stack_(new QUndoStack()),
       histogram_(new Histogram()) {
 
-  connect(this, &Document::imageUpdated, histogram_,
+  // On image changed -> generate new histogram
+  connect(this, &Document::imageChanged, histogram_,
           &Histogram::generateHistogram);
 
   setImage(image);
 }
 
-Document::~Document() { delete undo_stack_; }
+Document::~Document() {
+  delete undo_stack_;
+  delete histogram_;
+}
 
 Document::Document(const Document &other) {
   QFileInfo other_file_path(other.filePath());
@@ -35,14 +39,14 @@ Image *Document::copyImage() const { return image_->copy(); }
 
 void Document::setFilePath(QString file_path) {
   file_path_ = file_path;
+
   emit filePathChanged(file_path);
 }
 
 void Document::setImage(Image *image) {
-  qInfo() << "Replacing image" << image_ << "with" << image;
-
   image_ = image;
-  emit imageUpdated(image);
+
+  emit imageChanged(image);
 }
 
 } // namespace imagecpp

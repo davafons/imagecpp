@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QFileDialog>
 #include <QObject>
 
 #include "histogram.hpp"
@@ -21,25 +22,33 @@ class Document : public QObject {
   Q_OBJECT
 
 public:
-  Document(Image *image = nullptr, QObject *parent = nullptr);
+  explicit Document(Image *image = nullptr, QObject *parent = nullptr);
+
   Document(const Document &data);
   virtual ~Document();
 
+  // Property getters
   int id() const noexcept { return id_; }
-  QString filePath() const { return file_path_; }
-
-  Image *image() { return image_; }
-  QUndoStack *undoStack() { return undo_stack_; }
-  Histogram *histogram() { return histogram_; }
-
-  Image *copyImage() const;
-
+  QString filePath() const noexcept { return file_path_; }
   // TODO: get image format
   // TODO: get image size
 
+  // Object getters
+  Image *image() { return image_; }
+  const Image *image() const { return image_; }
+
+  QUndoStack *undoStack() { return undo_stack_; }
+  const QUndoStack *undoStack() const { return undo_stack_; }
+
+  Histogram *histogram() { return histogram_; }
+  const Histogram *histogram() const { return histogram_; }
+
+  // Functions
+  Image *copyImage() const;
+
 signals:
   void filePathChanged(const QString &file_path);
-  void imageUpdated(const Image *image);
+  void imageChanged(const Image *image);
 
 public slots:
   void setFilePath(QString file_path);
@@ -49,10 +58,13 @@ protected:
   static int next_id_;
 
 private:
+  // Unique identifier of the document
   int id_{next_id_++};
 
+  // Document properties
   QString file_path_;
 
+  // Document objects
   Image *image_;
   QUndoStack *undo_stack_;
   Histogram *histogram_;

@@ -14,9 +14,10 @@ class ImageDisplayArea;
 class ImageSubWindow : public QMdiSubWindow {
   Q_OBJECT
 public:
-  ImageSubWindow(Document *data);
+  ImageSubWindow(Document *document);
 
-  Document *data() { return data_; }
+  // Getters
+  Document *document() { return document_; }
   ImageDisplayArea *display() { return display_; }
 
 signals:
@@ -24,7 +25,7 @@ signals:
 
 private:
   ImageDisplayArea *const display_;
-  Document *const data_;
+  Document *const document_;
 };
 
 } // namespace imagecpp

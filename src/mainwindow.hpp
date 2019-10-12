@@ -31,6 +31,10 @@ private:
   void createMenuBar();
   void createStatusBar();
   void createSubWindowsArea();
+  void createDocks();
+
+private slots:
+  void updateViews(Document *document); // TODO: Pass const
 
 private:
   MainMenuBar main_menu_bar_;
@@ -44,6 +48,8 @@ private:
   QUndoView *undo_view_{nullptr};
 
   HistogramView *hist_view_;
+
+  // Add list with all documents
 };
 
 } // namespace imagecpp

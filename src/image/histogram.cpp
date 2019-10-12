@@ -53,7 +53,10 @@ Histogram::createBarSet(const std::array<int, HISTOGRAM_SIZE> &histogram,
   barset->setColor(color);
   barset->setBorderColor(color);
 
+  qDebug() << "Starting to duplicate";
+  qDebug() << histogram.size();
   for (const auto &part : histogram) {
+    qDebug() << part;
     *barset << part;
   }
 

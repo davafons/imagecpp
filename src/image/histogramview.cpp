@@ -50,8 +50,8 @@ HistogramView::HistogramView(QWidget *parent)
   red_chart_radio_->setChecked(true);
 
   rgb_box_layout->addWidget(red_chart_radio_);
-  rgb_box_layout->addWidget(blue_chart_radio_);
   rgb_box_layout->addWidget(green_chart_radio_);
+  rgb_box_layout->addWidget(blue_chart_radio_);
 
   rgb_box->setLayout(rgb_box_layout);
 

@@ -18,40 +18,40 @@ void ImageManager::open() {
   qInfo() << "File selected: " << file_path;
 
   if (!file_path.isEmpty()) {
-    Document *image_data = new Document(new Image(file_path), this);
-    Q_CHECK_PTR(image_data);
+    Document *document = new Document(new Image(file_path), this);
+    Q_CHECK_PTR(document);
 
-    image_data->setFilePath(file_path);
+    document->setFilePath(file_path);
 
-    qInfo() << "Document object created:" << image_data;
+    qInfo() << "Document object created:" << document;
 
-    emit imageOpened(image_data);
+    emit imageOpened(document);
   }
 }
 
-void ImageManager::save(Document *image_data) {
-  saveAs(image_data, image_data->filePath());
+void ImageManager::save(Document *document) {
+  saveAs(document, document->filePath());
 }
 
-void ImageManager::saveAs(Document *image_data, QString file_path) {
-  if (!image_data) {
+void ImageManager::saveAs(Document *document, QString file_path) {
+  if (!document) {
     return;
   }
 
   if (file_path.isEmpty()) {
     file_path =
         QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
-    image_data->setFilePath(file_path);
+    document->setFilePath(file_path);
   }
 
-  if (!image_data->image()->saveAs(file_path)) {
+  if (!document->image()->saveAs(file_path)) {
     // TODO: Specify why image couldn't be saved
     // QMessageBox::critical(this, tr("Save As... error"),
     //                       tr("Couldn't save image!"));
   } else {
     qDebug() << "Image saved";
 
-    emit imageSaved(image_data, file_path);
+    emit imageSaved(document, file_path);
   }
 }
 
