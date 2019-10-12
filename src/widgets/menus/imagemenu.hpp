@@ -13,12 +13,16 @@ public:
   virtual ~ImageMenu() = default;
 
 signals:
-  void toGrayscale();
   void duplicateImage();
 
+  void grayscale();
+  void inverse();
+
 private:
-  QAction *to_grayscale_act_;
   QAction *duplicate_img_act_;
+
+  QAction *grayscale_act_;
+  QAction *inverse_act_;
 };
 
 } // namespace imagecpp

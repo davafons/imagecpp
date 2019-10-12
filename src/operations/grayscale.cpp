@@ -7,8 +7,8 @@ namespace imagecpp {
 
 // --- Implementation ---
 
-Grayscale::Grayscale(Document *data, const Format &format)
-    : PixelOperation(data) {
+Grayscale::Grayscale(Document *document, const Format &format)
+    : PixelOperation(document) {
   setFormat(format);
 }
 
@@ -39,8 +39,9 @@ QRgb Grayscale::pixelOperation(int, int, QRgb color) const {
 
 // --- Dialog ---
 
-GrayscaleConfigDialog::GrayscaleConfigDialog(Document *data, QWidget *parent)
-    : OperationConfigDialog(data, parent) {
+GrayscaleConfigDialog::GrayscaleConfigDialog(Document *document,
+                                             QWidget *parent)
+    : OperationConfigDialog(document, parent) {
   QGroupBox *group_box = new QGroupBox("Format");
   QVBoxLayout *vbox = new QVBoxLayout();
 

@@ -31,8 +31,9 @@ signals:
   void undo();
   void redo();
 
-  void toGrayscale();
   void duplicateImage();
+  void grayscale();
+  void inverse();
 
   void toggleTabsView(bool toggled);
 

@@ -36,10 +36,10 @@ void MainMenuBar::createEditMenu() {
 void MainMenuBar::createImageMenu() {
   addMenu(&image_menu_);
 
-  connect(&image_menu_, &ImageMenu::toGrayscale, this,
-          &MainMenuBar::toGrayscale);
   connect(&image_menu_, &ImageMenu::duplicateImage, this,
           &MainMenuBar::duplicateImage);
+  connect(&image_menu_, &ImageMenu::grayscale, this, &MainMenuBar::grayscale);
+  connect(&image_menu_, &ImageMenu::inverse, this, &MainMenuBar::inverse);
 }
 
 void MainMenuBar::createSettingsMenu() {

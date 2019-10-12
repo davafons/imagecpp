@@ -11,19 +11,6 @@
 
 namespace imagecpp {
 
-template <class DialogType>
-static QUndoCommand *createCommandFromDialog(Document *data) {
-  DialogType dialog(data);
-
-  int return_value = dialog.exec();
-
-  if (return_value == QDialog::Accepted) {
-    return dialog.command();
-  }
-
-  return nullptr;
-}
-
 /*
  *
  */

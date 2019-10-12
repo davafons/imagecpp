@@ -3,6 +3,7 @@
 #include <QElapsedTimer>
 
 namespace imagecpp {
+
 PixelOperation::PixelOperation(Document *data, const QString &name)
     : ImageOperation(data, name) {}
 

@@ -18,7 +18,7 @@ class Grayscale : public PixelOperation {
 public:
   enum class Format { NTSC, PAL };
 
-  Grayscale(Document *data, const Format &format = Format::PAL);
+  Grayscale(Document *document, const Format &format = Format::PAL);
   virtual ~Grayscale() = default;
 
 public slots:
@@ -41,7 +41,7 @@ private:
  */
 class GrayscaleConfigDialog : public OperationConfigDialog<Grayscale> {
 public:
-  GrayscaleConfigDialog(Document *data, QWidget *parent = nullptr);
+  GrayscaleConfigDialog(Document *document, QWidget *parent = nullptr);
   virtual ~GrayscaleConfigDialog() = default;
 
 private:
