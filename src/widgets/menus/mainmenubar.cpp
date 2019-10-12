@@ -40,6 +40,8 @@ void MainMenuBar::createImageMenu() {
           &MainMenuBar::duplicateImage);
   connect(&image_menu_, &ImageMenu::grayscale, this, &MainMenuBar::grayscale);
   connect(&image_menu_, &ImageMenu::inverse, this, &MainMenuBar::inverse);
+  connect(&image_menu_, &ImageMenu::linearTransform, this,
+          &MainMenuBar::linearTransform);
 }
 
 void MainMenuBar::createSettingsMenu() {

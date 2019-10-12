@@ -34,6 +34,7 @@ signals:
   void duplicateImage();
   void grayscale();
   void inverse();
+  void linearTransform();
 
   void toggleTabsView(bool toggled);
 

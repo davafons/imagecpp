@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME}
     src/image/histogramview.cpp
     src/operations/grayscale.cpp
     src/operations/inverse.cpp
+    src/operations/lineartransform.cpp
     src/operations/private/pixeloperation.cpp
     src/operations/private/imageoperation.cpp
     src/operations/private/lutoperation.cpp

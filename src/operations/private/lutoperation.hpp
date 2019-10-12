@@ -15,6 +15,9 @@ public:
 private:
   virtual QRgb pixelOperation(int x, int y, QRgb color) const override;
 
+protected slots:
+  virtual void fillLutTables() = 0;
+
 protected:
   static const int LUT_SIZE = 256;
 

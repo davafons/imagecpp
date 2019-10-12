@@ -29,12 +29,21 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(inverse_act_, &QAction::triggered, this, &ImageMenu::inverse);
 
+  // Linear Transform
+  linear_trans_act_ = new QAction(tr("Linear transform..."), this);
+  linear_trans_act_->setStatusTip(
+      tr("Perform a linear transformation (specifying the in/out values)"));
+
+  connect(linear_trans_act_, &QAction::triggered, this,
+          &ImageMenu::linearTransform);
+
   // Menu layout
 
   addAction(duplicate_img_act_);
   addSeparator();
   addAction(grayscale_act_);
   addAction(inverse_act_);
+  addAction(linear_trans_act_);
 }
 
 } // namespace imagecpp

@@ -12,6 +12,7 @@
 #include "image/document.hpp"
 #include "operations/grayscale.hpp"
 #include "operations/inverse.hpp"
+#include "operations/lineartransform.hpp"
 #include "operations/private/operationconfigdialog.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
@@ -105,6 +106,13 @@ void MainWindow::createMenuBar() {
   connect(&main_menu_bar_, &MainMenuBar::inverse, this,
           [this] { executeOperation<Inverse>(mdi_area_->activeDocument()); });
 
+  connect(&main_menu_bar_, &MainMenuBar::linearTransform, this, [this] {
+    executeOperation<LinearTransformConfigDialog>(mdi_area_->activeDocument());
+  });
+
+  // Windows
+
+  // TODO: Change with the dock toggle actions
   connect(&main_menu_bar_, &MainMenuBar::toggleTabsView, mdi_area_,
           &SubWindowsArea::toggleTabsView);
   connect(&main_menu_bar_, &MainMenuBar::toggleHistoryWindow, undo_view_,

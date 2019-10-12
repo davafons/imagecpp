@@ -17,12 +17,14 @@ signals:
 
   void grayscale();
   void inverse();
+  void linearTransform();
 
 private:
   QAction *duplicate_img_act_;
 
   QAction *grayscale_act_;
   QAction *inverse_act_;
+  QAction *linear_trans_act_;
 };
 
 } // namespace imagecpp
