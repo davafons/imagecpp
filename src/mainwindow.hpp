@@ -2,10 +2,10 @@
 
 #include <QMainWindow>
 
+#include "image/histogramview.hpp"
 #include "manager/imagemanager.hpp"
 #include "widgets/menus/mainmenubar.hpp"
 #include "widgets/statusbar/mainstatusbar.hpp"
-#include "image/histogramview.hpp"
 
 // Forward declarations
 class QUndoView;

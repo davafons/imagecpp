@@ -2,6 +2,7 @@
 
 #include <QChart>
 #include <QChartView>
+#include <QValueAxis>
 
 #include "histogram.hpp"
 
@@ -12,10 +13,16 @@ public:
   explicit HistogramView(QWidget *parent = nullptr);
 
 public slots:
-  void setHistogram(const Histogram &histogram);
+  void setHistogram(const Histogram *histogram);
+
+protected:
+  virtual QSize sizeHint() const { return QSize(200, 200); }
 
 private:
   QtCharts::QChart *chart_;
+
+  QtCharts::QValueAxis *x_axis_;
+  QtCharts::QValueAxis *y_axis_;
 };
 
 } // namespace imagecpp

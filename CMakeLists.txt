@@ -33,6 +33,7 @@ add_executable(${PROJECT_NAME}
     src/widgets/menus/windowsmenu.cpp
     src/widgets/menus/settingsmenu.cpp
     src/widgets/menus/mainmenubar.cpp
+    src/widgets/dock/resizabledockwidget.cpp
     src/widgets/statusbar/mainstatusbar.cpp
     src/widgets/statusbar/pixelinformationwidget.cpp
     src/widgets/image/subwindowsarea.cpp

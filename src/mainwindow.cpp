@@ -4,12 +4,15 @@
 #include <QDebug>
 #include <QDockWidget>
 #include <QMenuBar>
+#include <QSizeGrip>
+#include <QSizePolicy>
 #include <QUndoGroup>
 #include <QUndoView>
 
 #include "image/document.hpp"
 #include "operations/grayscale.hpp"
 #include "operations/private/operationconfigdialog.hpp"
+#include "widgets/dock/resizabledockwidget.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/subwindowsarea.hpp"
 #include "widgets/statusbar/pixelinformationwidget.hpp"
@@ -44,20 +47,26 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
             if (image_data) {
               qInfo() << "Active stack: " << image_data->undoStack();
               undo_group_->setActiveStack(image_data->undoStack());
+
+              qDebug() << "Inside conditon";
               hist_view_->setHistogram(image_data->histogram());
             }
           });
 
   // Docks
-  QDockWidget *a = new QDockWidget(tr("Tools"), this);
-  a->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-  a->setWidget(undo_view_);
-  addDockWidget(Qt::RightDockWidgetArea, a);
+  ResizableDockWidget *histogram_dock =
+      new ResizableDockWidget(tr("Histogram"), this);
+  histogram_dock->setAllowedAreas(Qt::LeftDockWidgetArea |
+                                  Qt::RightDockWidgetArea);
+  histogram_dock->setWidget(hist_view_);
+  addDockWidget(Qt::RightDockWidgetArea, histogram_dock);
 
-  QDockWidget *b = new QDockWidget(tr("Histogram"), this);
-  b->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-  b->setWidget(hist_view_);
-  addDockWidget(Qt::RightDockWidgetArea, b);
+  ResizableDockWidget *history_dock =
+      new ResizableDockWidget(tr("History"), this);
+  history_dock->setAllowedAreas(Qt::LeftDockWidgetArea |
+                                Qt::RightDockWidgetArea);
+  history_dock->setWidget(undo_view_);
+  addDockWidget(Qt::RightDockWidgetArea, history_dock);
 
   // ImageManager
   connect(&image_manager_, &ImageManager::imageOpened, mdi_area_,
@@ -67,8 +76,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
           [this](Document *image_data) {
             Q_CHECK_PTR(image_data);
             if (image_data) {
-              undo_group_->addStack(image_data->undoStack());
               qInfo() << "Add new undo stack: " << image_data->undoStack();
+              undo_group_->addStack(image_data->undoStack());
+              connect(image_data->histogram(), &Histogram::histogramUpdated,
+                      hist_view_, &HistogramView::setHistogram);
             }
           });
 

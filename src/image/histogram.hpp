@@ -16,17 +16,26 @@ public:
   virtual ~Histogram() = default;
 
   // TODO: Alternative to return const
-  QtCharts::QBarSet *red() const { return h_r_; }
-  QtCharts::QBarSet *green() const { return h_g_; }
-  QtCharts::QBarSet *blue() const { return h_b_; }
+  QtCharts::QBarSet *redBars() const;
+  QtCharts::QBarSet *greenBars() const;
+  QtCharts::QBarSet *blueBars() const;
+
+signals:
+  void histogramUpdated(const Histogram *histogram);
 
 public slots:
   void generateHistogram(const Image *image);
 
 private:
-  QtCharts::QBarSet *h_r_;
-  QtCharts::QBarSet *h_g_;
-  QtCharts::QBarSet *h_b_;
+  static const size_t HISTOGRAM_SIZE = 256;
+
+  QtCharts::QBarSet *createBarSet(const std::array<int, HISTOGRAM_SIZE> &h,
+                                  const QColor &color) const;
+
+private:
+  std::array<int, HISTOGRAM_SIZE> r_h_;
+  std::array<int, HISTOGRAM_SIZE> g_h_;
+  std::array<int, HISTOGRAM_SIZE> b_h_;
 };
 
 } // namespace imagecpp
