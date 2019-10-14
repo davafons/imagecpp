@@ -2,6 +2,8 @@
 
 #include <QIntValidator>
 #include <QLineEdit>
+#include <QList>
+#include <QSpinBox>
 
 #include <map>
 
@@ -18,19 +20,23 @@ namespace imagecpp {
  *
  */
 class LinearTransform : public LutOperation {
+  Q_OBJECT
+
 public:
   // Constructors
 
   explicit LinearTransform(Document *document,
                            const std::map<int, int> &steps = std::map<int, int>{
-                               {4, 0}, {255, 255}});
+                               {0, 0}, {255, 255}});
 
   // Getters and Setters
   void addStep(int in, int out);
   void removeStep(int in);
 
   const std::map<int, int> &steps() const { return steps_; }
+  void setSteps(std::map<int, int> steps);
 
+protected slots:
   virtual void fillLutTables() override;
 
 private:
@@ -67,54 +73,31 @@ private:
 /*
  *
  */
-class InOutItem : public QWidget {
+class Step : public QWidget {
   Q_OBJECT
 
 public:
-  InOutItem(const std::map<int, int> &map, int in, int out,
-            QWidget *parent = nullptr)
-      : QWidget(parent) {
-    QHBoxLayout *hbox = new QHBoxLayout();
-
-    in_edit_ = new QLineEdit(QString::number(in));
-    out_edit_ = new QLineEdit(QString::number(out));
-
-    in_edit_->setValidator(new QIntValidator(0, 255, in_edit_));
-    out_edit_->setValidator(new QIntValidator(0, 255, out_edit_));
-
-    delete_button_ = new QPushButton(tr("Delete"));
-
-    hbox->addWidget(new QLabel(tr("In")));
-    hbox->addWidget(in_edit_);
-    hbox->addWidget(new QLabel(tr("Out")));
-    hbox->addWidget(out_edit_);
-    hbox->addWidget(delete_button_);
-
-    connect(delete_button_, &QPushButton::clicked, this, [this] {
-      setParent(nullptr);
-      emit itemDeleted(this);
-    });
-
-    connect(in_edit_, &QLineEdit::editingFinished, this,
-            [this] { emit inModified(this); });
-    connect(out_edit_, &QLineEdit::editingFinished, this,
-            [this] { emit outModified(this); });
-
-    setLayout(hbox);
-  }
+  Step(int in, int out, QWidget *parent = nullptr);
 
   int in() const { return in_edit_->text().toInt(); }
   int out() const { return out_edit_->text().toInt(); }
 
 signals:
-  void inModified(InOutItem *step);
-  void outModified(InOutItem *step);
-  void itemDeleted(InOutItem *step);
+  void inModified(Step *step);
+  void outModified(Step *step);
+  void stepRemoved(Step *step);
+
+public slots:
+  void setIn(int in) {
+    in_edit_->setValue(in);
+    emit inModified(this);
+  }
+  void setOut(int out) { out_edit_->setValue(out); }
 
 private:
-  QLineEdit *in_edit_;
-  QLineEdit *out_edit_;
-  QPushButton *delete_button_;
+  QSpinBox *in_edit_;
+  QSpinBox *out_edit_;
+  QPushButton *remove_button_;
 };
 
 /*
@@ -130,15 +113,25 @@ public:
   virtual ~LinearTransformConfigDialog() = default;
 
 private slots:
-  void addStep(int in, int out);
-  void removeStep(InOutItem *inout);
+  void addNewStep(int in, int out);
+  void removeStep(Step *inout);
 
-  void inModified(InOutItem *step);
+  void inModified(Step *step);
+  void outModified(Step *step);
 
-  void addNextEmptyStep();
+  void updateSteps();
 
 private:
-  QVBoxLayout *steps_list_layout_;
+  void addNextEmptyStep();
+  void insertStepOrderedInLayout(Step *step);
+
+  std::map<int, int> generateMap();
+
+  // int findNextGap(Step *step);
+
+private:
+  QVBoxLayout *steps_layout_;
+  QList<Step *> steps_list_;
 
   QPushButton *add_button_;
 };
