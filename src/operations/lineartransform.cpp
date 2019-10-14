@@ -41,16 +41,43 @@ LinearTransformConfigDialog::LinearTransformConfigDialog(Document *document,
     addStep(inout.first, inout.second);
   }
 
-  connect(add_button_, &QPushButton::clicked, this, [this] { addStep(); });
+  connect(add_button_, &QPushButton::clicked, this,
+          &LinearTransformConfigDialog::addNextEmptyStep);
 }
 
 void LinearTransformConfigDialog::addStep(int in, int out) {
-  InOutItem *step = new InOutItem(in, out);
+  operation_.addStep(in, out);
 
-  connect(step, &InOutItem::itemDeleted, steps_list_layout_,
-          &QLayout::removeWidget);
+  InOutItem *step = new InOutItem(in, out);
+  connect(step, &InOutItem::itemDeleted, this,
+          &LinearTransformConfigDialog::removeStep);
+
+  connect(step, &InOutItem::inModified, this,
+          &LinearTransformConfigDialog::inModified);
 
   steps_list_layout_->insertWidget(in, step);
+}
+
+void LinearTransformConfigDialog::removeStep(InOutItem *inout) {
+  operation_.removeStep(inout->in());
+  steps_list_layout_->removeWidget(inout);
+}
+
+void LinearTransformConfigDialog::inModified(InOutItem *inout) {
+  int in = inout->in();
+  int out = inout->out();
+
+  removeStep(inout);
+  addStep(in, out);
+}
+
+void LinearTransformConfigDialog::addNextEmptyStep() {
+  for (int i = 0; i < 256; ++i) {
+    if (!operation_.steps().count(i)) {
+      addStep(i, i);
+      break;
+    }
+  }
 }
 
 } // namespace imagecpp

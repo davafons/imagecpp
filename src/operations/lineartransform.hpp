@@ -23,7 +23,7 @@ public:
 
   explicit LinearTransform(Document *document,
                            const std::map<int, int> &steps = std::map<int, int>{
-                               {0, 0}, {255, 255}});
+                               {4, 0}, {255, 255}});
 
   // Getters and Setters
   void addStep(int in, int out);
@@ -38,6 +38,10 @@ private:
 };
 
 // --- Dialog ---
+
+/*
+ *
+ */
 class InOutItem : public QWidget {
   Q_OBJECT
 
@@ -59,8 +63,15 @@ public:
     hbox->addWidget(out_edit_);
     hbox->addWidget(delete_button_);
 
-    connect(delete_button_, &QPushButton::clicked, this,
-            [this] { setParent(nullptr); emit itemDeleted(this); });
+    connect(delete_button_, &QPushButton::clicked, this, [this] {
+      setParent(nullptr);
+      emit itemDeleted(this);
+    });
+
+    connect(in_edit_, &QLineEdit::editingFinished, this,
+            [this] { emit inModified(this); });
+    connect(out_edit_, &QLineEdit::editingFinished, this,
+            [this] { emit outModified(this); });
 
     setLayout(hbox);
   }
@@ -69,6 +80,8 @@ public:
   int out() const { return out_edit_->text().toInt(); }
 
 signals:
+  void inModified(InOutItem *step);
+  void outModified(InOutItem *step);
   void itemDeleted(InOutItem *step);
 
 private:
@@ -76,6 +89,7 @@ private:
   QLineEdit *out_edit_;
   QPushButton *delete_button_;
 };
+
 /*
  *
  */
@@ -89,7 +103,12 @@ public:
   virtual ~LinearTransformConfigDialog() = default;
 
 private slots:
-  void addStep(int in = 0, int out = 0);
+  void addStep(int in, int out);
+  void removeStep(InOutItem *inout);
+
+  void inModified(InOutItem *step);
+
+  void addNextEmptyStep();
 
 private:
   QVBoxLayout *steps_list_layout_;
