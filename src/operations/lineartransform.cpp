@@ -48,7 +48,7 @@ LinearTransformConfigDialog::LinearTransformConfigDialog(Document *document,
 void LinearTransformConfigDialog::addStep(int in, int out) {
   operation_.addStep(in, out);
 
-  InOutItem *step = new InOutItem(in, out);
+  InOutItem *step = new InOutItem(operation_.steps(), in, out);
   connect(step, &InOutItem::itemDeleted, this,
           &LinearTransformConfigDialog::removeStep);
 
@@ -56,6 +56,30 @@ void LinearTransformConfigDialog::addStep(int in, int out) {
           &LinearTransformConfigDialog::inModified);
 
   steps_list_layout_->insertWidget(in, step);
+
+  qDebug() << "New index: " << steps_list_layout_->indexOf(step);
+
+  // Lista de InoutItems (QVector<InOutItem*> items)
+  // Al insertar uno:
+  // Insertar en la lista.
+  // Para el layout:
+  // Comparar el in del objeto con el de cada item. Si se se encuentra un item tal que
+  // in < item.in, significa que el objeto va insertado justo detrás de item. Utilizar
+  // layout->indexof(item) para saber su posición y layout->insertWidget(pos - 1, ) para
+  // insertarlo
+  //
+  // Al modificar uno:
+  // Borrar SOLO DEL LAYOUT (no de la lista) y reinsertar en el layout ordenado (utilizando el método anterior)
+  //
+  // Al borrar uno:
+  // Borrar de la lista y del layout
+  //
+  // Para obtener una lista usable:
+  // Iterar todos los elementos de la lista y construir un array de 256 con el valor de
+  // vout correspondiente para cada índice, o devolver un set o algo parecido.
+  //
+  // TODO: Pensar como evitar que en Vin se escriban valores que ya están repetidos en
+  // otros elementos de la lista
 }
 
 void LinearTransformConfigDialog::removeStep(InOutItem *inout) {
@@ -67,8 +91,10 @@ void LinearTransformConfigDialog::inModified(InOutItem *inout) {
   int in = inout->in();
   int out = inout->out();
 
-  removeStep(inout);
-  addStep(in, out);
+  qDebug() << "Old index: " << steps_list_layout_->indexOf(inout);
+
+  steps_list_layout_->removeWidget(inout);
+  steps_list_layout_->insertWidget(in, inout);
 }
 
 void LinearTransformConfigDialog::addNextEmptyStep() {

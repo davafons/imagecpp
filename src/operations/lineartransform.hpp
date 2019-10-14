@@ -38,6 +38,31 @@ private:
 };
 
 // --- Dialog ---
+//
+
+// template <class T> class QItemValidator : public QIntValidator {
+// public:
+//   QItemValidator(const T &data, int min, int max, QObject *parent = nullptr)
+//       : QIntValidator(min, max, parent), data_(data) {}
+//
+//   virtual QValidator::State validate(QString &input, int &pos) const override
+//   {
+//     QValidator::State range_state = QIntValidator::validate(input, pos);
+//
+//     if (range_state == QValidator::State::Acceptable) {
+//       if (data_.count(input.toInt())) {
+//         return QValidator::State::Invalid;
+//       }
+//
+//       return QValidator::State::Acceptable;
+//     }
+//
+//     return range_state;
+//   }
+//
+// private:
+//   const T &data_;
+// };
 
 /*
  *
@@ -46,7 +71,9 @@ class InOutItem : public QWidget {
   Q_OBJECT
 
 public:
-  InOutItem(int in, int out, QWidget *parent = nullptr) : QWidget(parent) {
+  InOutItem(const std::map<int, int> &map, int in, int out,
+            QWidget *parent = nullptr)
+      : QWidget(parent) {
     QHBoxLayout *hbox = new QHBoxLayout();
 
     in_edit_ = new QLineEdit(QString::number(in));
