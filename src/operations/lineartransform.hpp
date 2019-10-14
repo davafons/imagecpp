@@ -4,6 +4,7 @@
 #include <QLineEdit>
 #include <QList>
 #include <QSpinBox>
+#include <QChart>
 
 #include <map>
 
@@ -125,8 +126,6 @@ private:
   void addNextEmptyStep();
   void insertStepOrderedInLayout(Step *step);
 
-  std::map<int, int> generateMap();
-
   // int findNextGap(Step *step);
 
 private:
@@ -134,6 +133,8 @@ private:
   QList<Step *> steps_list_;
 
   QPushButton *add_button_;
+
+  QtCharts::QChart *line_chart_;
 };
 
 } // namespace imagecpp

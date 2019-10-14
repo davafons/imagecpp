@@ -1,8 +1,11 @@
 #include "lineartransform.hpp"
 
+#include <QChartView>
 #include <QLineEdit>
+#include <QLineSeries>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QValueAxis>
 
 namespace imagecpp {
 
@@ -79,43 +82,46 @@ Step::Step(int in, int out, QWidget *parent) : QWidget(parent) {
 LinearTransformConfigDialog::LinearTransformConfigDialog(Document *document,
                                                          QWidget *parent)
     : OperationConfigDialog(document, parent), steps_layout_(new QVBoxLayout()),
-      add_button_(new QPushButton(tr("Add new step"))) {
+      add_button_(new QPushButton(tr("Add new step"))),
+      line_chart_(new QtCharts::QChart()) {
+
+  QHBoxLayout *hbox = new QHBoxLayout();
 
   steps_layout_->setAlignment(Qt::AlignTop);
+  steps_layout_->addWidget(add_button_, 0, Qt::AlignBottom);
 
-  settings_layout_->addLayout(steps_layout_);
-  settings_layout_->addWidget(add_button_);
+  settings_layout_->addLayout(hbox);
+
+  hbox->addLayout(steps_layout_);
 
   addNewStep(0, 0);
   addNewStep(255, 255);
 
   connect(add_button_, &QPushButton::clicked, this,
           &LinearTransformConfigDialog::addNextEmptyStep);
-}
 
-// Lista de InoutItems (QVector<InOutItem*> items)
-// Al insertar uno:
-// Insertar en la lista.
-// Para el layout:
-// Comparar el in del objeto con el de cada item. Si se se encuentra un item
-// tal que in < item.in, significa que el objeto va insertado justo detrás de
-// item. Utilizar layout->indexof(item) para saber su posición y
-// layout->insertWidget(pos - 1, ) para insertarlo
-//
-// Al modificar uno:
-// Borrar SOLO DEL LAYOUT (no de la lista) y reinsertar en el layout ordenado
-// (utilizando el método anterior)
-//
-// Al borrar uno:
-// Borrar de la lista y del layout
-//
-// Para obtener una lista usable:
-// Iterar todos los elementos de la lista y construir un array de 256 con el
-// valor de vout correspondiente para cada índice, o devolver un set o algo
-// parecido.
-//
-// TODO: Pensar como evitar que en Vin se escriban valores que ya están
-// repetidos en otros elementos de la lista
+  // Setup  chart
+  QtCharts::QValueAxis *x_axis = new QtCharts::QValueAxis();
+  x_axis->setRange(0, 255);
+  x_axis->setLabelFormat("%d");
+  x_axis->setTickCount(5);
+
+  QtCharts::QValueAxis *y_axis = new QtCharts::QValueAxis();
+  y_axis->setRange(0, 255);
+  y_axis->setLabelFormat("%d");
+  y_axis->setTickCount(5);
+
+  line_chart_->legend()->hide();
+  line_chart_->addAxis(x_axis, Qt::AlignBottom);
+  line_chart_->addAxis(y_axis, Qt::AlignLeft);
+
+  QtCharts::QChartView *chart_view = new QtCharts::QChartView(line_chart_);
+  chart_view->setRenderHint(QPainter::Antialiasing);
+  chart_view->setRubberBand(QtCharts::QChartView::NoRubberBand);
+
+  chart_view->setFixedSize(350, 350);
+  hbox->addWidget(chart_view);
+}
 
 void LinearTransformConfigDialog::addNewStep(int in, int out) {
   Step *step = new Step(in, out);
@@ -179,22 +185,27 @@ void LinearTransformConfigDialog::inModified(Step *step) {
 }
 
 void LinearTransformConfigDialog::updateSteps() {
-  operation_.setSteps(generateMap());
-}
-
-void LinearTransformConfigDialog::outModified(Step *step) { updateSteps(); }
-
-std::map<int, int> LinearTransformConfigDialog::generateMap() {
   std::map<int, int> steps_map;
+  QtCharts::QLineSeries *series = new QtCharts::QLineSeries();
 
   for (const auto &step : steps_list_) {
     steps_map[step->in()] = step->out();
   }
 
-  qDebug() << "Set new map" << steps_map;
+  // Now its sorted
+  for (const auto &pair : steps_map) {
+    series->append(pair.first, pair.second);
+  }
 
-  return steps_map;
+  line_chart_->removeAllSeries();
+  line_chart_->addSeries(series);
+
+  operation_.setSteps(steps_map);
+
+  // QLineSeries *series
 }
+
+void LinearTransformConfigDialog::outModified(Step *step) { updateSteps(); }
 
 void LinearTransformConfigDialog::addNextEmptyStep() {
   if (steps_list_.size() == 256) {
