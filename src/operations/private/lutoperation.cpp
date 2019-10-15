@@ -14,4 +14,12 @@ QRgb LutOperation::pixelOperation(int x, int y, QRgb color) const {
                qAlpha(color));
 }
 
+void LutOperation::generateTargetImage() {
+  qDebug() << "Called LutOperation generate Image";
+  fillLutTables();
+
+  // Continue with parent
+  ImageOperation::generateTargetImage();
+}
+
 } // namespace imagecpp

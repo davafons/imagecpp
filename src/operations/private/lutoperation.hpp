@@ -17,6 +17,7 @@ private:
 
 protected slots:
   virtual void fillLutTables() = 0;
+  virtual void generateTargetImage() override;
 
 protected:
   static const int LUT_SIZE = 256;

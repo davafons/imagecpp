@@ -18,10 +18,29 @@ LinearTransform::LinearTransform(Document *document,
 }
 
 void LinearTransform::fillLutTables() {
-  for (int i = 0; i < LUT_SIZE; ++i) {
-    r_lut_[i] = LUT_SIZE - i;
-    g_lut_[i] = LUT_SIZE - i;
-    b_lut_[i] = LUT_SIZE - i;
+  int x_i = steps_.begin()->first;
+  int y_i = steps_.begin()->second;
+
+  for (auto it = std::next(steps_.cbegin()); it != steps_.cend(); ++it) {
+    int x_f = it->first;
+    int y_f = it->second;
+
+    int m = (y_f - y_i) / (x_f - x_i);
+    int n = y_i - m * x_i;
+
+    for (int vin = x_i; vin <= x_f; ++vin) {
+      r_lut_[vin] = m * vin + n;
+      g_lut_[vin] = m * vin + n;
+      b_lut_[vin] = m * vin + n;
+    }
+
+    x_i = x_f;
+    y_i = y_f;
+  }
+
+  qDebug() << "Table";
+  for (int i = 0; i < 256; ++i) {
+    qDebug() << i << "=" << r_lut_[i];
   }
 }
 
@@ -37,7 +56,7 @@ void LinearTransform::removeStep(int in) {
 
 void LinearTransform::setSteps(std::map<int, int> steps) {
   steps_ = steps;
-  // emit propertyChanged();
+  emit propertyChanged();
 }
 
 // --- Dialog ---
