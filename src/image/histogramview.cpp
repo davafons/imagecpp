@@ -19,7 +19,9 @@ HistogramView::HistogramView(QWidget *parent)
     : QWidget(parent), chart_(new QChart()), x_axis_(new QValueAxis()),
       y_axis_(new QValueAxis()), red_chart_radio_(new QRadioButton("Red")),
       green_chart_radio_(new QRadioButton("Green")),
-      blue_chart_radio_(new QRadioButton("Blue")) {
+      blue_chart_radio_(new QRadioButton("Blue")), bar_values_(new QLabel()) {
+
+  setMouseTracking(true);
 
   // Setup chart properties
   QStringList categories;
@@ -40,6 +42,7 @@ HistogramView::HistogramView(QWidget *parent)
   chart_->legend()->hide();
   chart_->setBackgroundRoundness(0);
   chart_->setMargins(QMargins(0, 0, 0, 0));
+  chart_->setAcceptHoverEvents(true);
 
   // Setup widgets
   QVBoxLayout *vbox_layout = new QVBoxLayout();
@@ -59,6 +62,7 @@ HistogramView::HistogramView(QWidget *parent)
   chart_view->setRenderHint(QPainter::Antialiasing);
 
   vbox_layout->addWidget(chart_view);
+  vbox_layout->addWidget(bar_values_);
   vbox_layout->addWidget(rgb_box);
 
   setLayout(vbox_layout);
@@ -93,6 +97,17 @@ void HistogramView::changeDisplayedBars(QtCharts::QBarSet *bars) {
 
   chart_->removeAllSeries();
   chart_->addSeries(series);
+
+  connect(series, &QAbstractBarSeries::hovered, this,
+          [this](bool status, int index, QBarSet *barset) {
+            if (status) {
+              bar_values_->setText(QString("Index: %1\t-\tValue: %2")
+                                       .arg(index)
+                                       .arg(barset->at(index)));
+            } else {
+              bar_values_->clear();
+            }
+          });
 }
 
 } // namespace imagecpp

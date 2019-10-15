@@ -4,6 +4,7 @@
 #include <QChartView>
 #include <QRadioButton>
 #include <QValueAxis>
+#include <QLabel>
 
 #include "histogram.hpp"
 
@@ -34,6 +35,8 @@ private:
   QRadioButton *red_chart_radio_;
   QRadioButton *green_chart_radio_;
   QRadioButton *blue_chart_radio_;
+
+  QLabel *bar_values_;
 
   const Histogram *active_histogram_;
 };
