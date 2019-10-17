@@ -19,7 +19,8 @@ HistogramView::HistogramView(QWidget *parent)
     : QWidget(parent), chart_(new QChart()), x_axis_(new QValueAxis()),
       y_axis_(new QValueAxis()), red_chart_radio_(new QRadioButton("Red")),
       green_chart_radio_(new QRadioButton("Green")),
-      blue_chart_radio_(new QRadioButton("Blue")), bar_values_(new QLabel()) {
+      blue_chart_radio_(new QRadioButton("Blue")), bar_values_(new QLabel()),
+      mean_values_(new QLabel()) {
 
   setMouseTracking(true);
 
@@ -63,7 +64,10 @@ HistogramView::HistogramView(QWidget *parent)
 
   vbox_layout->addWidget(chart_view);
   vbox_layout->addWidget(bar_values_);
+  vbox_layout->addWidget(mean_values_);
   vbox_layout->addWidget(rgb_box);
+
+  mean_values_->setText("Mean: ");
 
   setLayout(vbox_layout);
 
@@ -81,10 +85,13 @@ void HistogramView::setHistogram(const Histogram *histogram) {
 
     if (red_chart_radio_->isChecked()) {
       changeDisplayedBars(active_histogram_->redBars());
+      mean_values_->setText(QString("Mean: %1").arg(histogram->redMean()));
     } else if (green_chart_radio_->isChecked()) {
       changeDisplayedBars(active_histogram_->greenBars());
+      mean_values_->setText(QString("Mean: %1").arg(histogram->greenMean()));
     } else if (blue_chart_radio_->isChecked()) {
       changeDisplayedBars(active_histogram_->blueBars());
+      mean_values_->setText(QString("Mean: %1").arg(histogram->blueMean()));
     }
   }
 }

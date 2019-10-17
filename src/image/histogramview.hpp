@@ -37,6 +37,7 @@ private:
   QRadioButton *blue_chart_radio_;
 
   QLabel *bar_values_;
+  QLabel *mean_values_;
 
   const Histogram *active_histogram_;
 };

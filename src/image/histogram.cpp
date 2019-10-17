@@ -7,7 +7,8 @@
 
 namespace imagecpp {
 
-Histogram::Histogram(const Image *image, QObject *parent) : QObject(parent) {
+Histogram::Histogram(const Image *image, QObject *parent)
+    : QObject(parent), r_mean_(0), g_mean_(0), b_mean_(0) {
   r_h_.fill(0);
   g_h_.fill(0);
   b_h_.fill(0);
@@ -35,6 +36,12 @@ QtCharts::QBarSet *Histogram::blueBars() const {
   return createBarSet(b_h_, Qt::blue);
 }
 
+float Histogram::redMean() const { return r_mean_; }
+
+float Histogram::greenMean() const { return g_mean_; }
+
+float Histogram::blueMean() const { return b_mean_; }
+
 void Histogram::generateHistogram(const Image *image) {
   QElapsedTimer timer;
   timer.start();
@@ -51,9 +58,27 @@ void Histogram::generateHistogram(const Image *image) {
     b_h_[qBlue(pixels[p])] += 1;
   }
 
+  r_mean_ = calculateMean(r_h_, image->pixelCount());
+  g_mean_ = calculateMean(g_h_, image->pixelCount());
+  b_mean_ = calculateMean(b_h_, image->pixelCount());
+
   qDebug() << "The histogram took" << timer.elapsed() << "ms to generate";
 
   emit histogramChanged(this);
+}
+
+int Histogram::calculateMean(const std::array<int, HISTOGRAM_SIZE> &h,
+                             int size) const {
+  float mean = 0;
+  for (int i = 0; i < HISTOGRAM_SIZE; ++i) {
+    mean += (i + 1) * h[i];
+  }
+
+  mean /= size;
+
+  qDebug() << "Mean" << mean;
+
+  return mean;
 }
 
 QtCharts::QBarSet *
