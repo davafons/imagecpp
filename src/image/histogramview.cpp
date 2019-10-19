@@ -4,6 +4,7 @@
 #include <QBarSeries>
 #include <QChart>
 #include <QDebug>
+#include <QFont>
 #include <QGraphicsLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -28,13 +29,18 @@ HistogramView::HistogramView(QWidget *parent)
   setMouseTracking(true);
 
   // Create X axis
+  QFont axis_font;
+  axis_font.setPixelSize(10);
+
   x_axis_->setRange(0, 255);
   x_axis_->setLabelFormat("%d");
-  x_axis_->setTickCount(9);
+  x_axis_->setTickCount(5);
+  x_axis_->setLabelsFont(axis_font);
 
   // Create Y axis
   y_axis_->setLabelFormat("%d");
-  y_axis_->applyNiceNumbers();
+  y_axis_->setMin(0);
+  y_axis_->setLabelsFont(axis_font);
 
   // Attach axis to chart
   chart_->addAxis(x_axis_, Qt::AlignBottom);
@@ -50,15 +56,15 @@ HistogramView::HistogramView(QWidget *parent)
   chart_->addSeries(blue_series_);
 
   // Setup series
-  red_series_->setBarWidth(1);
+  red_series_->setBarWidth(0.5);
   red_series_->attachAxis(x_axis_);
   red_series_->attachAxis(y_axis_);
 
-  green_series_->setBarWidth(1);
+  green_series_->setBarWidth(0.5);
   green_series_->attachAxis(x_axis_);
   green_series_->attachAxis(y_axis_);
 
-  blue_series_->setBarWidth(1);
+  blue_series_->setBarWidth(0.5);
   blue_series_->attachAxis(x_axis_);
   blue_series_->attachAxis(y_axis_);
 
@@ -74,6 +80,7 @@ HistogramView::HistogramView(QWidget *parent)
 
   chart_view_ = new QtCharts::QChartView(chart_);
   chart_view_->setRenderHint(QPainter::Antialiasing);
+  chart_view_->setContentsMargins(0, 0, 0, 0);
 
   // Tie all widgets together on a single vertical box
   QVBoxLayout *vbox_layout = new QVBoxLayout();
@@ -81,6 +88,8 @@ HistogramView::HistogramView(QWidget *parent)
   vbox_layout->addWidget(histogram_type_selector_);
   vbox_layout->addWidget(bar_values_);
   vbox_layout->addWidget(mean_values_);
+
+  vbox_layout->setSpacing(0);
 
   setLayout(vbox_layout);
 }
