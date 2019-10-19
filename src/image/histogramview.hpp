@@ -23,10 +23,11 @@ public:
 
 public slots:
   void setHistogram(const Histogram *histogram);
-  void setHistogramType(Type type);
+  void setType(Type type);
 
 private slots:
-  void handleMarkerClicked();
+  void updateHistogramSeries();
+  void setMarkerStyle(QLegendMarker *marker);
 
 protected:
   virtual QSize sizeHint() const { return QSize(200, 200); }

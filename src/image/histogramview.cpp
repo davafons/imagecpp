@@ -68,50 +68,50 @@ HistogramView::HistogramView(QWidget *parent)
   histogram_type_selector_->addItem("Default");
   histogram_type_selector_->addItem("Cummulative");
 
+  connect(histogram_type_selector_,
+          QOverload<int>::of(&QComboBox::currentIndexChanged),
+          [this](int index) { setType(static_cast<Type>(index)); });
+
   chart_view_ = new QtCharts::QChartView(chart_);
   chart_view_->setRenderHint(QPainter::Antialiasing);
 
   // Tie all widgets together on a single vertical box
   QVBoxLayout *vbox_layout = new QVBoxLayout();
   vbox_layout->addWidget(chart_view_);
+  vbox_layout->addWidget(histogram_type_selector_);
   vbox_layout->addWidget(bar_values_);
   vbox_layout->addWidget(mean_values_);
-  vbox_layout->addWidget(histogram_type_selector_);
 
   setLayout(vbox_layout);
 }
 
 void HistogramView::setHistogram(const Histogram *histogram) {
-  if (histogram) {
-    active_histogram_ = histogram;
+  active_histogram_ = histogram;
 
-    qDebug() << active_histogram_->red().modeValue();
-    qDebug() << active_histogram_->green().modeValue();
-    qDebug() << active_histogram_->blue().modeValue();
-
-    setHistogramType(type_);
-
-    // const auto markers = chart_->legend()->markers();
-    // qDebug() << "Markers" << markers;
-    // for (QLegendMarker *marker : markers) {
-    //   connect(marker, &QLegendMarker::clicked, this,
-    //           &HistogramView::handleMarkerClicked);
-    // }
-  }
+  updateHistogramSeries();
 }
 
-void HistogramView::setHistogramType(Type type) {
+void HistogramView::setType(Type type) {
+  type_ = type;
+
+  updateHistogramSeries();
+}
+
+void HistogramView::updateHistogramSeries() {
+  if (!active_histogram_) {
+    return;
+  }
+
   int max_y_value = 0;
 
-  switch (type) {
+  red_series_->clear();
+  green_series_->clear();
+  blue_series_->clear();
+
+  switch (type_) {
   case Type::Default:
-    red_series_->clear();
     red_series_->append(active_histogram_->red().bars());
-
-    green_series_->clear();
     green_series_->append(active_histogram_->green().bars());
-
-    blue_series_->clear();
     blue_series_->append(active_histogram_->blue().bars());
 
     // Highest Y-axis value is the highest series
@@ -121,13 +121,8 @@ void HistogramView::setHistogramType(Type type) {
     break;
 
   case Type::Cummulative:
-    red_series_->clear();
     red_series_->append(active_histogram_->red().cummulativeBars());
-
-    green_series_->clear();
     green_series_->append(active_histogram_->green().cummulativeBars());
-
-    blue_series_->clear();
     blue_series_->append(active_histogram_->blue().cummulativeBars());
 
     max_y_value = active_histogram_->red().pixelCount();
@@ -138,13 +133,50 @@ void HistogramView::setHistogramType(Type type) {
     break;
   }
 
+  // Set max y axis value
   y_axis_->setMax(max_y_value);
+
+  // Allow clicks to legend to show/hide series
+  const auto markers = chart_->legend()->markers();
+  for (QLegendMarker *marker : markers) {
+    setMarkerStyle(marker);
+
+    connect(marker, &QLegendMarker::clicked, this, [this] {
+      QLegendMarker *marker = qobject_cast<QLegendMarker *>(sender());
+      // Toggle the visibility of the attached series
+      marker->series()->setVisible(!marker->series()->isVisible());
+      // Update style
+      setMarkerStyle(marker);
+    });
+  }
 }
 
-void HistogramView::handleMarkerClicked() {
-  qDebug() << "Clicked" << sender();
-  QLegendMarker *marker = qobject_cast<QLegendMarker *>(sender());
-  marker->series()->setVisible(!marker->series()->isVisible());
+void HistogramView::setMarkerStyle(QLegendMarker *marker) {
   marker->setVisible(true);
+
+  // Dim the marker, if series is not visible
+  qreal alpha = 1.0;
+
+  if (!marker->series()->isVisible())
+    alpha = 0.5;
+
+  QColor color;
+  QBrush brush = marker->labelBrush();
+  color = brush.color();
+  color.setAlphaF(alpha);
+  brush.setColor(color);
+  marker->setLabelBrush(brush);
+
+  brush = marker->brush();
+  color = brush.color();
+  color.setAlphaF(alpha);
+  brush.setColor(color);
+  marker->setBrush(brush);
+
+  QPen pen = marker->pen();
+  color = pen.color();
+  color.setAlphaF(alpha);
+  pen.setColor(color);
+  marker->setPen(pen);
 }
 } // namespace imagecpp
