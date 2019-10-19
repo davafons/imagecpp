@@ -1,12 +1,48 @@
 #pragma once
 
 #include <QBarSet>
+#include <QColor>
 #include <QObject>
+
 #include <array>
 
 #include "image/image.hpp"
 
 namespace imagecpp {
+
+class Channel {
+public:
+  using HistArray = std::array<int, 256>;
+
+  explicit Channel(const HistArray &h = HistArray(),
+                   const QColor &color = Qt::black);
+
+  // Getters
+  QtCharts::QBarSet *bars() const;
+  QtCharts::QBarSet *accumulativeBars() const;
+
+  float mean() const;
+  float standardDeviation() const;
+
+private:
+  static HistArray calculateAccumulated(const HistArray &h);
+
+  static float calculateMean(const HistArray &h, int pixel_count);
+
+  static float calculateStdDeviation(const HistArray &h, int pixel_count,
+                                     float mean);
+  static QtCharts::QBarSet *createBarSet(const HistArray &h,
+                                         const QColor &color);
+
+private:
+  HistArray h_;     // Histogram
+  HistArray acc_h_; // Accumulative
+
+  float mean_;
+  float std_deviation_;
+
+  QColor color_;
+};
 
 class Histogram : public QObject {
   Q_OBJECT
@@ -35,19 +71,13 @@ public slots:
 private:
   static const size_t HISTOGRAM_SIZE = 256;
 
-  int calculateMean(const std::array<int, HISTOGRAM_SIZE> & h, int size) const;
-
   QtCharts::QBarSet *createBarSet(const std::array<int, HISTOGRAM_SIZE> &h,
                                   const QColor &color) const;
 
 private:
-  std::array<int, HISTOGRAM_SIZE> r_h_;
-  std::array<int, HISTOGRAM_SIZE> g_h_;
-  std::array<int, HISTOGRAM_SIZE> b_h_;
-
-  float r_mean_;
-  float g_mean_;
-  float b_mean_;
+  Channel red_;
+  Channel green_;
+  Channel blue_;
 };
 
 } // namespace imagecpp

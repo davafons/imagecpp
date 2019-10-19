@@ -82,39 +82,50 @@ HistogramView::HistogramView(QWidget *parent)
 void HistogramView::setHistogram(const Histogram *histogram) {
   if (histogram) {
     active_histogram_ = histogram;
+    QBarSeries *series = new QBarSeries();
+    series->append(active_histogram_->redBars());
+    series->append(active_histogram_->greenBars());
+    series->append(active_histogram_->blueBars());
 
-    if (red_chart_radio_->isChecked()) {
-      changeDisplayedBars(active_histogram_->redBars());
-      mean_values_->setText(QString("Mean: %1").arg(histogram->redMean()));
-    } else if (green_chart_radio_->isChecked()) {
-      changeDisplayedBars(active_histogram_->greenBars());
-      mean_values_->setText(QString("Mean: %1").arg(histogram->greenMean()));
-    } else if (blue_chart_radio_->isChecked()) {
-      changeDisplayedBars(active_histogram_->blueBars());
-      mean_values_->setText(QString("Mean: %1").arg(histogram->blueMean()));
-    }
+    series->setOpacity(0.5f);
+
+    series->setBarWidth(1);
+
+    chart_->removeAllSeries();
+    chart_->addSeries(series);
+
+    // if (red_chart_radio_->isChecked()) {
+    //   changeDisplayedBars(active_histogram_->redBars());
+    //   mean_values_->setText(QString("Mean: %1").arg(histogram->redMean()));
+    // } else if (green_chart_radio_->isChecked()) {
+    //   changeDisplayedBars(active_histogram_->greenBars());
+    //   mean_values_->setText(QString("Mean: %1").arg(histogram->greenMean()));
+    // } else if (blue_chart_radio_->isChecked()) {
+    //   changeDisplayedBars(active_histogram_->blueBars());
+    //   mean_values_->setText(QString("Mean: %1").arg(histogram->blueMean()));
+    // }
   }
 }
 
 void HistogramView::changeDisplayedBars(QtCharts::QBarSet *bars) {
-  QBarSeries *series = new QBarSeries();
-  series->append(bars);
-
-  series->setBarWidth(1);
-
-  chart_->removeAllSeries();
-  chart_->addSeries(series);
-
-  connect(series, &QAbstractBarSeries::hovered, this,
-          [this](bool status, int index, QBarSet *barset) {
-            if (status) {
-              bar_values_->setText(QString("Index: %1\t-\tValue: %2")
-                                       .arg(index)
-                                       .arg(barset->at(index)));
-            } else {
-              bar_values_->clear();
-            }
-          });
+  // QBarSeries *series = new QBarSeries();
+  // series->append(bars);
+  //
+  // series->setBarWidth(1);
+  //
+  // chart_->removeAllSeries();
+  // chart_->addSeries(series);
+  //
+  // connect(series, &QAbstractBarSeries::hovered, this,
+  //         [this](bool status, int index, QBarSet *barset) {
+  //           if (status) {
+  //             bar_values_->setText(QString("Index: %1\t-\tValue: %2")
+  //                                      .arg(index)
+  //                                      .arg(barset->at(index)));
+  //           } else {
+  //             bar_values_->clear();
+  //           }
+  //         });
 }
 
 } // namespace imagecpp
