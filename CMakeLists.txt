@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME}
     src/mainwindow.cpp
     src/image/document.cpp
     src/image/histogram.cpp
+    src/image/histogramchannel.cpp
     src/image/image.cpp
     src/image/histogramview.cpp
     src/operations/grayscale.cpp
