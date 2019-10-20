@@ -50,6 +50,12 @@ void Document::setFilePath(QString file_path) {
 void Document::setImage(Image *image) {
   image_ = image;
 
+  if (image) {
+    dimensions_ = image_->size();
+  } else {
+    dimensions_ = QSize();
+  }
+
   emit imageChanged(image);
 }
 

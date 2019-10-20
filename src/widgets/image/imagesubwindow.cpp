@@ -10,7 +10,12 @@ ImageSubWindow::ImageSubWindow(Document *document)
     : display_(new ImageDisplayArea()), document_(document) {
 
   // Setup properties
-  setWindowTitle(document->filePath());
+  QString window_title = tr("(%1 x %2) %3")
+                             .arg(document->dimensions().width())
+                             .arg(document->dimensions().height())
+                             .arg(document->filePath());
+  setWindowTitle(window_title);
+
   setWidget(display_);
 
   display_->onImageOpened(document->image());

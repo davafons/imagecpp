@@ -31,8 +31,7 @@ public:
   // Property getters
   int id() const noexcept { return id_; }
   QString filePath() const noexcept { return file_path_; }
-  // TODO: get image format
-  // TODO: get image size
+  QSize dimensions() const noexcept { return dimensions_; }
 
   // Object getters
   Image *image() { return image_; }
@@ -65,6 +64,7 @@ private:
 
   // Document properties
   QString file_path_;
+  QSize dimensions_;
 
   // Document objects
   Image *image_;
