@@ -22,7 +22,7 @@ HistogramView::HistogramView(QWidget *parent)
       x_axis_(new QValueAxis()), y_axis_(new QValueAxis()),
       type_(Type::Default), red_series_(new QBarSeries()),
       green_series_(new QBarSeries()), blue_series_(new QBarSeries()),
-      histogram_type_selector_(new QComboBox()) {
+      histogram_type_selector_(new QComboBox()), active_histogram_(nullptr) {
 
   QFont axis_font;
   axis_font.setPixelSize(10);
@@ -98,6 +98,7 @@ HistogramView::HistogramView(QWidget *parent)
 
 void HistogramView::setHistogram(const Histogram *histogram) {
   active_histogram_ = histogram;
+
   setLabelsText();
 
   updateHistogramSeries();
@@ -110,13 +111,13 @@ void HistogramView::setType(Type type) {
 }
 
 void HistogramView::updateHistogramSeries() {
-  if (!active_histogram_) {
-    return;
-  }
-
   red_series_->clear();
   green_series_->clear();
   blue_series_->clear();
+
+  if (!active_histogram_) {
+    return;
+  }
 
   int max_y_value = 0;
 
