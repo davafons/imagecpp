@@ -27,6 +27,7 @@ public slots:
 
 private slots:
   void updateHistogramSeries();
+  void setLabelsText();
   void setMarkerStyle(QLegendMarker *marker);
 
 protected:
@@ -48,8 +49,12 @@ private:
   QtCharts::QBarSeries *blue_series_;
 
   // Widgets
-  QLabel *bar_values_;
-  QLabel *mean_values_;
+  QLabel count_label_;
+  QLabel mean_label_;
+  QLabel std_label_;
+  QLabel min_label_;
+  QLabel max_label_;
+  QLabel mode_label_;
 
   QComboBox *histogram_type_selector_;
 

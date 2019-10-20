@@ -8,6 +8,13 @@ HistogramChannel::HistogramChannel(const HistArray &h, const QString &name,
       pixel_count_(0), name_(name), color_(color) {
 
   if (!h.empty()) {
+    auto is_not_zero = [](auto x) { return x != 0; };
+    min_intensity_ =
+        std::find_if(h.cbegin(), h.cend(), is_not_zero) - h.cbegin();
+
+    max_intensity_ =
+        h.crend() - std::find_if(h.crbegin(), h.crend(), is_not_zero) - 1;
+
     mode_ = std::max_element(h.cbegin(), h.cend()) - h.cbegin();
     acc_h_ = calculateCummulative(h);
     pixel_count_ = acc_h_[255];
@@ -33,6 +40,10 @@ float HistogramChannel::standardDeviation() const { return std_deviation_; }
 int HistogramChannel::mode() const { return mode_; }
 
 int HistogramChannel::modeValue() const { return h_[mode_]; }
+
+int HistogramChannel::minIntensity() const { return min_intensity_; }
+
+int HistogramChannel::maxIntensity() const { return max_intensity_; }
 
 int HistogramChannel::pixelCount() const { return pixel_count_; }
 

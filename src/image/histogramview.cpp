@@ -22,7 +22,6 @@ HistogramView::HistogramView(QWidget *parent)
       x_axis_(new QValueAxis()), y_axis_(new QValueAxis()),
       type_(Type::Default), red_series_(new QBarSeries()),
       green_series_(new QBarSeries()), blue_series_(new QBarSeries()),
-      bar_values_(new QLabel()), mean_values_(new QLabel()),
       histogram_type_selector_(new QComboBox()) {
 
   // Setup chart properties
@@ -69,7 +68,15 @@ HistogramView::HistogramView(QWidget *parent)
   blue_series_->attachAxis(y_axis_);
 
   // Setup additional widgets
-  mean_values_->setText("Mean: ");
+  QGroupBox *information_box = new QGroupBox("Information");
+  QVBoxLayout *information_layout = new QVBoxLayout();
+  information_layout->addWidget(&count_label_);
+  information_layout->addWidget(&mean_label_);
+  information_layout->addWidget(&std_label_);
+  information_layout->addWidget(&min_label_);
+  information_layout->addWidget(&max_label_);
+  information_layout->addWidget(&mode_label_);
+  information_box->setLayout(information_layout);
 
   histogram_type_selector_->addItem("Default");
   histogram_type_selector_->addItem("Cummulative");
@@ -80,22 +87,19 @@ HistogramView::HistogramView(QWidget *parent)
 
   chart_view_ = new QtCharts::QChartView(chart_);
   chart_view_->setRenderHint(QPainter::Antialiasing);
-  chart_view_->setContentsMargins(0, 0, 0, 0);
 
   // Tie all widgets together on a single vertical box
   QVBoxLayout *vbox_layout = new QVBoxLayout();
   vbox_layout->addWidget(chart_view_);
   vbox_layout->addWidget(histogram_type_selector_);
-  vbox_layout->addWidget(bar_values_);
-  vbox_layout->addWidget(mean_values_);
-
-  vbox_layout->setSpacing(0);
+  vbox_layout->addWidget(information_box);
 
   setLayout(vbox_layout);
 }
 
 void HistogramView::setHistogram(const Histogram *histogram) {
   active_histogram_ = histogram;
+  setLabelsText();
 
   updateHistogramSeries();
 }
@@ -134,6 +138,7 @@ void HistogramView::updateHistogramSeries() {
     green_series_->append(active_histogram_->green().cummulativeBars());
     blue_series_->append(active_histogram_->blue().cummulativeBars());
 
+    // Highest Y-axis value is the total of pixels on the image
     max_y_value = active_histogram_->red().pixelCount();
     break;
 
@@ -158,6 +163,40 @@ void HistogramView::updateHistogramSeries() {
       setMarkerStyle(marker);
     });
   }
+}
+
+void HistogramView::setLabelsText() {
+  if (!active_histogram_) {
+    return;
+  }
+
+  QString rgb = "<font color=\"red\">%1</font> <font color=\"green\">%2</font> "
+                "<font color=\"blue\">%3</font>";
+
+  const auto red = active_histogram_->red();
+  const auto green = active_histogram_->green();
+  const auto blue = active_histogram_->blue();
+
+  count_label_.setText(
+      QString(tr("Count: %1")).arg(active_histogram_->red().pixelCount()));
+
+  mean_label_.setText(tr("Mean: ") +
+                      rgb.arg(red.mean()).arg(green.mean()).arg(blue.mean()));
+
+  std_label_.setText(tr("Std: ") + rgb.arg(red.standardDeviation())
+                                       .arg(green.standardDeviation())
+                                       .arg(blue.standardDeviation()));
+
+  min_label_.setText(tr("Min: ") + rgb.arg(red.minIntensity())
+                                       .arg(green.minIntensity())
+                                       .arg(blue.minIntensity()));
+
+  max_label_.setText(tr("Max: ") + rgb.arg(red.maxIntensity())
+                                       .arg(green.maxIntensity())
+                                       .arg(blue.maxIntensity()));
+
+  mode_label_.setText(tr("Mode: ") +
+                      rgb.arg(red.mode()).arg(green.mode()).arg(blue.mode()));
 }
 
 void HistogramView::setMarkerStyle(QLegendMarker *marker) {

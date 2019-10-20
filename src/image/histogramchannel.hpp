@@ -22,6 +22,8 @@ public:
   int mode() const;
   int modeValue() const;
 
+  int minIntensity() const;
+  int maxIntensity() const;
   int pixelCount() const;
 
 private:
@@ -43,6 +45,8 @@ private:
   int mode_;
 
   int pixel_count_;
+  int min_intensity_;
+  int max_intensity_;
 
   QString name_;
   QColor color_;
