@@ -53,7 +53,7 @@ HistogramView::HistogramView(QWidget *parent)
   // Setup series
   for (const auto &s : chart_->series()) {
     QBarSeries *bar_series = static_cast<QBarSeries *>(s);
-    bar_series->setBarWidth(0.5f);
+    bar_series->setBarWidth(1.0f);
     bar_series->attachAxis(x_axis_);
     bar_series->attachAxis(y_axis_);
     bar_series->installEventFilter(this);
@@ -90,6 +90,7 @@ HistogramView::HistogramView(QWidget *parent)
   QVBoxLayout *vbox_layout = new QVBoxLayout();
   vbox_layout->addWidget(chart_view_);
   vbox_layout->addWidget(histogram_type_selector_);
+  vbox_layout->addWidget(&mouse_values_label_);
   vbox_layout->addWidget(information_box);
 
   setLayout(vbox_layout);
@@ -253,7 +254,7 @@ bool HistogramView::eventFilter(QObject *object, QEvent *event) {
     index = (index < x_axis_->min()) ? x_axis_->min() : index;
     index = (index > x_axis_->max()) ? x_axis_->max() : index;
 
-    qDebug() << index;
+    updateLabelTextFromMousePosition(index);
 
     return true;
   }
@@ -262,6 +263,23 @@ bool HistogramView::eventFilter(QObject *object, QEvent *event) {
 }
 
 void HistogramView::updateLabelTextFromMousePosition(int index) {
-  // mouse_values_label_.setText(tr("Index: %1\t\t Values: %2 %3 %4"));
+  if (!active_histogram_) {
+    return;
+  }
+
+  QString rgb_placeholder_text =
+      "<font color=\"red\">%1</font> <font color=\"green\">%2</font> "
+      "<font color=\"blue\">%3</font>";
+
+  QString index_text = tr("Index: ") + QString::number(index);
+
+  int red_value = red_series_->barSets()[0]->at(index);
+  int green_value = green_series_->barSets()[0]->at(index);
+  int blue_vale = blue_series_->barSets()[0]->at(index);
+
+  QString rgb_values_text =
+      rgb_placeholder_text.arg(red_value).arg(green_value).arg(blue_vale);
+
+  mouse_values_label_.setText(index_text + "\t\t" + rgb_values_text);
 }
 } // namespace imagecpp
