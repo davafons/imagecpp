@@ -68,7 +68,7 @@ HistogramView::HistogramView(QWidget *parent)
   blue_series_->attachAxis(y_axis_);
 
   // Setup additional widgets
-  QGroupBox *information_box = new QGroupBox("Information");
+  QGroupBox *information_box = new QGroupBox();
   QVBoxLayout *information_layout = new QVBoxLayout();
   information_layout->addWidget(&count_label_);
   information_layout->addWidget(&mean_label_);

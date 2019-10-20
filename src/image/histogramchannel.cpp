@@ -81,7 +81,7 @@ float HistogramChannel::calculateStdDeviation(const HistArray &h,
   float deviation = 0.0f;
 
   for (size_t i = 0; i < h.size(); ++i) {
-    deviation += std::pow(h[i] - mean, 2);
+    deviation += std::pow(i - mean, 2) * h[i];
   }
 
   deviation /= pixel_count;
