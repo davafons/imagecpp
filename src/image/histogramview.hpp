@@ -4,6 +4,7 @@
 #include <QChart>
 #include <QChartView>
 #include <QComboBox>
+#include <QHoverEvent>
 #include <QLabel>
 #include <QRadioButton>
 #include <QValueAxis>
@@ -27,11 +28,15 @@ public slots:
 
 private slots:
   void updateHistogramSeries();
-  void setLabelsText();
   void setMarkerStyle(QLegendMarker *marker);
 
+  void setLabelsText();
+  void updateLabelTextFromMousePosition(int index);
+
 protected:
-  virtual QSize sizeHint() const { return QSize(200, 200); }
+  virtual QSize sizeHint() const override { return QSize(200, 200); }
+
+  virtual bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
   // Chart attributes
@@ -49,6 +54,8 @@ private:
   QtCharts::QBarSeries *blue_series_;
 
   // Widgets
+  QLabel mouse_values_label_;
+
   QLabel count_label_;
   QLabel mean_label_;
   QLabel std_label_;

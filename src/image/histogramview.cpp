@@ -24,13 +24,10 @@ HistogramView::HistogramView(QWidget *parent)
       green_series_(new QBarSeries()), blue_series_(new QBarSeries()),
       histogram_type_selector_(new QComboBox()) {
 
-  // Setup chart properties
-  setMouseTracking(true);
-
-  // Create X axis
   QFont axis_font;
   axis_font.setPixelSize(10);
 
+  // Create X axis
   x_axis_->setRange(0, 255);
   x_axis_->setLabelFormat("%d");
   x_axis_->setTickCount(5);
@@ -41,31 +38,34 @@ HistogramView::HistogramView(QWidget *parent)
   y_axis_->setMin(0);
   y_axis_->setLabelsFont(axis_font);
 
-  // Attach axis to chart
+  // Attach each axis to chart
   chart_->addAxis(x_axis_, Qt::AlignBottom);
   chart_->addAxis(y_axis_, Qt::AlignLeft);
 
   // Set chart properties
   chart_->setBackgroundRoundness(0);
   chart_->setMargins(QMargins(0, 0, 0, 0));
-  chart_->setAcceptHoverEvents(true);
 
   chart_->addSeries(red_series_);
   chart_->addSeries(green_series_);
   chart_->addSeries(blue_series_);
 
   // Setup series
-  red_series_->setBarWidth(0.5);
-  red_series_->attachAxis(x_axis_);
-  red_series_->attachAxis(y_axis_);
+  for (const auto &s : chart_->series()) {
+    QBarSeries *bar_series = static_cast<QBarSeries *>(s);
+    bar_series->setBarWidth(0.5f);
+    bar_series->attachAxis(x_axis_);
+    bar_series->attachAxis(y_axis_);
+    bar_series->installEventFilter(this);
+  }
 
-  green_series_->setBarWidth(0.5);
-  green_series_->attachAxis(x_axis_);
-  green_series_->attachAxis(y_axis_);
+  // Setup chart view
+  chart_view_ = new QtCharts::QChartView(chart_);
+  chart_view_->setRenderHint(QPainter::Antialiasing);
 
-  blue_series_->setBarWidth(0.5);
-  blue_series_->attachAxis(x_axis_);
-  blue_series_->attachAxis(y_axis_);
+  // Important! Allow to register mouse over events handled on eventFilter
+  chart_view_->setAttribute(Qt::WA_Hover);
+  chart_view_->installEventFilter(this);
 
   // Setup additional widgets
   QGroupBox *information_box = new QGroupBox();
@@ -78,15 +78,13 @@ HistogramView::HistogramView(QWidget *parent)
   information_layout->addWidget(&mode_label_);
   information_box->setLayout(information_layout);
 
+  // Add histogram types to the selector
   histogram_type_selector_->addItem("Default");
   histogram_type_selector_->addItem("Cummulative");
 
   connect(histogram_type_selector_,
           QOverload<int>::of(&QComboBox::currentIndexChanged),
           [this](int index) { setType(static_cast<Type>(index)); });
-
-  chart_view_ = new QtCharts::QChartView(chart_);
-  chart_view_->setRenderHint(QPainter::Antialiasing);
 
   // Tie all widgets together on a single vertical box
   QVBoxLayout *vbox_layout = new QVBoxLayout();
@@ -115,11 +113,11 @@ void HistogramView::updateHistogramSeries() {
     return;
   }
 
-  int max_y_value = 0;
-
   red_series_->clear();
   green_series_->clear();
   blue_series_->clear();
+
+  int max_y_value = 0;
 
   switch (type_) {
   case Type::Default:
@@ -170,33 +168,45 @@ void HistogramView::setLabelsText() {
     return;
   }
 
-  QString rgb = "<font color=\"red\">%1</font> <font color=\"green\">%2</font> "
-                "<font color=\"blue\">%3</font>";
+  // Placeholder string. Text is formmated to display %1 %2 %3 in Red/Green/Blue
+  // colors
+  QString rgb_placeholder_text =
+      "<font color=\"red\">%1</font> <font color=\"green\">%2</font> "
+      "<font color=\"blue\">%3</font>";
 
-  const auto red = active_histogram_->red();
-  const auto green = active_histogram_->green();
-  const auto blue = active_histogram_->blue();
+  // Some less verbose aliases for red/green/blue histogram channels
+  auto red = active_histogram_->red();
+  auto green = active_histogram_->green();
+  auto blue = active_histogram_->blue();
 
-  count_label_.setText(
-      QString(tr("Count: %1")).arg(active_histogram_->red().pixelCount()));
+  // Execute "method" for each rgb channel, and return the result as a formatted
+  // string
+  auto extract_rgb_values_as_text = [rgb_placeholder_text, &red, &green,
+                                     &blue](auto method) -> QString {
+    return rgb_placeholder_text.arg(std::bind(method, red)())
+        .arg(std::bind(method, green)())
+        .arg(std::bind(method, blue)());
+  };
+
+  // Update the labels with the formatted text for each attribute
+
+  count_label_.setText(tr("Count: ") +
+                       QString::number(active_histogram_->red().pixelCount()));
 
   mean_label_.setText(tr("Mean: ") +
-                      rgb.arg(red.mean()).arg(green.mean()).arg(blue.mean()));
+                      extract_rgb_values_as_text(&HistogramChannel::mean));
 
-  std_label_.setText(tr("Std: ") + rgb.arg(red.standardDeviation())
-                                       .arg(green.standardDeviation())
-                                       .arg(blue.standardDeviation()));
+  std_label_.setText(tr("Std: ") + extract_rgb_values_as_text(
+                                       &HistogramChannel::standardDeviation));
 
-  min_label_.setText(tr("Min: ") + rgb.arg(red.minIntensity())
-                                       .arg(green.minIntensity())
-                                       .arg(blue.minIntensity()));
+  min_label_.setText(tr("Min: ") + extract_rgb_values_as_text(
+                                       &HistogramChannel::minIntensity));
 
-  max_label_.setText(tr("Max: ") + rgb.arg(red.maxIntensity())
-                                       .arg(green.maxIntensity())
-                                       .arg(blue.maxIntensity()));
+  max_label_.setText(tr("Max: ") + extract_rgb_values_as_text(
+                                       &HistogramChannel::maxIntensity));
 
   mode_label_.setText(tr("Mode: ") +
-                      rgb.arg(red.mode()).arg(green.mode()).arg(blue.mode()));
+                      extract_rgb_values_as_text(&HistogramChannel::mode));
 }
 
 void HistogramView::setMarkerStyle(QLegendMarker *marker) {
@@ -226,5 +236,32 @@ void HistogramView::setMarkerStyle(QLegendMarker *marker) {
   color.setAlphaF(alpha);
   pen.setColor(color);
   marker->setPen(pen);
+}
+
+bool HistogramView::eventFilter(QObject *object, QEvent *event) {
+  if (object == chart_view_ && event->type() == QEvent::HoverMove) {
+    QHoverEvent *hover_event = static_cast<QHoverEvent *>(event);
+
+    // Get mouse coordinates
+    QPoint cursor_pos = hover_event->pos();
+
+    // Translate mouse coordinate to chart coordinates and save the position
+    // in X
+    int index = chart_->mapToValue(cursor_pos).x();
+
+    // Clamp index to min and max values
+    index = (index < x_axis_->min()) ? x_axis_->min() : index;
+    index = (index > x_axis_->max()) ? x_axis_->max() : index;
+
+    qDebug() << index;
+
+    return true;
+  }
+
+  return false;
+}
+
+void HistogramView::updateLabelTextFromMousePosition(int index) {
+  // mouse_values_label_.setText(tr("Index: %1\t\t Values: %2 %3 %4"));
 }
 } // namespace imagecpp
