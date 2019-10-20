@@ -42,6 +42,8 @@ void MainMenuBar::createImageMenu() {
   connect(&image_menu_, &ImageMenu::inverse, this, &MainMenuBar::inverse);
   connect(&image_menu_, &ImageMenu::linearTransform, this,
           &MainMenuBar::linearTransform);
+  connect(&image_menu_, &ImageMenu::brightnessAndConstrast, this,
+          &MainMenuBar::brightnessAndConstrast);
 }
 
 void MainMenuBar::createSettingsMenu() {

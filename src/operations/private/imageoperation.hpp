@@ -44,9 +44,9 @@ public slots:
 
 protected slots:
   virtual void applyImageOperation() = 0;
+  virtual void generateTargetImage();
 
   void setName(const QString &name) { name_ = name; }
-  virtual void generateTargetImage();
 
 protected:
   Image *const target_image_;

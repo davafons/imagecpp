@@ -35,6 +35,7 @@ signals:
   void grayscale();
   void inverse();
   void linearTransform();
+  void brightnessAndConstrast();
 
   void toggleTabsView(bool toggled);
 

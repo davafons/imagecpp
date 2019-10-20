@@ -10,6 +10,7 @@
 #include <QUndoView>
 
 #include "image/document.hpp"
+#include "operations/brightnesscontrast.hpp"
 #include "operations/grayscale.hpp"
 #include "operations/inverse.hpp"
 #include "operations/lineartransform.hpp"
@@ -108,6 +109,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::linearTransform, this, [this] {
     executeOperation<LinearTransformConfigDialog>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::brightnessAndConstrast, this, [this] {
+    executeOperation<BACConfigDialog>(mdi_area_->activeDocument());
   });
 
   // Windows

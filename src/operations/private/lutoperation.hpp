@@ -15,7 +15,7 @@ public:
 private:
   virtual QRgb pixelOperation(int x, int y, QRgb color) const override;
 
-protected slots:
+protected:
   virtual void fillLutTables() = 0;
   virtual void generateTargetImage() override;
 

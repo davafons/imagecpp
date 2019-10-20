@@ -37,6 +37,14 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   connect(linear_trans_act_, &QAction::triggered, this,
           &ImageMenu::linearTransform);
 
+  // Brightness and Contrast
+  bac_act_ = new QAction(tr("Brightnes/Constrast..."), this);
+  bac_act_->setStatusTip(
+      tr("Change Brightnes and Contrast properties of the image"));
+
+  connect(bac_act_, &QAction::triggered, this,
+          &ImageMenu::brightnessAndConstrast);
+
   // Menu layout
 
   addAction(duplicate_img_act_);
@@ -44,6 +52,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(grayscale_act_);
   addAction(inverse_act_);
   addAction(linear_trans_act_);
+  addAction(bac_act_);
 }
 
 } // namespace imagecpp

@@ -98,8 +98,6 @@ float HistogramChannel::calculateEntropy(const HistArray &h, int pixel_count) {
     entropy += p_i * std::log2(p_i);
   }
 
-  qDebug() << entropy;
-
   return -entropy;
 }
 

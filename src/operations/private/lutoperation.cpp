@@ -15,7 +15,6 @@ QRgb LutOperation::pixelOperation(int x, int y, QRgb color) const {
 }
 
 void LutOperation::generateTargetImage() {
-  qDebug() << "Called LutOperation generate Image";
   fillLutTables();
 
   // Continue with parent
