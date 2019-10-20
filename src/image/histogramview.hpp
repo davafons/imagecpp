@@ -59,6 +59,7 @@ private:
   QLabel count_label_;
   QLabel mean_label_;
   QLabel std_label_;
+  QLabel entropy_label_;
   QLabel min_label_;
   QLabel max_label_;
   QLabel mode_label_;

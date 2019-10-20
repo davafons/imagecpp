@@ -18,6 +18,7 @@ public:
 
   float mean() const;
   float standardDeviation() const;
+  float entropy() const;
 
   int mode() const;
   int modeValue() const;
@@ -33,6 +34,9 @@ private:
 
   static float calculateStdDeviation(const HistArray &h, int pixel_count,
                                      float mean);
+
+  static float calculateEntropy(const HistArray &h, int pixel_count);
+
   static QtCharts::QBarSet *
   createBarSet(const HistArray &h, const QString &name, const QColor &color);
 
@@ -42,6 +46,8 @@ private:
 
   float mean_;
   float std_deviation_;
+  float entropy_;
+
   int mode_;
 
   int pixel_count_;

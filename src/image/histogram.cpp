@@ -10,7 +10,9 @@
 namespace imagecpp {
 
 Histogram::Histogram(const Image *image, QObject *parent) : QObject(parent) {
+  qDebug() << "Constructin histogram";
   if (image) {
+    qDebug() << "\tWith image";
     generateHistogram(image);
   }
 }

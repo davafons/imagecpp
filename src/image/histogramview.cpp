@@ -73,6 +73,7 @@ HistogramView::HistogramView(QWidget *parent)
   information_layout->addWidget(&count_label_);
   information_layout->addWidget(&mean_label_);
   information_layout->addWidget(&std_label_);
+  information_layout->addWidget(&entropy_label_);
   information_layout->addWidget(&min_label_);
   information_layout->addWidget(&max_label_);
   information_layout->addWidget(&mode_label_);
@@ -200,6 +201,9 @@ void HistogramView::setLabelsText() {
 
   std_label_.setText(tr("Std: ") + extract_rgb_values_as_text(
                                        &HistogramChannel::standardDeviation));
+
+  entropy_label_.setText(
+      tr("Entropy: ") + extract_rgb_values_as_text(&HistogramChannel::entropy));
 
   min_label_.setText(tr("Min: ") + extract_rgb_values_as_text(
                                        &HistogramChannel::minIntensity));
