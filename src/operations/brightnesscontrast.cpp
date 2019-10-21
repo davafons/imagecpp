@@ -1,5 +1,8 @@
 #include "brightnesscontrast.hpp"
 
+#include <QFormLayout>
+#include <QLabel>
+
 #include "image/document.hpp"
 
 namespace imagecpp {
@@ -15,13 +18,35 @@ void BrightnessAndConstrast::setStd(float target_std) {
   float green_A = target_std / old_histogram()->green().standardDeviation();
   float blue_A = target_std / old_histogram()->blue().standardDeviation();
 
+  qDebug() << "Desired std" << target_std;
+
+  qDebug() << "A: Red std from" << old_histogram()->red().standardDeviation()
+           << "to" << red_A;
+
+  qDebug() << "A: Green std from"
+           << old_histogram()->green().standardDeviation() << "to" << green_A;
+
+  qDebug() << "A: Blue std from" << old_histogram()->blue().standardDeviation()
+           << "to" << blue_A;
+
   setA(red_A, green_A, blue_A);
 }
 
 void BrightnessAndConstrast::setMean(float target_mean) {
-  float red_B = target_mean / old_histogram()->red().mean();
-  float green_B = target_mean / old_histogram()->green().mean();
-  float blue_B = target_mean / old_histogram()->blue().mean();
+  float red_B = target_mean - red_.A * old_histogram()->red().mean();
+  float green_B = target_mean - green_.A * old_histogram()->green().mean();
+  float blue_B = target_mean - blue_.A * old_histogram()->blue().mean();
+
+  qDebug() << "Desired mean" << target_mean;
+
+  qDebug() << "B: Red mean from" << old_histogram()->red().mean() << "to"
+           << red_B;
+
+  qDebug() << "B: Green mean from" << old_histogram()->green().mean() << "to"
+           << green_B;
+
+  qDebug() << "B: Blue mean from" << old_histogram()->blue().mean() << "to"
+           << blue_B;
 
   setB(red_B, green_B, blue_B);
 }
@@ -97,11 +122,31 @@ void BrightnessAndConstrast::fillLutTables() {
 BACConfigDialog::BACConfigDialog(Document *document, QWidget *parent)
     : OperationConfigDialog(document, parent) {
 
-  a_spin_.setRange(-127, 127);
-  b_spin_.setRange(-127, 127);
+  // Configure widgets
+  brightness_spin_.setRange(-255, 255);
+  contrast_spin_.setRange(0, 255);
 
-  settings_layout_->addWidget(&a_spin_);
-  settings_layout_->addWidget(&b_spin_);
+  // a_spin_.setRange(-127, 127);
+  // b_spin_.setRange(-127, 127);
+  //
+  // settings_layout_->addWidget(&a_spin_);
+  // settings_layout_->addWidget(&b_spin_);
+
+  // Setup layout
+
+  QFormLayout *basic_parameters_layout = new QFormLayout();
+
+  basic_parameters_layout->addRow(tr("Brightness:"), &brightness_spin_);
+  basic_parameters_layout->addRow(tr("Contrast:"), &contrast_spin_);
+
+  settings_layout_->addLayout(basic_parameters_layout);
+
+  // Add connections
+  connect(&brightness_spin_, qOverload<double>(&QDoubleSpinBox::valueChanged),
+          &operation_, &BrightnessAndConstrast::setMean);
+
+  connect(&contrast_spin_, qOverload<double>(&QDoubleSpinBox::valueChanged),
+          &operation_, &BrightnessAndConstrast::setStd);
 
   connect(&a_spin_, qOverload<double>(&QDoubleSpinBox::valueChanged),
           &operation_, qOverload<float>(&BrightnessAndConstrast::setA));

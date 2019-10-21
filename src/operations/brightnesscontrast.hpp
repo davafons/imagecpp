@@ -63,7 +63,11 @@ public:
   explicit BACConfigDialog(Document *document, QWidget *parent = nullptr);
   virtual ~BACConfigDialog() = default;
 
+
 private:
+  QDoubleSpinBox brightness_spin_;
+  QDoubleSpinBox contrast_spin_;
+
   QDoubleSpinBox a_spin_;
   QDoubleSpinBox b_spin_;
 };
