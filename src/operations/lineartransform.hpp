@@ -1,17 +1,16 @@
 #pragma once
 
+#include <QChart>
 #include <QIntValidator>
 #include <QLineEdit>
 #include <QList>
 #include <QSpinBox>
-#include <QChart>
+#include <QPushButton>
 
 #include <map>
 
 #include "operations/private/lutoperation.hpp"
 #include "operations/private/operationconfigdialog.hpp"
-
-#include <QPushButton>
 
 namespace imagecpp {
 

@@ -8,6 +8,7 @@
 
 #include "operations/private/imageoperation.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
+#include "image/document.hpp"
 
 namespace imagecpp {
 

@@ -2,6 +2,8 @@
 
 #include <QElapsedTimer>
 
+#include "image/image.hpp"
+
 namespace imagecpp {
 
 PixelOperation::PixelOperation(Document *data, const QString &name)

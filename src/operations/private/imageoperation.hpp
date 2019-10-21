@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QUndoCommand>
 
-#include "image/image.hpp"
-
 // TODO: Remove
 #include <QDebug>
 
@@ -13,6 +11,8 @@ namespace imagecpp {
 
 // Forward declarations
 class Document;
+class Histogram;
+class Image;
 
 /*
  *
@@ -47,6 +47,7 @@ protected slots:
   virtual void generateTargetImage();
 
   void setName(const QString &name) { name_ = name; }
+  const Histogram *old_histogram() const;
 
 protected:
   Image *const target_image_;

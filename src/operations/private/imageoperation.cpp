@@ -50,6 +50,10 @@ void ImageOperation::generateTargetImage() {
   }
 }
 
+const Histogram *ImageOperation::old_histogram() const {
+  return document_->histogram();
+}
+
 ImageOperation::ImageCommand::ImageCommand(const QString &name,
                                            Document *document,
                                            const Image *target_image,

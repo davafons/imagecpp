@@ -20,15 +20,36 @@ public:
   virtual ~BrightnessAndConstrast() = default;
 
 public slots:
+  void setStd(float target_std);
+  void setMean(float target_mean);
+
   void setA(float A);
+  void setA(float red_A, float green_A, float blue_A);
+
   void setB(float B);
+  void setB(float red_B, float green_B, float blue_B);
+
+  void setRedA(float A);
+  void setRedB(float B);
+
+  void setGreenA(float A);
+  void setGreenB(float B);
+
+  void setBlueA(float A);
+  void setBlueB(float B);
 
 protected:
   void fillLutTables() override;
 
 private:
-  float A_;
-  float B_;
+  struct Params {
+    float A = 1.0f;
+    float B = 0.0f;
+  };
+
+  Params red_;
+  Params green_;
+  Params blue_;
 };
 
 // --- Dialog ---
