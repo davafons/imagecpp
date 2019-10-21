@@ -37,6 +37,7 @@ public slots:
 
   void resetSize();
   void resize(float scale_factor);
+  void fitOnFrame();
 
 protected:
   virtual bool eventFilter(QObject *obj, QEvent *event) override;

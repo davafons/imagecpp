@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QHoverEvent>
+#include <QScrollBar>
 #include <QTimeLine>
 
 #include "image/image.hpp"
@@ -13,6 +14,9 @@ ImageDisplayArea::ImageDisplayArea(QWidget *parent)
   // Set widgets attributes and options
   target_.setAttribute(Qt::WA_Hover); // Allow hover events
   target_.setScaledContents(true);
+
+  verticalScrollBar()->setEnabled(false);
+  horizontalScrollBar()->setEnabled(false);
 
   // Set widgets style
   setBackgroundRole(QPalette::Dark);
@@ -34,9 +38,11 @@ void ImageDisplayArea::onImageOpened(const Image *image) {
   image_ref_ = image;
   scale_factor_ = 1.0f;
 
+  // Fit image to the window frame
+  fitOnFrame();
+
   // Display image at full size
   target_.setPixmap(image_ref_->getPixmap());
-  target_.resize(image_ref_->size());
 
   emit imageOpened(image_ref_);
 }
@@ -46,7 +52,6 @@ void ImageDisplayArea::onImageUpdated(const Image *image) {
 
   // Save current position of the image on the area
   QPoint target_old_pos = target_.pos();
-  qDebug() << target_old_pos;
 
   target_.setPixmap(image_ref_->getPixmap());
   target_.resize(scale_factor_ * image_ref_->size());
@@ -66,11 +71,19 @@ void ImageDisplayArea::resize(float scale_factor) {
   }
 
   scale_factor_ = scale_factor;
+  numScheduledScalings_ = scale_factor_ * 50;
 
   target_.resize(scale_factor_ * image_ref_->size());
 
   emit scaleFactorChanged(scale_factor_);
   emit imageSizeChanged(target_.size());
+}
+
+void ImageDisplayArea::fitOnFrame() {
+  int longest_side = std::max(image_ref_->width(), image_ref_->height());
+  scale_factor_ = float(size().width()) / longest_side;
+
+  resize(scale_factor_);
 }
 
 bool ImageDisplayArea::eventFilter(QObject *obj, QEvent *event) {
@@ -111,7 +124,7 @@ void ImageDisplayArea::wheelEvent(QWheelEvent *event) {
     anim->setUpdateInterval(20);
 
     connect(anim, &QTimeLine::valueChanged, this, [this](qreal x) {
-      qreal factor = 1.0 + qreal(numScheduledScalings_) / 50.0;
+      qreal factor = qreal(numScheduledScalings_) / 50.0;
       resize(factor);
     });
 
