@@ -14,11 +14,15 @@ SubWindowsArea::SubWindowsArea(QWidget *parent)
   setTabsMovable(true);
 
   connect(this, &QMdiArea::subWindowActivated, this, [this](QMdiSubWindow *w) {
-    active_document_ = imageFromSubwindow(w);
+    active_document_ = documentFromSubwindow(w);
 
     emit activeDocumentChanged(active_document_);
   });
 }
+//
+// ImageSubWindow *SubWindowsArea::activeSubWindow() const {
+//   return static_cast<ImageSubWindow *>(QMdiArea::activeSubWindow());
+// }
 
 void SubWindowsArea::addDocumentWindow(Document *document) {
   Q_CHECK_PTR(document);
@@ -41,7 +45,7 @@ void SubWindowsArea::toggleTabsView(bool toggled) {
   }
 }
 
-Document *SubWindowsArea::imageFromSubwindow(QMdiSubWindow *subwindow) {
+Document *SubWindowsArea::documentFromSubwindow(QMdiSubWindow *subwindow) {
   ImageSubWindow *active_subwindow =
       dynamic_cast<ImageSubWindow *>(activeSubWindow());
 

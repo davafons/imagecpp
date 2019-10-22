@@ -19,6 +19,7 @@ public:
 signals:
   void undo();
   void redo();
+  void rectSelect();
 
 public slots:
   void createUndoActions(const QUndoGroup *undo_group = nullptr);
@@ -26,6 +27,7 @@ public slots:
 private:
   QAction *undo_act_;
   QAction *redo_act_;
+  QAction *rect_select_act_;
 };
 
 } // namespace imagecpp

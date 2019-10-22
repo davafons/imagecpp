@@ -31,6 +31,7 @@ void MainMenuBar::createEditMenu() {
 
   connect(&edit_menu_, &EditMenu::undo, this, &MainMenuBar::undo);
   connect(&edit_menu_, &EditMenu::redo, this, &MainMenuBar::redo);
+  connect(&edit_menu_, &EditMenu::rectSelect, this, &MainMenuBar::rectSelect);
 }
 
 void MainMenuBar::createImageMenu() {

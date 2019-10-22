@@ -67,6 +67,7 @@ MainWindow::~MainWindow() {
   delete mdi_area_;
   delete undo_group_;
   delete undo_view_;
+  delete rect_selection_tool_;
 }
 
 void MainWindow::createMenuBar() {
@@ -93,6 +94,12 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::undo, undo_group_, &QUndoGroup::undo);
   connect(&main_menu_bar_, &MainMenuBar::redo, undo_group_, &QUndoGroup::redo);
+  connect(&main_menu_bar_, &MainMenuBar::rectSelect, this, [this] {
+    qDebug() << "Selected";
+    delete rect_selection_tool_;
+    rect_selection_tool_ = new RectSelectionTool();
+    mdi_area_->activeSubWindow()->widget()->installEventFilter(rect_selection_tool_);
+  });
 
   connect(
       &main_menu_bar_, &MainMenuBar::duplicateImage, &documents_manager_,
@@ -138,6 +145,13 @@ void MainWindow::createSubWindowsArea() {
 
   connect(mdi_area_, &SubWindowsArea::activeDocumentChanged, this,
           &MainWindow::updateViews);
+
+  connect(mdi_area_, &SubWindowsArea::subWindowActivated, this,
+          [this](QWidget *w) {
+            if (w && rect_selection_tool_) {
+              w->installEventFilter(rect_selection_tool_);
+            }
+          });
 }
 
 void MainWindow::createDocks() {

@@ -97,6 +97,7 @@ bool ImageDisplayArea::eventFilter(QObject *obj, QEvent *event) {
       return true;
     }
   }
+
   return QObject::eventFilter(obj, event);
 }
 
@@ -104,6 +105,8 @@ void ImageDisplayArea::mousePressEvent(QMouseEvent *event) {
   if (event->buttons() & Qt::RightButton) {
     last_clicked_point_ = event->pos();
   }
+
+  QScrollArea::mousePressEvent(event);
 }
 
 void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
@@ -111,6 +114,8 @@ void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
     target_.move(target_.pos() + (event->pos() - last_clicked_point_));
     last_clicked_point_ = event->pos();
   }
+
+  QScrollArea::mouseMoveEvent(event);
 }
 
 // TODO: Transform literals to constants?

@@ -4,6 +4,7 @@
 
 #include "image/histogramview.hpp"
 #include "manager/documentsmanager.hpp"
+#include "tools/rectselectiontool.hpp"
 #include "widgets/menus/mainmenubar.hpp"
 #include "widgets/statusbar/mainstatusbar.hpp"
 
@@ -49,6 +50,8 @@ private:
   QUndoView *undo_view_;
 
   HistogramView *hist_view_;
+
+  RectSelectionTool *rect_selection_tool_{nullptr};
 
   // TODO: Add list with all documents?
 };

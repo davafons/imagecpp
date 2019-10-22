@@ -8,8 +8,18 @@ namespace imagecpp {
 EditMenu::EditMenu(QWidget *parent) : QMenu(tr("Edit"), parent) {
   createUndoActions();
 
+  rect_select_act_ = new QAction(tr("%Rectangular selection"), this);
+  rect_select_act_->setStatusTip(
+      tr("Select a rectangular portion of the image"));
+
+  connect(rect_select_act_, &QAction::triggered, this, &EditMenu::rectSelect);
+
+  // Menu layout
+
   addAction(undo_act_);
   addAction(redo_act_);
+  addSeparator();
+  addAction(rect_select_act_);
 }
 
 void EditMenu::createUndoActions(const QUndoGroup *undo_group) {

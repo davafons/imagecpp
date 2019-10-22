@@ -18,9 +18,12 @@ public:
   virtual ~SubWindowsArea() = default;
 
   Document *activeDocument() const { return active_document_; }
+  // ImageSubWindow *activeSubWindow() const;
 
 signals:
   void activeDocumentChanged(Document *image_document);
+  // void activeSubWindowChanged(ImageSubWindow *subwindow);
+
   void subwindowAdded(ImageSubWindow *subwindow);
 
 public slots:
@@ -28,7 +31,7 @@ public slots:
   void toggleTabsView(bool toggled);
 
 private:
-  Document *imageFromSubwindow(QMdiSubWindow *subwindow);
+  Document *documentFromSubwindow(QMdiSubWindow *subwindow);
 
 private:
   Document *active_document_;
