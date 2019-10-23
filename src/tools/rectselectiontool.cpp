@@ -3,11 +3,9 @@
 #include <QEvent>
 #include <QMouseEvent>
 
-RectSelectionTool::RectSelectionTool(QObject *object) {}
+RectSelectionTool::RectSelectionTool(QObject *parent) {}
 
 bool RectSelectionTool::eventFilter(QObject *object, QEvent *event) {
-  qDebug() << "Event filtered" << event->type();
-
   QMouseEvent *mouse_event = dynamic_cast<QMouseEvent *>(event);
 
   if (mouse_event) {
@@ -31,6 +29,8 @@ bool RectSelectionTool::eventFilter(QObject *object, QEvent *event) {
 void RectSelectionTool::createSelection(QPoint start_point,
                                         QPoint end_point) const {
   QRect rect = QRect(start_point, end_point);
+  rect.setWidth(std::abs(rect.width()));
+  rect.setHeight(std::abs(rect.height()));
 
   qDebug() << "Selection created" << rect.width() << rect.height();
 

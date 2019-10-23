@@ -30,7 +30,7 @@ signals:
 
   void undo();
   void redo();
-  void rectSelect();
+  void toggleRectSelect(bool toggled);
 
   void duplicateImage();
   void grayscale();

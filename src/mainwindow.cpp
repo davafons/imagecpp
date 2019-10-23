@@ -94,12 +94,17 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::undo, undo_group_, &QUndoGroup::undo);
   connect(&main_menu_bar_, &MainMenuBar::redo, undo_group_, &QUndoGroup::redo);
-  connect(&main_menu_bar_, &MainMenuBar::rectSelect, this, [this] {
-    qDebug() << "Selected";
-    delete rect_selection_tool_;
-    rect_selection_tool_ = new RectSelectionTool();
-    mdi_area_->activeSubWindow()->widget()->installEventFilter(rect_selection_tool_);
-  });
+  connect(&main_menu_bar_, &MainMenuBar::toggleRectSelect, this,
+          [this](bool toggled) {
+            delete rect_selection_tool_;
+            rect_selection_tool_ = nullptr;
+
+            if (toggled) {
+              rect_selection_tool_ = new RectSelectionTool();
+              mdi_area_->activeSubWindow()->widget()->installEventFilter(
+                  rect_selection_tool_);
+            }
+          });
 
   connect(
       &main_menu_bar_, &MainMenuBar::duplicateImage, &documents_manager_,

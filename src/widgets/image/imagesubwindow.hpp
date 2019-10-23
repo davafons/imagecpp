@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMdiSubWindow>
+#include <QPainter>
 
 namespace imagecpp {
 

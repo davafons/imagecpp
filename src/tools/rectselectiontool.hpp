@@ -8,7 +8,7 @@ class RectSelectionTool : public QObject {
   Q_OBJECT
 
 public:
-  RectSelectionTool(QObject *object = nullptr);
+  RectSelectionTool(QObject *parent = nullptr);
   virtual ~RectSelectionTool() = default;
 
   virtual bool eventFilter(QObject *object, QEvent *event) override;

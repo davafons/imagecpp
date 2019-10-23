@@ -19,7 +19,7 @@ public:
 signals:
   void undo();
   void redo();
-  void rectSelect();
+  void toggleRectSelect(bool toggled);
 
 public slots:
   void createUndoActions(const QUndoGroup *undo_group = nullptr);
