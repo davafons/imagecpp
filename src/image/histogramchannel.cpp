@@ -15,6 +15,7 @@ HistogramChannel::HistogramChannel(const HistArray &h, const QString &name,
 
   max_intensity_ =
       h.crend() - std::find_if(h.crbegin(), h.crend(), is_not_zero) - 1;
+  // TODO: Minmax?
 
   mode_ = std::max_element(h.cbegin(), h.cend()) - h.cbegin();
   acc_h_ = calculateCummulative(h);

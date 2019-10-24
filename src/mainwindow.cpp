@@ -100,9 +100,7 @@ void MainWindow::createMenuBar() {
             rect_selection_tool_ = nullptr;
 
             if (toggled) {
-              rect_selection_tool_ = new RectSelectionTool();
-              mdi_area_->activeSubWindow()->widget()->installEventFilter(
-                  rect_selection_tool_);
+              rect_selection_tool_ = new RectSelectionTool(mdi_area_);
             }
           });
 

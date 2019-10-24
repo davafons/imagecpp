@@ -20,6 +20,7 @@ public:
   Document *activeDocument() const { return active_document_; }
   // ImageSubWindow *activeSubWindow() const;
 
+
 signals:
   void activeDocumentChanged(Document *image_document);
   // void activeSubWindowChanged(ImageSubWindow *subwindow);

@@ -3,7 +3,19 @@
 #include <QEvent>
 #include <QMouseEvent>
 
-RectSelectionTool::RectSelectionTool(QObject *parent) {}
+#include "widgets/image/subwindowsarea.hpp"
+
+namespace imagecpp {
+
+RectSelectionTool::RectSelectionTool(const SubWindowsArea *subwin_area,
+                                     QObject *parent)
+    : subwin_area_(subwin_area), tracked_widget_(nullptr) {
+  // Connect to widget
+}
+
+RectSelectionTool::~RectSelectionTool() {
+  // Disconnect from widget (RAII)
+}
 
 bool RectSelectionTool::eventFilter(QObject *object, QEvent *event) {
   QMouseEvent *mouse_event = dynamic_cast<QMouseEvent *>(event);
@@ -36,3 +48,5 @@ void RectSelectionTool::createSelection(QPoint start_point,
 
   emit selectionCreated(rect);
 }
+
+} // namespace imagecpp

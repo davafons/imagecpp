@@ -4,12 +4,16 @@
 #include <QObject>
 #include <QPoint>
 
+namespace imagecpp {
+
+class SubWindowsArea;
+
 class RectSelectionTool : public QObject {
   Q_OBJECT
 
 public:
-  RectSelectionTool(QObject *parent = nullptr);
-  virtual ~RectSelectionTool() = default;
+  RectSelectionTool(const SubWindowsArea *subwin_area, QObject *parent = nullptr);
+  virtual ~RectSelectionTool();
 
   virtual bool eventFilter(QObject *object, QEvent *event) override;
 
@@ -21,4 +25,9 @@ private:
 
 private:
   QPoint last_clicked_point_;
+
+  const SubWindowsArea *subwin_area_;
+  const QWidget *tracked_widget_;
 };
+
+}
