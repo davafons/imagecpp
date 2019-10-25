@@ -46,6 +46,8 @@ void MainMenuBar::createImageMenu() {
           &MainMenuBar::linearTransform);
   connect(&image_menu_, &ImageMenu::brightnessAndConstrast, this,
           &MainMenuBar::brightnessAndConstrast);
+  connect(&image_menu_, &ImageMenu::gammaCorrection, this,
+          &MainMenuBar::gammaCorrection);
 }
 
 void MainMenuBar::createSettingsMenu() {

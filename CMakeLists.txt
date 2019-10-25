@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME}
     src/operations/lineartransform.cpp
     src/operations/brightnesscontrast.cpp
     src/operations/private/pixeloperation.cpp
+    src/operations/gammacorrection.cpp
     src/operations/private/imageoperation.cpp
     src/operations/private/lutoperation.cpp
     src/widgets/image/imagedisplayarea.cpp

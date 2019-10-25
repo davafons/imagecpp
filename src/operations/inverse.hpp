@@ -18,7 +18,7 @@ public:
   virtual ~Inverse() = default;
 
 protected slots:
-  void fillLutTables() override;
+  virtual void fillLutTables() override;
 };
 
 } // namespace imagecpp

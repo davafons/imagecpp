@@ -37,6 +37,7 @@ signals:
   void inverse();
   void linearTransform();
   void brightnessAndConstrast();
+  void gammaCorrection();
 
   void toggleTabsView(bool toggled);
 
