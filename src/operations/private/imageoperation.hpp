@@ -2,6 +2,7 @@
 
 #include <QColor>
 #include <QObject>
+#include <QRect>
 #include <QUndoCommand>
 
 // TODO: Remove
@@ -29,6 +30,7 @@ public:
   QString name() const { return name_; }
   const Image *preview();
   QUndoCommand *command();
+  QRect selection() const;
 
   bool isLiveUpdateActive() const { return live_update_; }
 
@@ -50,11 +52,11 @@ protected slots:
   const Histogram *old_histogram() const;
 
 protected:
-  Image *const target_image_;
-  const Image *const old_image_;
+  Image *target_image_;
+  const Image *old_image_;
 
 private:
-  Document *const document_;
+  Document *document_;
 
   QString name_;
 

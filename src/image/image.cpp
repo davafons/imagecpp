@@ -6,6 +6,8 @@ namespace imagecpp {
 
 // Construction and copy
 Image::Image(const QString &file_path) { open(file_path); }
+Image::Image(const QImage &image) : image_(image) {}
+
 Image::Image(int width, int height, QImage::Format format)
     : image_(width, height, format) {}
 
@@ -20,7 +22,9 @@ Image &Image::operator=(Image other) {
 
 // Image Operations
 QPixmap Image::getPixmap() const noexcept { return QPixmap::fromImage(image_); }
-Image *Image::copy() const { return new Image(*this); }
+Image *Image::copy(const QRect &rectangle) const {
+  return new Image(image_.copy(rectangle));
+}
 
 // Iterators
 // QRgb *Image::begin() { return (QRgb *)image_.bits(); }
@@ -78,6 +82,10 @@ void Image::setPixelColor(const QPoint &position, const QColor &color) {
 // Static functions
 Image *Image::empty(const Image &other) {
   return new Image(other.width(), other.height(), other.format());
+}
+
+Image *Image::empty(size_t width, size_t height, QImage::Format format) {
+  return new Image(width, height, format);
 }
 
 // Friend functions

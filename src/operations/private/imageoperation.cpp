@@ -33,6 +33,8 @@ QUndoCommand *ImageOperation::command() {
   return new ImageCommand(name_, document_, target_image_, old_image_);
 }
 
+QRect ImageOperation::selection() const { return document_->selection(); }
+
 void ImageOperation::toggleLiveUpdate(bool toggled) {
   live_update_ = toggled;
 

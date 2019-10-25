@@ -2,12 +2,13 @@
 
 #include <QElapsedTimer>
 
+#include "image/document.hpp"
 #include "image/image.hpp"
 
 namespace imagecpp {
 
-PixelOperation::PixelOperation(Document *data, const QString &name)
-    : ImageOperation(data, name) {}
+PixelOperation::PixelOperation(Document *document, const QString &name)
+    : ImageOperation(document, name) {}
 
 void PixelOperation::applyImageOperation() {
   QElapsedTimer timer;
@@ -18,7 +19,11 @@ void PixelOperation::applyImageOperation() {
     QRgb *target_line = (QRgb *)target_image_->scanLine(y);
 
     for (int x = 0; x < old_image_->width(); ++x) {
-      target_line[x] = pixelOperation(x, y, old_line[x]);
+      if (selection().contains(x, y)) {
+        target_line[x] = pixelOperation(x, y, old_line[x]);
+      } else {
+        target_line[x] = old_line[x];
+      }
     }
   }
 

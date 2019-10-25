@@ -148,13 +148,6 @@ void MainWindow::createSubWindowsArea() {
 
   connect(mdi_area_, &SubWindowsArea::activeDocumentChanged, this,
           &MainWindow::updateViews);
-
-  connect(mdi_area_, &SubWindowsArea::subWindowActivated, this,
-          [this](QWidget *w) {
-            if (w && rect_selection_tool_) {
-              w->installEventFilter(rect_selection_tool_);
-            }
-          });
 }
 
 void MainWindow::createDocks() {

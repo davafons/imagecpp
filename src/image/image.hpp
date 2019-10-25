@@ -17,6 +17,7 @@ class Image : public QObject {
 public:
   // Construction and copy
   explicit Image(const QString &file_path);
+  explicit Image(const QImage &image);
   Image(int width, int height, QImage::Format format);
 
   Image(const Image &other);
@@ -35,7 +36,7 @@ public:
 
   // Image Operations
   QPixmap getPixmap() const noexcept;
-  Image *copy() const;
+  Image *copy(const QRect &rectangle = QRect()) const;
 
   // Properties
   int width() const noexcept;
@@ -63,6 +64,7 @@ public:
 
   // Static functions
   static Image *empty(const Image &other);
+  static Image *empty(size_t width, size_t height, QImage::Format format);
 
   // Friend functions
   friend void swap(Image &first, Image &second) noexcept;

@@ -18,7 +18,7 @@ public:
   virtual bool eventFilter(QObject *object, QEvent *event) override;
 
 signals:
-  void selectionCreated(QRect rect) const;
+  void selectionCreated(const QRect& selection) const;
 
 private:
   void createSelection(QPoint start_point, QPoint end_point) const;
@@ -27,7 +27,7 @@ private:
   QPoint last_clicked_point_;
 
   const SubWindowsArea *subwin_area_;
-  const QWidget *tracked_widget_;
+  QWidget *tracked_widget_;
 };
 
 }
