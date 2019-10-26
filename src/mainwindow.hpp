@@ -52,8 +52,6 @@ private:
   HistogramView *hist_view_;
 
   RectSelectionTool *rect_selection_tool_{nullptr};
-
-  // TODO: Add list with all documents?
 };
 
 } // namespace imagecpp

@@ -5,13 +5,40 @@
 
 namespace imagecpp {
 
-// --- Implementation ---
+/*!
+ *  \class Grayscale
+ *  \brief Transforms an image to grayscale.
+ *
+ *  Can be used with both PAL and NTSC formulas.
+ */
 
-Grayscale::Grayscale(Document *document, const Format &format)
-    : PixelOperation(document) {
-  setFormat(format);
+/*!
+ *  Construcs a Grayscale operation object.
+ */
+Grayscale::Grayscale(Document *document) : PixelOperation(document) {
+
+  // Update the operation name each time a property changes
+  connect(this, &Grayscale::propertyChanged, this, [this] {
+    setName(tr("Grayscale (%1)").arg((format_ == Format::PAL) ? "PAL" : "NTSC"));
+  });
+
+  // Default format used for the grayscale formula
+  setFormat(Format::PAL);
 }
 
+/*!
+ *  Returns the format used by the grayscale operation.
+ *
+ *  \sa setFormat(const Format& format)
+ */
+Grayscale::Format Grayscale::format() const {
+  return format_;
+}
+
+/*!
+ *  Sets the RGB factors used by the grayscale formula, depending on the Format (PAL or
+ *  NSTC)
+ */
 Grayscale &Grayscale::setFormat(const Format &format) {
   format_ = format;
 
@@ -19,15 +46,19 @@ Grayscale &Grayscale::setFormat(const Format &format) {
   green_factor_ = (format_ == Format::PAL) ? 0.707f : 0.587f;
   blue_factor_ = (format_ == Format::PAL) ? 0.071f : 0.114f;
 
-  setName(QString("To Grayscale (%1)")
-              .arg((format == Format::PAL) ? "PAL" : "NTSC"));
-
   emit propertyChanged();
 
   return *this;
 }
 
-QRgb Grayscale::pixelOperation(int, int, QRgb color) const {
+/*!
+ *  Implementation of the Grayscale operation.
+ *
+ *  For each pixel, multiply the input color with the RGB factors, and add them
+ *  together. The result will be the intensity of the pixel, which must be placed on the
+ *  three RGB channels.
+ */
+QRgb Grayscale::pixelOperationImpl(int, int, QRgb color) const {
   uint8_t red = qRed(color) * red_factor_;
   uint8_t green = qGreen(color) * green_factor_;
   uint8_t blue = qBlue(color) * blue_factor_;
@@ -39,8 +70,16 @@ QRgb Grayscale::pixelOperation(int, int, QRgb color) const {
 
 // --- Dialog ---
 
-GrayscaleConfigDialog::GrayscaleConfigDialog(Document *document,
-                                             QWidget *parent)
+/*!
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+GrayscaleConfigDialog::GrayscaleConfigDialog(Document *document, QWidget *parent)
     : OperationConfigDialog(document, parent) {
   QGroupBox *group_box = new QGroupBox("Format");
   QVBoxLayout *vbox = new QVBoxLayout();
@@ -57,19 +96,17 @@ GrayscaleConfigDialog::GrayscaleConfigDialog(Document *document,
 
   settings_layout_->addWidget(group_box);
 
-  connect(pal_radio_, &QRadioButton::toggled, &operation_,
-          [this](bool checked) {
-            if (checked) {
-              operation_.setFormat(Grayscale::Format::PAL);
-            }
-          });
+  connect(pal_radio_, &QRadioButton::toggled, &operation_, [this](bool checked) {
+    if (checked) {
+      operation_.setFormat(Grayscale::Format::PAL);
+    }
+  });
 
-  connect(ntsc_radio_, &QRadioButton::toggled, &operation_,
-          [this](bool checked) {
-            if (checked) {
-              operation_.setFormat(Grayscale::Format::NTSC);
-            }
-          });
+  connect(ntsc_radio_, &QRadioButton::toggled, &operation_, [this](bool checked) {
+    if (checked) {
+      operation_.setFormat(Grayscale::Format::NTSC);
+    }
+  });
 }
 
-} // namespace imagecpp
+}  // namespace imagecpp

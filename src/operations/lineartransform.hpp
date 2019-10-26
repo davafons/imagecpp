@@ -4,9 +4,8 @@
 #include <QIntValidator>
 #include <QLineEdit>
 #include <QList>
-#include <QSpinBox>
 #include <QPushButton>
-
+#include <QSpinBox>
 #include <map>
 
 #include "operations/private/lutoperation.hpp"
@@ -14,37 +13,36 @@
 
 namespace imagecpp {
 
-// --- Implementation ---
-
-/*
- *
- */
 class LinearTransform : public LutOperation {
   Q_OBJECT
 
 public:
-  // Constructors
+  using StepsList = std::map<int, int>;
 
-  explicit LinearTransform(Document *document,
-                           const std::map<int, int> &steps = std::map<int, int>{
-                               {0, 0}, {255, 255}});
+public:
+  explicit LinearTransform(Document *document);
 
-  // Getters and Setters
+  const StepsList &steps() const;
+  void setSteps(StepsList steps);
+
   void addStep(int in, int out);
   void removeStep(int in);
 
-  const std::map<int, int> &steps() const { return steps_; }
-  void setSteps(std::map<int, int> steps);
-
 protected slots:
-  virtual void fillLutTables() override;
+  virtual void fillLutTablesImpl() override;
 
 private:
-  std::map<int, int> steps_;
+  StepsList steps_{{0, 0}, {255, 255}};
 };
 
-// --- Dialog ---
-//
+/*!
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 // template <class T> class QItemValidator : public QIntValidator {
 // public:
@@ -103,13 +101,11 @@ private:
 /*
  *
  */
-class LinearTransformConfigDialog
-    : public OperationConfigDialog<LinearTransform> {
+class LinearTransformConfigDialog : public OperationConfigDialog<LinearTransform> {
   Q_OBJECT
 
 public:
-  explicit LinearTransformConfigDialog(Document *document,
-                                       QWidget *parent = nullptr);
+  explicit LinearTransformConfigDialog(Document *document, QWidget *parent = nullptr);
   virtual ~LinearTransformConfigDialog() = default;
 
 private slots:
@@ -136,4 +132,4 @@ private:
   QtCharts::QChart *line_chart_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

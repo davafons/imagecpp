@@ -5,20 +5,15 @@
 
 namespace imagecpp {
 
-// --- Implementation ---
-
-/*
- *
- */
 class Inverse : public LutOperation {
   Q_OBJECT
 
 public:
-  Inverse(Document *document);
+  explicit Inverse(Document *document);
   virtual ~Inverse() = default;
 
 protected slots:
-  virtual void fillLutTables() override;
+  virtual void fillLutTablesImpl() override;
 };
 
 } // namespace imagecpp

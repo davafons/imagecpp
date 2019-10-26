@@ -4,17 +4,32 @@
 
 namespace imagecpp {
 
-Inverse::Inverse(Document *document) : LutOperation(document, "Inverse") {
-  fillLutTables();
-}
+/*!
+ *  \class Inverse
+ *  \brief Transforms an image to its inverse (swap colors);
+ */
 
-void Inverse::fillLutTables() {
+/*!
+ *  Construcs an Inverse operation object.
+ */
+Inverse::Inverse(Document *document) : LutOperation(document, tr("Inverse")) {}
+
+/*!
+ *  Implementation of the Inverse operation.
+ *
+ *  Each entry will be transformed to the inverse of its intensity:
+ *    * 0 -> 255
+ *    * 1 -> 254
+ *    * 2 -> 253
+ *    * ...
+ */
+void Inverse::fillLutTablesImpl() {
   for (int i = 0; i < LUT_SIZE; ++i) {
-    r_lut_[i] = LUT_SIZE - 1 - i;
-    g_lut_[i] = LUT_SIZE - 1 - i;
-    b_lut_[i] = LUT_SIZE - 1 - i;
-    qDebug() << r_lut_[i];
+    int vout = LUT_SIZE - 1 - i;
+    r_lut_[i] = vout;
+    g_lut_[i] = vout;
+    b_lut_[i] = vout;
   }
 }
 
-} // namespace imagecpp
+}  // namespace imagecpp

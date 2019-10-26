@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QColor>
+
 #include "operations/private/imageoperation.hpp"
 
 namespace imagecpp {
@@ -7,15 +9,12 @@ namespace imagecpp {
 class Document;
 
 class PixelOperation : public ImageOperation {
-  // TODO: Implement policys? (Cpu Threads, Cuda...)
 public:
-  PixelOperation(Document *data, const QString &name = "");
+  explicit PixelOperation(Document *document, const QString &name = "");
   virtual ~PixelOperation() = default;
 
-protected slots:
-  virtual QRgb pixelOperation(int x, int y, QRgb color) const = 0;
-
-private:
-  virtual void applyImageOperation() override;
+protected:
+  virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const = 0;
+  virtual void imageOperationImpl(Image *new_image) override;
 };
-} // namespace imagecpp
+}  // namespace imagecpp

@@ -4,20 +4,16 @@
 
 namespace imagecpp {
 
-/*
- *
- */
 class LutOperation : public PixelOperation {
 public:
-  LutOperation(Document *document, const QString &name = "");
+  explicit LutOperation(Document *document, const QString &name = "");
   virtual ~LutOperation() = default;
 
-private:
-  virtual QRgb pixelOperation(int x, int y, QRgb color) const override;
-
 protected:
-  virtual void fillLutTables() = 0;
-  virtual void generateTargetImage() override;
+  virtual void imageOperationImpl(Image *new_image) override;
+  virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
+
+  virtual void fillLutTablesImpl() = 0;
 
 protected:
   static const int LUT_SIZE = 256;
@@ -27,4 +23,4 @@ protected:
   std::array<int, LUT_SIZE> b_lut_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

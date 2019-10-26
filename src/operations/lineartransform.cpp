@@ -9,15 +9,65 @@
 
 namespace imagecpp {
 
-// --- Implementation ---
+/*!
+ *  \class LinearTransform
+ *  \brief Applies a linear transformation to an image.
+ *
+ *  The user can define the steps used on the transformation.
+ */
 
-LinearTransform::LinearTransform(Document *document,
-                                 const std::map<int, int> &steps)
-    : LutOperation(document, "Linear Transformation"), steps_(steps) {
-  fillLutTables();
+/*!
+ *  Construcs a LinearTransform operation object.
+ */
+LinearTransform::LinearTransform(Document *document)
+    : LutOperation(document, "Linear transformation") {}
+
+/*!
+ *  Returns the list of steps used by the transformation.
+ */
+const LinearTransform::StepsList &LinearTransform::steps() const {
+  return steps_;
 }
 
-void LinearTransform::fillLutTables() {
+/*!
+ *  Sets a new list of steps.
+ */
+void LinearTransform::setSteps(std::map<int, int> steps) {
+  steps_ = steps;
+
+  emit propertyChanged();
+}
+
+/*!
+ *  Adds a new step to the transformation.
+ */
+void LinearTransform::addStep(int in, int out) {
+  steps_[in] = out;
+
+  emit propertyChanged();
+}
+
+/*!
+ *  Removes a step from the transformation. The deleted key must have the value "in". If
+ *  the step isn't on the list, nothing will be deleted (but the propertyChanged signal
+ *  will be triggered).
+ */
+void LinearTransform::removeStep(int in) {
+  steps_.erase(in);
+
+  emit propertyChanged();
+}
+
+/*!
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+void LinearTransform::fillLutTablesImpl() {
   int x_i = steps_.begin()->first;
   int y_i = steps_.begin()->second;
 
@@ -37,26 +87,6 @@ void LinearTransform::fillLutTables() {
     x_i = x_f;
     y_i = y_f;
   }
-
-  qDebug() << "Table";
-  for (int i = 0; i < 256; ++i) {
-    qDebug() << i << "=" << r_lut_[i];
-  }
-}
-
-void LinearTransform::addStep(int in, int out) {
-  steps_[in] = out;
-  emit propertyChanged();
-}
-
-void LinearTransform::removeStep(int in) {
-  steps_.erase(in);
-  emit propertyChanged();
-}
-
-void LinearTransform::setSteps(std::map<int, int> steps) {
-  steps_ = steps;
-  emit propertyChanged();
 }
 
 // --- Dialog ---
@@ -89,10 +119,12 @@ Step::Step(int in, int out, QWidget *parent) : QWidget(parent) {
     emit stepRemoved(this);
   });
 
-  connect(in_edit_, qOverload<int>(&QSpinBox::valueChanged), this,
-          [this] { emit inModified(this); });
-  connect(out_edit_, qOverload<int>(&QSpinBox::valueChanged), this,
-          [this] { emit outModified(this); });
+  connect(in_edit_, qOverload<int>(&QSpinBox::valueChanged), this, [this] {
+    emit inModified(this);
+  });
+  connect(out_edit_, qOverload<int>(&QSpinBox::valueChanged), this, [this] {
+    emit outModified(this);
+  });
 
   // Set final layout of the widget
   setLayout(hbox);
@@ -100,7 +132,8 @@ Step::Step(int in, int out, QWidget *parent) : QWidget(parent) {
 
 LinearTransformConfigDialog::LinearTransformConfigDialog(Document *document,
                                                          QWidget *parent)
-    : OperationConfigDialog(document, parent), steps_layout_(new QVBoxLayout()),
+    : OperationConfigDialog(document, parent),
+      steps_layout_(new QVBoxLayout()),
       add_button_(new QPushButton(tr("Add new step"))),
       line_chart_(new QtCharts::QChart()) {
 
@@ -116,7 +149,9 @@ LinearTransformConfigDialog::LinearTransformConfigDialog(Document *document,
   addNewStep(0, 0);
   addNewStep(255, 255);
 
-  connect(add_button_, &QPushButton::clicked, this,
+  connect(add_button_,
+          &QPushButton::clicked,
+          this,
           &LinearTransformConfigDialog::addNextEmptyStep);
 
   // Setup  chart
@@ -146,14 +181,11 @@ void LinearTransformConfigDialog::addNewStep(int in, int out) {
   Step *step = new Step(in, out);
 
   // Make connections between the step and the list
-  connect(step, &Step::stepRemoved, this,
-          &LinearTransformConfigDialog::removeStep);
+  connect(step, &Step::stepRemoved, this, &LinearTransformConfigDialog::removeStep);
 
-  connect(step, &Step::inModified, this,
-          &LinearTransformConfigDialog::inModified);
+  connect(step, &Step::inModified, this, &LinearTransformConfigDialog::inModified);
 
-  connect(step, &Step::outModified, this,
-          &LinearTransformConfigDialog::outModified);
+  connect(step, &Step::outModified, this, &LinearTransformConfigDialog::outModified);
 
   // Add to layout. Must be ordered
   insertStepOrderedInLayout(step);
@@ -224,7 +256,9 @@ void LinearTransformConfigDialog::updateSteps() {
   // QLineSeries *series
 }
 
-void LinearTransformConfigDialog::outModified(Step *step) { updateSteps(); }
+void LinearTransformConfigDialog::outModified(Step *step) {
+  updateSteps();
+}
 
 void LinearTransformConfigDialog::addNextEmptyStep() {
   if (steps_list_.size() == 256) {
@@ -281,4 +315,4 @@ void LinearTransformConfigDialog::insertStepOrderedInLayout(Step *step) {
 //   return -1;
 // }
 
-} // namespace imagecpp
+}  // namespace imagecpp

@@ -3,42 +3,42 @@
 #include "operations/private/operationconfigdialog.hpp"
 #include "operations/private/pixeloperation.hpp"
 
-// Forward declarations
 class QRadioButton;
 
 namespace imagecpp {
 
-// --- Implementation ---
-
-/*
- *
- */
 class Grayscale : public PixelOperation {
   Q_OBJECT
 
 public:
   enum class Format { NTSC, PAL };
 
-  Grayscale(Document *document, const Format &format = Format::PAL);
+public:
+  explicit Grayscale(Document *document);
   virtual ~Grayscale() = default;
+
+  Format format() const;
 
 public slots:
   Grayscale &setFormat(const Format &format);
 
 protected:
-  virtual QRgb pixelOperation(int x, int y, QRgb color) const override;
+  virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
 
 private:
   Format format_;
 
-  float red_factor_{0};
-  float green_factor_{0};
-  float blue_factor_{0};
+  float red_factor_{0.0f};
+  float green_factor_{0.0f};
+  float blue_factor_{0.0f};
 };
 
-// --- Dialog ---
-
-/*
+/*!
+ *
+ *
+ *
+ *
+ *
  *
  */
 class GrayscaleConfigDialog : public OperationConfigDialog<Grayscale> {
@@ -51,4 +51,4 @@ private:
   QRadioButton *ntsc_radio_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp
