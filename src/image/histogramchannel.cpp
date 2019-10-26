@@ -4,17 +4,24 @@
 
 namespace imagecpp {
 
-HistogramChannel::HistogramChannel(const HistArray &h, const QString &name,
+HistogramChannel::HistogramChannel(const HistArray &h,
+                                   const QString &name,
                                    const QColor &color)
-    : h_(h), acc_h_(HistArray()), mean_(0.0f), std_deviation_(0.0f),
-      entropy_(0.0f), mode_(0), pixel_count_(0), name_(name), color_(color) {
+    : h_(h),
+      acc_h_(HistArray()),
+      mean_(0.0f),
+      std_deviation_(0.0f),
+      entropy_(0.0f),
+      mode_(0),
+      pixel_count_(0),
+      name_(name),
+      color_(color) {
   // TODO: Check if empty is passed
 
   auto is_not_zero = [](auto x) { return x != 0; };
   min_intensity_ = std::find_if(h.cbegin(), h.cend(), is_not_zero) - h.cbegin();
 
-  max_intensity_ =
-      h.crend() - std::find_if(h.crbegin(), h.crend(), is_not_zero) - 1;
+  max_intensity_ = h.crend() - std::find_if(h.crbegin(), h.crend(), is_not_zero) - 1;
   // TODO: Minmax?
 
   mode_ = std::max_element(h.cbegin(), h.cend()) - h.cbegin();
@@ -35,21 +42,39 @@ QtCharts::QBarSet *HistogramChannel::cummulativeBars() const {
   return createBarSet(acc_h_, name_, color_);
 }
 
-float HistogramChannel::mean() const { return mean_; }
-float HistogramChannel::standardDeviation() const { return std_deviation_; }
-float HistogramChannel::entropy() const { return entropy_; }
+float HistogramChannel::mean() const {
+  return mean_;
+}
+float HistogramChannel::stdev() const {
+  return standardDeviation();
+}
+float HistogramChannel::standardDeviation() const {
+  return std_deviation_;
+}
+float HistogramChannel::entropy() const {
+  return entropy_;
+}
 
-int HistogramChannel::mode() const { return mode_; }
-int HistogramChannel::modeValue() const { return h_[mode_]; }
+int HistogramChannel::mode() const {
+  return mode_;
+}
+int HistogramChannel::modeValue() const {
+  return h_[mode_];
+}
 
-int HistogramChannel::minIntensity() const { return min_intensity_; }
-int HistogramChannel::maxIntensity() const { return max_intensity_; }
-int HistogramChannel::pixelCount() const { return pixel_count_; }
+int HistogramChannel::minIntensity() const {
+  return min_intensity_;
+}
+int HistogramChannel::maxIntensity() const {
+  return max_intensity_;
+}
+int HistogramChannel::pixelCount() const {
+  return pixel_count_;
+}
 
 // Private functions
 
-HistogramChannel::HistArray
-HistogramChannel::calculateCummulative(const HistArray &h) {
+HistogramChannel::HistArray HistogramChannel::calculateCummulative(const HistArray &h) {
   HistArray acc_h;
   int accumulated = 0;
 
@@ -75,7 +100,8 @@ float HistogramChannel::calculateMean(const HistArray &h, int pixel_count) {
 }
 
 float HistogramChannel::calculateStdDeviation(const HistArray &h,
-                                              int pixel_count, float mean) {
+                                              int pixel_count,
+                                              float mean) {
   float deviation = 0.0f;
 
   for (size_t i = 0; i < h.size(); ++i) {
@@ -91,7 +117,7 @@ float HistogramChannel::calculateEntropy(const HistArray &h, int pixel_count) {
   float entropy = 0.0f;
 
   for (size_t i = 0; i < h.size(); ++i) {
-    if (h[i] <= 0) { // log of zero is infinite
+    if (h[i] <= 0) {  // log of zero is infinite
       continue;
     }
 
@@ -116,4 +142,4 @@ QtCharts::QBarSet *HistogramChannel::createBarSet(const HistArray &h,
   return barset;
 }
 
-} // namespace imagecpp
+}  // namespace imagecpp

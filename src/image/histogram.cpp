@@ -1,11 +1,10 @@
 #include "histogram.hpp"
 
-#include <cmath>
-
 #include <QBarSet>
 #include <QColor>
 #include <QDebug>
 #include <QElapsedTimer>
+#include <cmath>
 
 namespace imagecpp {
 
@@ -21,9 +20,27 @@ Histogram::Histogram(const Histogram &other) {
   // b_h_ = other.b_h_;
 }
 
-const HistogramChannel &Histogram::red() const { return red_; }
-const HistogramChannel &Histogram::green() const { return green_; }
-const HistogramChannel &Histogram::blue() const { return blue_; }
+float Histogram::mean() const {
+  return (red().mean() + green().mean() + blue().mean()) / 3;
+}
+
+float Histogram::stdev() const {
+  return standardDeviation();
+}
+
+float Histogram::standardDeviation() const {
+  return (red().stdev() + green().stdev() + blue().stdev()) / 3;
+}
+
+const HistogramChannel &Histogram::red() const {
+  return red_;
+}
+const HistogramChannel &Histogram::green() const {
+  return green_;
+}
+const HistogramChannel &Histogram::blue() const {
+  return blue_;
+}
 
 void Histogram::generateHistogram(const Image *image) {
   QElapsedTimer timer;
@@ -53,4 +70,4 @@ void Histogram::generateHistogram(const Image *image) {
 
   emit histogramChanged(this);
 }
-} // namespace imagecpp
+}  // namespace imagecpp

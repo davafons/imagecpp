@@ -3,7 +3,6 @@
 #include <QBarSet>
 #include <QColor>
 #include <QObject>
-
 #include <array>
 
 #include "image/histogramchannel.hpp"
@@ -19,6 +18,10 @@ public:
   virtual ~Histogram() = default;
 
   Histogram(const Histogram &other);
+
+  float mean() const;
+  float stdev() const;
+  float standardDeviation() const;
 
   const HistogramChannel &red() const;
   const HistogramChannel &green() const;
@@ -36,4 +39,4 @@ private:
   HistogramChannel blue_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

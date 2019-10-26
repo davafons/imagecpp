@@ -45,6 +45,7 @@ public slots:
 signals:
   void propertyChanged();
   void realtimeUpdatetoggled(bool toggled);
+  void newImageGenerated(const Image* new_image);
 
 protected:
   virtual void imageOperationImpl(Image* new_image) = 0;

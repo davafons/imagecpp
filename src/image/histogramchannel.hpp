@@ -17,6 +17,7 @@ public:
   QtCharts::QBarSet *cummulativeBars() const;
 
   float mean() const;
+  float stdev() const;
   float standardDeviation() const;
   float entropy() const;
 

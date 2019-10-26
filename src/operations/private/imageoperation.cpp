@@ -178,6 +178,8 @@ void ImageOperation::generateNewImage() {
     imageOperationImpl(new_image_);
 
     new_image_up_to_date_ = true;
+
+    emit newImageGenerated(new_image_);
   }
 }
 

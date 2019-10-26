@@ -2,6 +2,7 @@
 
 #include <QFormLayout>
 #include <QLabel>
+#include <QVBoxLayout>
 
 #include "image/document.hpp"
 
@@ -23,20 +24,56 @@ BrightnessAndConstrast::BrightnessAndConstrast(Document *document)
  *
  *  \sa setA()
  */
-void BrightnessAndConstrast::setStd(float target_std) {
-  float red_A = target_std / oldHistogram()->red().standardDeviation();
-  float green_A = target_std / oldHistogram()->green().standardDeviation();
-  float blue_A = target_std / oldHistogram()->blue().standardDeviation();
+void BrightnessAndConstrast::setStd(float desired_std, Channel channel) {
+  float red_A = desired_std / oldHistogram()->red().stdev();
+  float green_A = desired_std / oldHistogram()->green().stdev();
+  float blue_A = desired_std / oldHistogram()->blue().stdev();
 
-  setA(red_A, green_A, blue_A);
+  switch (channel) {
+    case Channel::Red:
+      setA(red_A, channel);
+      break;
+
+    case Channel::Green:
+      setA(green_A, channel);
+      break;
+
+    case Channel::Blue:
+      setA(blue_A, channel);
+      break;
+
+    default:
+    case Channel::All:
+      setA(red_A, green_A, blue_A);
+      break;
+  }
 }
 
-void BrightnessAndConstrast::setMean(float target_mean) {
-  float red_B = target_mean - red_.A * oldHistogram()->red().mean();
-  float green_B = target_mean - green_.A * oldHistogram()->green().mean();
-  float blue_B = target_mean - blue_.A * oldHistogram()->blue().mean();
+void BrightnessAndConstrast::setMean(float desired_mean, Channel channel) {
+  float red_B = desired_mean - red_.A * oldHistogram()->red().mean();
+  float green_B = desired_mean - green_.A * oldHistogram()->green().mean();
+  float blue_B = desired_mean - blue_.A * oldHistogram()->blue().mean();
 
-  setB(red_B, green_B, blue_B);
+  qDebug() << red_B;
+
+  switch (channel) {
+    case Channel::Red:
+      setB(red_B, channel);
+      break;
+
+    case Channel::Green:
+      setB(green_B, channel);
+      break;
+
+    case Channel::Blue:
+      setB(blue_B, channel);
+      break;
+
+    default:
+    case Channel::All:
+      setB(red_B, green_B, blue_B);
+      break;
+  }
 }
 
 void BrightnessAndConstrast::setA(float A, Channel channel) {
@@ -129,45 +166,129 @@ void BrightnessAndConstrast::fillLutTablesImpl() {
 BACConfigDialog::BACConfigDialog(Document *document, QWidget *parent)
     : OperationConfigDialog(document, parent) {
 
-  // Configure widgets
-  brightness_spin_.setRange(-255, 255);
-  contrast_spin_.setRange(0, 255);
+  resetSliders();
 
-  // a_spin_.setRange(-127, 127);
-  // b_spin_.setRange(-127, 127);
-  //
-  // settings_layout_->addWidget(&a_spin_);
-  // settings_layout_->addWidget(&b_spin_);
+  // General box
+  QFormLayout *general_layout = new QFormLayout();
+  general_layout->addRow(tr("Brightness: "), &general_bright_slider_);
+  general_layout->addRow(tr("Contrast: "), &general_contrast_slider_);
 
-  // Setup layout
+  general_box_.setTitle("General");
+  general_box_.setLayout(general_layout);
 
-  QFormLayout *basic_parameters_layout = new QFormLayout();
+  // -- Connect sliders
 
-  basic_parameters_layout->addRow(tr("Brightness:"), &brightness_spin_);
-  basic_parameters_layout->addRow(tr("Contrast:"), &contrast_spin_);
+  connect(&general_bright_slider_, &QSlider::valueChanged, [this](int value) {
+    operation_.setMean(value);
+  });
 
-  settings_layout_->addLayout(basic_parameters_layout);
+  connect(&general_contrast_slider_, &QSlider::valueChanged, [this](int value) {
+    operation_.setStd(value);
+  });
 
-  // Add connections
-  connect(&brightness_spin_,
-          qOverload<double>(&QDoubleSpinBox::valueChanged),
-          &operation_,
-          &BrightnessAndConstrast::setMean);
+  // Brightness box
+  QFormLayout *rgb_bright_layout = new QFormLayout();
+  rgb_bright_layout->addRow(tr("Red: "), &red_bright_slider_);
+  rgb_bright_layout->addRow(tr("Green: "), &green_bright_slider_);
+  rgb_bright_layout->addRow(tr("Blue: "), &blue_bright_slider_);
 
-  connect(&contrast_spin_,
-          qOverload<double>(&QDoubleSpinBox::valueChanged),
-          &operation_,
-          &BrightnessAndConstrast::setStd);
+  rgb_bright_box_.setTitle("Brightness");
+  rgb_bright_box_.setLayout(rgb_bright_layout);
+  rgb_bright_box_.setVisible(false);
 
-  connect(&a_spin_,
-          qOverload<double>(&QDoubleSpinBox::valueChanged),
-          &operation_,
-          qOverload<float>(&BrightnessAndConstrast::setA));
+  // -- Connect sliders
+  connect(&red_bright_slider_, &QSlider::valueChanged, &operation_, [this](int value) {
+    operation_.setMean(value, BrightnessAndConstrast::Channel::Red);
+  });
 
-  connect(&b_spin_,
-          qOverload<double>(&QDoubleSpinBox::valueChanged),
-          &operation_,
-          qOverload<float>(&BrightnessAndConstrast::setB));
+  connect(
+      &green_bright_slider_, &QSlider::valueChanged, &operation_, [this](int value) {
+        operation_.setMean(value, BrightnessAndConstrast::Channel::Green);
+      });
+
+  connect(&blue_bright_slider_, &QSlider::valueChanged, &operation_, [this](int value) {
+    operation_.setMean(value, BrightnessAndConstrast::Channel::Blue);
+  });
+
+  // Contrast box
+  QFormLayout *rgb_constrast_layout = new QFormLayout();
+  rgb_constrast_layout->addRow(tr("Red: "), &red_contrast_slider_);
+  rgb_constrast_layout->addRow(tr("Green: "), &green_contrast_slider_);
+  rgb_constrast_layout->addRow(tr("Blue: "), &blue_contrast_slider_);
+
+  rgb_contrast_box_.setTitle("Contrast");
+  rgb_contrast_box_.setLayout(rgb_constrast_layout);
+  rgb_contrast_box_.setVisible(false);
+
+  // -- Connect sliders
+  connect(
+      &red_contrast_slider_, &QSlider::valueChanged, &operation_, [this](int value) {
+        operation_.setStd(value, BrightnessAndConstrast::Channel::Red);
+      });
+
+  connect(
+      &green_contrast_slider_, &QSlider::valueChanged, &operation_, [this](int value) {
+        operation_.setStd(value, BrightnessAndConstrast::Channel::Green);
+      });
+
+  connect(
+      &blue_contrast_slider_, &QSlider::valueChanged, &operation_, [this](int value) {
+        operation_.setStd(value, BrightnessAndConstrast::Channel::Blue);
+      });
+
+  // Buttons
+  QHBoxLayout *buttons_layout = new QHBoxLayout();
+  buttons_layout->addWidget(&reset_button_);
+  buttons_layout->addWidget(&more_button_);
+
+  more_button_.setCheckable(true);
+  more_button_.setChecked(false);
+
+  // -- Connect buttons
+  connect(&reset_button_, &QPushButton::clicked, this, &BACConfigDialog::resetSliders);
+  connect(&more_button_, &QPushButton::clicked, this, [this](bool checked) {
+    if (checked) {
+      more_button_.setText(tr("Hide"));
+    } else {
+      more_button_.setText(tr("More"));
+    }
+
+    rgb_bright_box_.setVisible(checked);
+    rgb_contrast_box_.setVisible(checked);
+  });
+
+  // Create final layout
+  QVBoxLayout *boxes_layout = new QVBoxLayout();
+  boxes_layout->addWidget(&general_box_);
+  boxes_layout->addWidget(&rgb_bright_box_);
+  boxes_layout->addWidget(&rgb_contrast_box_);
+  boxes_layout->addLayout(buttons_layout);
+
+  settings_layout_->addLayout(boxes_layout);
+}
+
+void BACConfigDialog::resetSliders() {
+  // General sliders
+  general_bright_slider_.setRange(0, 255);
+  general_bright_slider_.setValue(operation_.oldHistogram()->mean());
+  general_contrast_slider_.setRange(0, 255);
+  general_contrast_slider_.setValue(operation_.oldHistogram()->stdev());
+
+  // Brightness sliders
+  red_bright_slider_.setRange(0, 255);
+  red_bright_slider_.setValue(operation_.oldHistogram()->red().mean());
+  green_bright_slider_.setRange(0, 255);
+  green_bright_slider_.setValue(operation_.oldHistogram()->green().mean());
+  blue_bright_slider_.setRange(0, 255);
+  blue_bright_slider_.setValue(operation_.oldHistogram()->blue().mean());
+
+  // Constrast sliders
+  red_contrast_slider_.setRange(0, 255);
+  red_contrast_slider_.setValue(operation_.oldHistogram()->red().stdev());
+  green_contrast_slider_.setRange(0, 255);
+  green_contrast_slider_.setValue(operation_.oldHistogram()->green().stdev());
+  blue_contrast_slider_.setRange(0, 255);
+  blue_contrast_slider_.setValue(operation_.oldHistogram()->blue().stdev());
 }
 
 }  // namespace imagecpp
