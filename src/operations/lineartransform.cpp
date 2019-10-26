@@ -59,14 +59,11 @@ void LinearTransform::removeStep(int in) {
 }
 
 /*!
+ *  Implementation of the linear transform.
  *
- *
- *
- *
- *
- *
+ *  Iterate through all steps. Calculate the equation for the rect between the two steps
+ *  and fill the lut table on the corresponding range.
  */
-
 void LinearTransform::fillLutTablesImpl() {
   int x_i = steps_.begin()->first;
   int y_i = steps_.begin()->second;
@@ -88,6 +85,15 @@ void LinearTransform::fillLutTablesImpl() {
     y_i = y_f;
   }
 }
+
+/*!
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 // --- Dialog ---
 
@@ -207,28 +213,6 @@ void LinearTransformConfigDialog::removeStep(Step *step) {
 }
 
 void LinearTransformConfigDialog::inModified(Step *step) {
-  // Reposition widget on layout, ordered
-  // qDebug() << step->in() << step->out() << "Modified";
-
-  // int count = 0;
-  // for (const auto &s : steps_list_) {
-  //   if (s->in() == step->in()) {
-  //     ++count;
-  //   }
-  // }
-  //
-  // // Find next gap
-  //
-  // if (count > 1) {
-  //   int gap = findNextGap(step);
-  //
-  //   if (gap == -1) {
-  //     step->setIn(step->in() - 1);
-  //   }
-  //
-  //   step->setIn(gap);
-  // }
-
   steps_layout_->removeWidget(step);
   insertStepOrderedInLayout(step);
 
@@ -297,22 +281,5 @@ void LinearTransformConfigDialog::insertStepOrderedInLayout(Step *step) {
   // Add to layout
   steps_layout_->insertWidget(index + 1, step);
 }
-
-// int LinearTransformConfigDialog::findNextGap(Step *step) {
-//   for (int i = step->in() + 1; i < 256; ++i) {
-//     bool found = false;
-//     for (const auto &s : steps_list_) {
-//       if (s->in() == i) {
-//         found = true;
-//       }
-//     }
-//
-//     if (!found) {
-//       return i;
-//     }
-//   }
-//
-//   return -1;
-// }
 
 }  // namespace imagecpp
