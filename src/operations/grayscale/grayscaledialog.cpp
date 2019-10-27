@@ -1,6 +1,7 @@
 #include "grayscaledialog.hpp"
 
 namespace imagecpp {
+
 GrayscaleDialog::GrayscaleDialog(Document *document, QWidget *parent)
     : ImageOperationDialog<Grayscale>(document, parent) {
 

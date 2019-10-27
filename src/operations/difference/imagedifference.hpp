@@ -15,15 +15,20 @@ public:
   virtual ~ImageDifference() = default;
 
   const Image* secondImage() const;
+  int threshold() const;
 
 public slots:
   ImageDifference& setSecondImage(const Image* image);
+  ImageDifference& setThreshold(int threshold);
 
 protected:
   virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
+  virtual void imageOperationImpl(Image *new_image) override;
 
 private:
   const Image* second_image_{nullptr};
+
+  int threshold_{0};
 };
 
 }  // namespace imagecpp
