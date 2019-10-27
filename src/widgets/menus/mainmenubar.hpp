@@ -33,6 +33,7 @@ signals:
   void toggleRectSelect(bool toggled);
 
   void duplicateImage();
+  void showHistogram();
   void grayscale();
   void inverse();
   void linearTransform();
@@ -61,4 +62,4 @@ private:
   WindowsMenu windows_menu_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

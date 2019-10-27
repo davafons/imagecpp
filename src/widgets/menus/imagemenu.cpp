@@ -8,13 +8,17 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   // Duplicate
   duplicate_img_act_ = new QAction(tr("Duplicate image"), this);
-  duplicate_img_act_->setShortcut(
-      QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_D));
+  duplicate_img_act_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_D));
   duplicate_img_act_->setStatusTip(
       tr("Duplicate current image and create a new window"));
 
-  connect(duplicate_img_act_, &QAction::triggered, this,
-          &ImageMenu::duplicateImage);
+  connect(duplicate_img_act_, &QAction::triggered, this, &ImageMenu::duplicateImage);
+
+  show_histogram_act_ = new QAction(tr("Show histogram"), this);
+  show_histogram_act_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
+  duplicate_img_act_->setStatusTip(tr("Open the histogram related to the image"));
+
+  connect(show_histogram_act_, &QAction::triggered, this, &ImageMenu::showHistogram);
 
   // Grayscale
   grayscale_act_ = new QAction(tr("To grayscale..."), this);
@@ -24,8 +28,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   // Inverse
   inverse_act_ = new QAction(tr("Inverse"), this);
-  inverse_act_->setStatusTip(
-      tr("Transform the image to its inverse (negative)"));
+  inverse_act_->setStatusTip(tr("Transform the image to its inverse (negative)"));
 
   connect(inverse_act_, &QAction::triggered, this, &ImageMenu::inverse);
 
@@ -34,16 +37,13 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   linear_trans_act_->setStatusTip(
       tr("Perform a linear transformation (specifying the in/out values)"));
 
-  connect(linear_trans_act_, &QAction::triggered, this,
-          &ImageMenu::linearTransform);
+  connect(linear_trans_act_, &QAction::triggered, this, &ImageMenu::linearTransform);
 
   // Brightness and Contrast
   bac_act_ = new QAction(tr("Brightnes/Constrast..."), this);
-  bac_act_->setStatusTip(
-      tr("Change Brightnes and Contrast properties of the image"));
+  bac_act_->setStatusTip(tr("Change Brightnes and Contrast properties of the image"));
 
-  connect(bac_act_, &QAction::triggered, this,
-          &ImageMenu::brightnessAndConstrast);
+  connect(bac_act_, &QAction::triggered, this, &ImageMenu::brightnessAndConstrast);
 
   // Gamma correction
   gamma_corr_act_ = new QAction(tr("Gamma cammaCorrection..."), this);
@@ -54,6 +54,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   // Menu layout
 
   addAction(duplicate_img_act_);
+  addAction(show_histogram_act_);
   addSeparator();
   addAction(grayscale_act_);
   addAction(inverse_act_);
@@ -62,4 +63,4 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(gamma_corr_act_);
 }
 
-} // namespace imagecpp
+}  // namespace imagecpp

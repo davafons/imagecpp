@@ -14,6 +14,7 @@ public:
 
 signals:
   void duplicateImage();
+  void showHistogram();
 
   void grayscale();
   void inverse();
@@ -23,6 +24,7 @@ signals:
 
 private:
   QAction *duplicate_img_act_;
+  QAction *show_histogram_act_;
 
   QAction *grayscale_act_;
   QAction *inverse_act_;

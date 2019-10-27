@@ -36,6 +36,8 @@ private:
   void createSubWindowsArea();
   void createDocks();
 
+  void showHistogram();
+
   template <class Operation>
   void executeOperation(Document *document);
 

@@ -125,6 +125,9 @@ void MainWindow::createMenuBar() {
     documents_manager_.duplicate(mdi_area_->activeDocument());
   });
 
+  connect(
+      &main_menu_bar_, &MainMenuBar::showHistogram, this, &MainWindow::showHistogram);
+
   // Operations
 
   connect(&main_menu_bar_, &MainMenuBar::grayscale, this, [this] {
@@ -200,6 +203,28 @@ void MainWindow::updateViews(Document *document) {
     undo_group_->setActiveStack(document->undoStack());
     hist_view_->setHistogram(document->histogram());
   }
+}
+
+void MainWindow::showHistogram() {
+  if (!mdi_area_->activeDocument()) {
+    return;
+  }
+
+  HistogramView *histogramview = new HistogramView();
+  histogramview->setHistogram(mdi_area_->activeDocument()->histogram());
+
+  connect(mdi_area_->activeDocument(),
+          &Document::histogramChanged,
+          histogramview,
+          &HistogramView::setHistogram);
+
+  QVBoxLayout *layout = new QVBoxLayout();
+  layout->addWidget(histogramview);
+
+  QDialog *dialog = new QDialog();
+  dialog->setLayout(layout);
+
+  dialog->show();
 }
 
 template <class Operation>
