@@ -50,6 +50,8 @@ void MainMenuBar::createImageMenu() {
           &MainMenuBar::brightnessAndConstrast);
   connect(
       &image_menu_, &ImageMenu::gammaCorrection, this, &MainMenuBar::gammaCorrection);
+  connect(
+      &image_menu_, &ImageMenu::imageDifference, this, &MainMenuBar::imageDifference);
 }
 
 void MainMenuBar::createSettingsMenu() {

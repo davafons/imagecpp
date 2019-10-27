@@ -21,6 +21,7 @@ signals:
   void linearTransform();
   void brightnessAndConstrast();
   void gammaCorrection();
+  void imageDifference();
 
 private:
   QAction *duplicate_img_act_;
@@ -31,6 +32,7 @@ private:
   QAction *linear_trans_act_;
   QAction *bac_act_;
   QAction *gamma_corr_act_;
+  QAction *image_difference_act_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

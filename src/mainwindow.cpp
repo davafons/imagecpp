@@ -11,6 +11,7 @@
 
 #include "image/document.hpp"
 #include "operations/bac/bacdialog.hpp"
+#include "operations/difference/imagedifferencedialog.hpp"
 #include "operations/gammac/gammacdialog.hpp"
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
@@ -148,6 +149,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::gammaCorrection, this, [this] {
     executeOperation<GammaCorrectionDialog>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::imageDifference, this, [this] {
+    executeOperation<ImageDifferenceDialog>(mdi_area_->activeDocument());
   });
 
   // Windows

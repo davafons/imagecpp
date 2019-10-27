@@ -15,7 +15,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   connect(duplicate_img_act_, &QAction::triggered, this, &ImageMenu::duplicateImage);
 
   show_histogram_act_ = new QAction(tr("Show histogram"), this);
-  show_histogram_act_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
+  show_histogram_act_->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_T));
   duplicate_img_act_->setStatusTip(tr("Open the histogram related to the image"));
 
   connect(show_histogram_act_, &QAction::triggered, this, &ImageMenu::showHistogram);
@@ -51,16 +51,26 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(gamma_corr_act_, &QAction::triggered, this, &ImageMenu::gammaCorrection);
 
+  // Image difference
+  image_difference_act_ = new QAction(tr("Image difference..."), this);
+  image_difference_act_->setStatusTip(tr("Image difference between two images."));
+
+  connect(
+      image_difference_act_, &QAction::triggered, this, &ImageMenu::imageDifference);
+
   // Menu layout
 
   addAction(duplicate_img_act_);
   addAction(show_histogram_act_);
+
   addSeparator();
+
   addAction(grayscale_act_);
   addAction(inverse_act_);
   addAction(linear_trans_act_);
   addAction(bac_act_);
   addAction(gamma_corr_act_);
+  addAction(image_difference_act_);
 }
 
 }  // namespace imagecpp

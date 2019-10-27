@@ -25,6 +25,8 @@ add_executable(${PROJECT_NAME}
     src/image/histogramview.cpp
     src/operations/grayscale/grayscale.cpp
     src/operations/grayscale/grayscaledialog.cpp
+    src/operations/difference/imagedifference.cpp
+    src/operations/difference/imagedifferencedialog.cpp
     src/operations/inverse/inverse.cpp
     src/operations/transform/lineartransform.cpp
     src/operations/transform/lineartransformdialog.cpp
