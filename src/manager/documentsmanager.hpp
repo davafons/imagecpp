@@ -1,17 +1,14 @@
 #pragma once
 
-// #include <QMap>
+#include <QMap>
 #include <QObject>
 
 namespace imagecpp {
 
-// Forward declarations
 class Image;
 class Document;
+class ImagesListWidget;
 
-/*
- *
- */
 class DocumentsManager : public QObject {
   Q_OBJECT
 
@@ -26,9 +23,11 @@ public slots:
 
   void duplicate(Document *other) const;
 
+  static ImagesListWidget *createImagesListWidget(QWidget *parent = nullptr);
+
 private:
-  // QMap<int, Document*> loaded_images_;
+  static QMap<int, Document *> loaded_documents_;
   QString filters_ = tr("Image Files(*.png *.jpg *.jpeg *.bmp)");
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

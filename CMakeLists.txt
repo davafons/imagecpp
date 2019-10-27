@@ -39,6 +39,7 @@ add_executable(${PROJECT_NAME}
     src/operations/private/lutoperation.cpp
     src/widgets/image/imagedisplayarea.cpp
     src/widgets/image/imagesubwindow.cpp
+    src/widgets/image/imageslistwidget.cpp
     src/widgets/menus/filemenu.cpp
     src/widgets/menus/imagemenu.cpp
     src/widgets/menus/editmenu.cpp

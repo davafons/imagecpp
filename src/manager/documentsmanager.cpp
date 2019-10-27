@@ -6,8 +6,11 @@
 
 #include "image/document.hpp"
 #include "image/image.hpp"
+#include "widgets/image/imageslistwidget.hpp"
 
 namespace imagecpp {
+
+QMap<int, Document *> DocumentsManager::loaded_documents_ = QMap<int, Document *>();
 
 void DocumentsManager::open() {
   qInfo() << "Selecting an image path to open";
@@ -26,6 +29,10 @@ void DocumentsManager::open() {
     qInfo() << "Document object created:" << document;
 
     emit newDocumentOpened(document);
+
+    loaded_documents_[document->id()] = document;
+
+    qDebug() << loaded_documents_.size();
   }
 }
 
@@ -43,8 +50,7 @@ void DocumentsManager::saveAs(Document *document, QString file_path) const {
   }
 
   if (file_path.isEmpty()) {
-    file_path =
-        QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
+    file_path = QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
     document->setFilePath(file_path);
   }
 
@@ -66,7 +72,19 @@ void DocumentsManager::duplicate(Document *other) const {
 
   Document *duplicated_document = new Document(*other);
 
+  loaded_documents_[duplicated_document->id()] = duplicated_document;
+
   emit newDocumentOpened(duplicated_document);
 }
 
-} // namespace imagecpp
+ImagesListWidget *DocumentsManager::createImagesListWidget(QWidget *parent) {
+  ImagesListWidget *images_list = new ImagesListWidget(parent);
+
+  for (const auto &doc : loaded_documents_) {
+    images_list->addImage(doc->filePath(), doc->image());
+  }
+
+  return images_list;
+}
+
+}  // namespace imagecpp

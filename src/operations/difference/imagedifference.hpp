@@ -16,19 +16,23 @@ public:
 
   const Image* secondImage() const;
   int threshold() const;
+  QRgb diffColor() const;
 
 public slots:
   ImageDifference& setSecondImage(const Image* image);
   ImageDifference& setThreshold(int threshold);
+  ImageDifference& setDiffColor(QRgb color);
 
 protected:
   virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
-  virtual void imageOperationImpl(Image *new_image) override;
+  virtual void imageOperationImpl(Image* new_image) override;
 
 private:
   const Image* second_image_{nullptr};
 
-  int threshold_{0};
+  int threshold_{80};
+
+  QRgb diff_color_{Qt::red};
 };
 
 }  // namespace imagecpp
