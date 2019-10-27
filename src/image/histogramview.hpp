@@ -70,4 +70,4 @@ private:
   const Histogram *active_histogram_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

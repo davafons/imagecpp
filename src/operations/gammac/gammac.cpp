@@ -1,4 +1,4 @@
-#include "gammacorrection.hpp"
+#include "gammac.hpp"
 
 #include <cmath>
 
@@ -50,29 +50,6 @@ void GammaCorrection::fillLutTablesImpl() {
     g_lut_[i] = vout;
     b_lut_[i] = vout;
   }
-}
-
-/*!
- *
- *
- *
- *
- *
- *
- */
-
-GammaCorrectionConfigDialog::GammaCorrectionConfigDialog(Document *document,
-                                                         QWidget *parent)
-    : OperationConfigDialog(document, parent) {
-  settings_layout_->addWidget(&gamma_spin_);
-
-  gamma_spin_.setValue(1.0f);
-  gamma_spin_.setSingleStep(0.1f);
-
-  connect(&gamma_spin_,
-          qOverload<double>(&QDoubleSpinBox::valueChanged),
-          &operation_,
-          &GammaCorrection::setGamma);
 }
 
 }  // namespace imagecpp

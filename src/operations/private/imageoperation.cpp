@@ -22,22 +22,48 @@ ImageOperation::ImageOperation(Document* referenced_document, const QString& nam
       referenced_document_(referenced_document),
       name_(name) {
 
+  old_image_histogram_ = Histogram(*referenced_document->histogram());
+
   // After receiving the propertyChanged signal, generate new_image if the
-  // "realtime update" option is toggled
+  // "realtime update" option is toggled. Generate new_histogram if the "realtime
+  // update" option is toggled.
   connect(this, &ImageOperation::propertyChanged, this, [this] {
     new_image_up_to_date_ = false;
+    new_histogram_up_to_date_ = false;
 
-    if (isRealtimeUpdateToggled()) {
+    if (isImageRealtimeUpdateToggled()) {
       generateNewImage();
+    }
+
+    if (isHistogramRealtimeUpdateToggled()) {
+      generateNewHistogram();
     }
   });
 
   // After toggling the "realtime update" option, generate new_image
-  connect(this, &ImageOperation::realtimeUpdatetoggled, this, [this](bool toggled) {
-    if (toggled) {
-      generateNewImage();
-    }
-  });
+  connect(
+      this, &ImageOperation::imageRealtimeUpdateToggled, this, [this](bool toggled) {
+        if (toggled) {
+          generateNewImage();
+        }
+      });
+
+  // After toggling the "realtime update" option, generate new_image_histogram
+  connect(this,
+          &ImageOperation::histogramRealtimeUpdateToggled,
+          this,
+          [this](bool toggled) {
+            if (toggled) {
+              generateNewHistogram();
+            }
+          });
+}
+
+/*!
+ *  Added for compatibility with the QDialog interface.
+ */
+int ImageOperation::exec() const {
+  return 1;
 }
 
 /*!
@@ -82,25 +108,19 @@ const Image* ImageOperation::oldImage() const {
 }
 
 /*!
- *  Returns the document that is being modified with the image operation.
- */
-const Document* ImageOperation::referencedDocument() const {
-  return referenced_document_;
-}
-
-/*!
  *  Returns the histogram of new_image
  */
-const Histogram* ImageOperation::newHistogram() const {
-  // TODO: To be implemented
-  return nullptr;
+const Histogram& ImageOperation::newHistogram() {
+  generateNewHistogram();
+
+  return new_image_histogram_;
 }
 
 /*!
  *  Returns the histogram of the old_image
  */
-const Histogram* ImageOperation::oldHistogram() const {
-  return referenced_document_->histogram();
+const Histogram& ImageOperation::oldHistogram() const {
+  return old_image_histogram_;
 }
 
 /*!
@@ -120,10 +140,26 @@ QRect ImageOperation::selection() const {
  *  This should only be toggled if the new_image if being previewed (i.e. on a window)
  *  while changing the properties of the operation.
  *
- *  \sa toggleRealtimeUpdate()
+ *  \sa toggleImageRealtimeUpdate()
  */
-bool ImageOperation::isRealtimeUpdateToggled() const {
-  return realtime_update_toggled_;
+bool ImageOperation::isImageRealtimeUpdateToggled() const {
+  return image_realtime_update_toggled_;
+}
+
+/*!
+ *  Returns if the histogram is being updated "on realtime" or not.
+ *
+ *  Updating an histogram "on realtime" means that every time the propertyChanged isgnal
+ *  is triggered, the new_image_histogram_ will be regenerated to be up-to-date.
+ *
+ *  This should only be toggled if the new_image_histogram is being previewed while
+ *  changing the properties of the operation.
+ *
+ *  \sa toggleHistogramRealtimeUpdate()
+ *
+ */
+bool ImageOperation::isHistogramRealtimeUpdateToggled() const {
+  return histogram_realtime_update_toggled_;
 }
 
 /*!
@@ -137,16 +173,39 @@ bool ImageOperation::isNewImageUpToDate() const {
 }
 
 /*!
+ *  Returns if the histogram is "up-to-date"
+ *
+ *  An "up-to-date" histogram means that new_image_histogram has been recalcualted after
+ *  the newest newImageGenerated signal.
+ */
+bool ImageOperation::isNewHistogramUpToDate() const {
+  return new_histogram_up_to_date_;
+}
+
+/*!
  *  Toggles if the image will be updated "on realtime" or not.
  *
  *  Emits a signal with the boolean value assigned.
  *
- * \sa isRealtimeUpdateToggled()
+ * \sa isImageRealtimeUpdateToggled()
  */
-void ImageOperation::toggleRealtimeUpdate(bool toggled) {
-  realtime_update_toggled_ = toggled;
+void ImageOperation::toggleImageRealtimeUpdate(bool toggled) {
+  image_realtime_update_toggled_ = toggled;
 
-  emit realtimeUpdatetoggled(toggled);
+  emit imageRealtimeUpdateToggled(toggled);
+}
+
+/*!
+ *  Toggles if the histogram will be updated "on realtime" or not.
+ *
+ *  Emits a signal with the boolean value assigned.
+ *
+ *  \sa isHistogramRealtimeUpdateToggled()
+ */
+void ImageOperation::toggleHistogramRealtimeUpdate(bool toggled) {
+  histogram_realtime_update_toggled_ = toggled;
+
+  emit histogramRealtimeUpdateToggled(toggled);
 }
 
 /*!
@@ -157,14 +216,6 @@ void ImageOperation::toggleRealtimeUpdate(bool toggled) {
  */
 void ImageOperation::setName(const QString& name) {
   name_ = name;
-}
-
-/*!
- *  TODO: Added for compatibility with Dialog.
- *  TODO: Explain better
- */
-int ImageOperation::exec() const {
-  return 1;
 }
 
 /*!
@@ -180,6 +231,21 @@ void ImageOperation::generateNewImage() {
     new_image_up_to_date_ = true;
 
     emit newImageGenerated(new_image_);
+  }
+};
+
+/*!
+ *  Generates new_image_histogram_ if it isn't "up-to-date"
+ *
+ *  \sa isNewHistogramUpToDate()
+ */
+void ImageOperation::generateNewHistogram() {
+  if (!isNewHistogramUpToDate()) {
+    new_image_histogram_.generateHistogram(new_image_);
+
+    new_histogram_up_to_date_ = true;
+
+    emit newHistogramGenerated(new_image_histogram_);
   }
 }
 

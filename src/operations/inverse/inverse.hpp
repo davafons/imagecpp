@@ -1,7 +1,6 @@
 #pragma once
 
 #include "operations/private/lutoperation.hpp"
-#include "operations/private/operationconfigdialog.hpp"
 
 namespace imagecpp {
 
@@ -16,4 +15,4 @@ protected slots:
   virtual void fillLutTablesImpl() override;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

@@ -4,15 +4,17 @@
 #include <QtCharts>
 
 namespace imagecpp {
+
 class HistogramChannel {
+
 public:
   using HistArray = std::array<int, 256>;
 
+public:
   explicit HistogramChannel(const HistArray &h = HistArray(),
                             const QString &name = "channel",
                             const QColor &color = Qt::black);
 
-  // Getters
   QtCharts::QBarSet *bars() const;
   QtCharts::QBarSet *cummulativeBars() const;
 
@@ -28,35 +30,34 @@ public:
   int maxIntensity() const;
   int pixelCount() const;
 
+  friend void swap(HistogramChannel &first, HistogramChannel &second);
+
 private:
   static HistArray calculateCummulative(const HistArray &h);
-
   static float calculateMean(const HistArray &h, int pixel_count);
-
-  static float calculateStdDeviation(const HistArray &h, int pixel_count,
-                                     float mean);
-
+  static float calculateStdDeviation(const HistArray &h, int pixel_count, float mean);
   static float calculateEntropy(const HistArray &h, int pixel_count);
 
-  static QtCharts::QBarSet *
-  createBarSet(const HistArray &h, const QString &name, const QColor &color);
+  static QtCharts::QBarSet *createBarSet(const HistArray &h,
+                                         const QString &name,
+                                         const QColor &color);
 
 private:
-  HistArray h_;     // Histogram
-  HistArray acc_h_; // Accumulative
+  HistArray h_;      // Histogram
+  HistArray acc_h_;  // Accumulative
 
-  float mean_;
-  float std_deviation_;
-  float entropy_;
+  float mean_{0.0f};
+  float std_deviation_{0.0f};
+  float entropy_{0.0f};
 
-  int mode_;
+  int mode_{0};
 
-  int pixel_count_;
-  int min_intensity_;
-  int max_intensity_;
+  int pixel_count_{0};
+  int min_intensity_{0};
+  int max_intensity_{0};
 
-  QString name_;
-  QColor color_;
+  QString name_{"undefined"};
+  QColor color_{Qt::black};
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

@@ -10,12 +10,11 @@
 #include <QUndoView>
 
 #include "image/document.hpp"
-#include "operations/brightnesscontrast.hpp"
-#include "operations/gammacorrection.hpp"
-#include "operations/grayscale.hpp"
-#include "operations/inverse.hpp"
-#include "operations/lineartransform.hpp"
-#include "operations/private/operationconfigdialog.hpp"
+#include "operations/bac/bacdialog.hpp"
+#include "operations/gammac/gammacdialog.hpp"
+#include "operations/grayscale/grayscaledialog.hpp"
+#include "operations/inverse/inverse.hpp"
+#include "operations/transform/lineartransformdialog.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/imagesubwindow.hpp"
@@ -25,8 +24,10 @@
 namespace imagecpp {
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
-    : QMainWindow(parent, flags), mdi_area_(new SubWindowsArea()),
-      undo_group_(new QUndoGroup()), undo_view_(new QUndoView()),
+    : QMainWindow(parent, flags),
+      mdi_area_(new SubWindowsArea()),
+      undo_group_(new QUndoGroup()),
+      undo_view_(new QUndoView()),
       hist_view_(new HistogramView()) {
 
   // MenuBar and StatusBar
@@ -45,20 +46,28 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
   // DocumentsManager
 
   // Add new window when opening a document
-  connect(&documents_manager_, &DocumentsManager::newDocumentOpened, mdi_area_,
+  connect(&documents_manager_,
+          &DocumentsManager::newDocumentOpened,
+          mdi_area_,
           &SubWindowsArea::addDocumentWindow);
 
-  connect(&documents_manager_, &DocumentsManager::newDocumentOpened, this,
+  connect(&documents_manager_,
+          &DocumentsManager::newDocumentOpened,
+          this,
           [this](Document *document) {
             if (document) {
               undo_group_->addStack(document->undoStack());
 
-              connect(document, &Document::histogramChanged, hist_view_,
+              connect(document,
+                      &Document::histogramChanged,
+                      hist_view_,
                       &HistogramView::setHistogram);
             }
           });
 
-  connect(&documents_manager_, &DocumentsManager::documentSaved, this,
+  connect(&documents_manager_,
+          &DocumentsManager::documentSaved,
+          this,
           [this](Document *, const QString &file_path) {
             main_status_bar_.showSavedFilePathMessage(file_path);
           });
@@ -76,99 +85,111 @@ void MainWindow::createMenuBar() {
 
   main_menu_bar_.createUndoActions(undo_group_);
 
-  connect(&main_menu_bar_, &MainMenuBar::open, &documents_manager_,
+  connect(&main_menu_bar_,
+          &MainMenuBar::open,
+          &documents_manager_,
           &DocumentsManager::open);
 
-  connect(&main_menu_bar_, &MainMenuBar::save, &documents_manager_,
-          [this] { documents_manager_.save(mdi_area_->activeDocument()); });
+  connect(&main_menu_bar_, &MainMenuBar::save, &documents_manager_, [this] {
+    documents_manager_.save(mdi_area_->activeDocument());
+  });
 
-  connect(&main_menu_bar_, &MainMenuBar::saveAs, &documents_manager_,
-          [this] { documents_manager_.saveAs(mdi_area_->activeDocument()); });
+  connect(&main_menu_bar_, &MainMenuBar::saveAs, &documents_manager_, [this] {
+    documents_manager_.saveAs(mdi_area_->activeDocument());
+  });
 
   // TODO: Add "Save copy connection"
 
-  connect(&main_menu_bar_, &MainMenuBar::closeView, mdi_area_,
+  connect(&main_menu_bar_,
+          &MainMenuBar::closeView,
+          mdi_area_,
           &SubWindowsArea::closeActiveSubWindow);
-  connect(&main_menu_bar_, &MainMenuBar::closeAll, mdi_area_,
+  connect(&main_menu_bar_,
+          &MainMenuBar::closeAll,
+          mdi_area_,
           &SubWindowsArea::closeAllSubWindows);
   connect(&main_menu_bar_, &MainMenuBar::quit, qApp, &QApplication::quit);
 
   connect(&main_menu_bar_, &MainMenuBar::undo, undo_group_, &QUndoGroup::undo);
   connect(&main_menu_bar_, &MainMenuBar::redo, undo_group_, &QUndoGroup::redo);
-  connect(&main_menu_bar_, &MainMenuBar::toggleRectSelect, this,
-          [this](bool toggled) {
-            delete rect_selection_tool_;
-            rect_selection_tool_ = nullptr;
+  connect(&main_menu_bar_, &MainMenuBar::toggleRectSelect, this, [this](bool toggled) {
+    delete rect_selection_tool_;
+    rect_selection_tool_ = nullptr;
 
-            if (toggled) {
-              rect_selection_tool_ = new RectSelectionTool(mdi_area_);
-            }
-          });
+    if (toggled) {
+      rect_selection_tool_ = new RectSelectionTool(mdi_area_);
+    }
+  });
 
-  connect(
-      &main_menu_bar_, &MainMenuBar::duplicateImage, &documents_manager_,
-      [this] { documents_manager_.duplicate(mdi_area_->activeDocument()); });
+  connect(&main_menu_bar_, &MainMenuBar::duplicateImage, &documents_manager_, [this] {
+    documents_manager_.duplicate(mdi_area_->activeDocument());
+  });
 
   // Operations
 
   connect(&main_menu_bar_, &MainMenuBar::grayscale, this, [this] {
-    executeOperation<GrayscaleConfigDialog>(mdi_area_->activeDocument());
+    executeOperation<GrayscaleDialog>(mdi_area_->activeDocument());
   });
 
-  connect(&main_menu_bar_, &MainMenuBar::inverse, this,
-          [this] { executeOperation<Inverse>(mdi_area_->activeDocument()); });
+  connect(&main_menu_bar_, &MainMenuBar::inverse, this, [this] {
+    executeOperation<Inverse>(mdi_area_->activeDocument());
+  });
 
   connect(&main_menu_bar_, &MainMenuBar::linearTransform, this, [this] {
-    executeOperation<LinearTransformConfigDialog>(mdi_area_->activeDocument());
+    executeOperation<LinearTransformDialog>(mdi_area_->activeDocument());
   });
 
   connect(&main_menu_bar_, &MainMenuBar::brightnessAndConstrast, this, [this] {
-    executeOperation<BACConfigDialog>(mdi_area_->activeDocument());
+    executeOperation<BACDialog>(mdi_area_->activeDocument());
   });
 
   connect(&main_menu_bar_, &MainMenuBar::gammaCorrection, this, [this] {
-    executeOperation<GammaCorrectionConfigDialog>(mdi_area_->activeDocument());
+    executeOperation<GammaCorrectionDialog>(mdi_area_->activeDocument());
   });
 
   // Windows
 
   // TODO: Change with the dock toggle actions
-  connect(&main_menu_bar_, &MainMenuBar::toggleTabsView, mdi_area_,
+  connect(&main_menu_bar_,
+          &MainMenuBar::toggleTabsView,
+          mdi_area_,
           &SubWindowsArea::toggleTabsView);
-  connect(&main_menu_bar_, &MainMenuBar::toggleHistoryWindow, undo_view_,
+  connect(&main_menu_bar_,
+          &MainMenuBar::toggleHistoryWindow,
+          undo_view_,
           &SubWindowsArea::setVisible);
 }
 
-void MainWindow::createStatusBar() { setStatusBar(&main_status_bar_); }
+void MainWindow::createStatusBar() {
+  setStatusBar(&main_status_bar_);
+}
 
 void MainWindow::createSubWindowsArea() {
   setCentralWidget(mdi_area_);
 
-  connect(mdi_area_, &SubWindowsArea::subwindowAdded, this,
-          [this](ImageSubWindow *w) {
-            connect(w, &ImageSubWindow::pixelInformation,
-                    main_status_bar_.pixelInfoWidget(),
-                    &PixelInformationWidget::onPixelInformationReceived);
-          });
+  connect(mdi_area_, &SubWindowsArea::subwindowAdded, this, [this](ImageSubWindow *w) {
+    connect(w,
+            &ImageSubWindow::pixelInformation,
+            main_status_bar_.pixelInfoWidget(),
+            &PixelInformationWidget::onPixelInformationReceived);
+  });
 
-  connect(mdi_area_, &SubWindowsArea::activeDocumentChanged, this,
+  connect(mdi_area_,
+          &SubWindowsArea::activeDocumentChanged,
+          this,
           &MainWindow::updateViews);
 }
 
 void MainWindow::createDocks() {
   // Histogram view
-  ResizableDockWidget *histogram_dock =
-      new ResizableDockWidget(tr("Histogram"), this);
-  histogram_dock->setAllowedAreas(Qt::LeftDockWidgetArea |
-                                  Qt::RightDockWidgetArea);
+  ResizableDockWidget *histogram_dock = new ResizableDockWidget(tr("Histogram"), this);
+  histogram_dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
   histogram_dock->setWidget(hist_view_);
   addDockWidget(Qt::RightDockWidgetArea, histogram_dock);
 
   // History view
-  ResizableDockWidget *history_dock =
-      new ResizableDockWidget(tr("History"), this);
-  history_dock->setAllowedAreas(Qt::LeftDockWidgetArea |
-                                Qt::RightDockWidgetArea);
+  ResizableDockWidget *history_dock = new ResizableDockWidget(tr("History"), this);
+  history_dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
   history_dock->setWidget(undo_view_);
   addDockWidget(Qt::RightDockWidgetArea, history_dock);
 }
@@ -188,9 +209,9 @@ void MainWindow::executeOperation(Document *document) {
   }
 
   Operation op(document);
-  int return_value = op.exec();
+  int return_type = op.exec();
 
-  if (return_value) {
+  if (return_type == 1) {
     document->undoStack()->push(op.command());
   }
 
@@ -198,4 +219,4 @@ void MainWindow::executeOperation(Document *document) {
   updateViews(document);
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

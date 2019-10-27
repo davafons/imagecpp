@@ -1,6 +1,5 @@
 #pragma once
 
-#include "operations/private/operationconfigdialog.hpp"
 #include "operations/private/pixeloperation.hpp"
 
 class QRadioButton;
@@ -31,24 +30,6 @@ private:
   float red_factor_{0.0f};
   float green_factor_{0.0f};
   float blue_factor_{0.0f};
-};
-
-/*!
- *
- *
- *
- *
- *
- *
- */
-class GrayscaleConfigDialog : public OperationConfigDialog<Grayscale> {
-public:
-  GrayscaleConfigDialog(Document *document, QWidget *parent = nullptr);
-  virtual ~GrayscaleConfigDialog() = default;
-
-private:
-  QRadioButton *pal_radio_;
-  QRadioButton *ntsc_radio_;
 };
 
 }  // namespace imagecpp

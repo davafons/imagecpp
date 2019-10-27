@@ -23,12 +23,16 @@ add_executable(${PROJECT_NAME}
     src/image/histogramchannel.cpp
     src/image/image.cpp
     src/image/histogramview.cpp
-    src/operations/grayscale.cpp
-    src/operations/inverse.cpp
-    src/operations/lineartransform.cpp
-    src/operations/brightnesscontrast.cpp
+    src/operations/grayscale/grayscale.cpp
+    src/operations/grayscale/grayscaledialog.cpp
+    src/operations/inverse/inverse.cpp
+    src/operations/transform/lineartransform.cpp
+    src/operations/transform/lineartransformdialog.cpp
+    src/operations/bac/bac.cpp
+    src/operations/bac/bacdialog.cpp
     src/operations/private/pixeloperation.cpp
-    src/operations/gammacorrection.cpp
+    src/operations/gammac/gammac.cpp
+    src/operations/gammac/gammacdialog.cpp
     src/operations/private/imageoperation.cpp
     src/operations/private/lutoperation.cpp
     src/widgets/image/imagedisplayarea.cpp

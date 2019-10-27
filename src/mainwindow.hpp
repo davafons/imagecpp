@@ -24,12 +24,11 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  MainWindow(QWidget *parent = nullptr,
-             Qt::WindowFlags flags = Qt::WindowFlags());
+  MainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
   virtual ~MainWindow();
 
 private slots:
-  void updateViews(Document *document); // TODO: Pass const
+  void updateViews(Document *document);  // TODO: Pass const
 
 private:
   void createMenuBar();
@@ -37,7 +36,8 @@ private:
   void createSubWindowsArea();
   void createDocks();
 
-  template <class Operation> void executeOperation(Document *document);
+  template <class Operation>
+  void executeOperation(Document *document);
 
 private:
   MainMenuBar main_menu_bar_;
@@ -54,4 +54,4 @@ private:
   RectSelectionTool *rect_selection_tool_{nullptr};
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

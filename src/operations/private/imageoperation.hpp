@@ -5,6 +5,8 @@
 #include <QString>
 #include <QUndoCommand>
 
+#include "image/histogram.hpp"
+
 namespace imagecpp {
 
 class Document;
@@ -20,47 +22,62 @@ public:
 
   virtual ~ImageOperation() = default;
 
+  virtual int exec() const;
+
   QString name() const;
   QUndoCommand* command();
 
   const Image* newImage();
   const Image* oldImage() const;
-  const Document* referencedDocument() const;
 
-  const Histogram* newHistogram() const;
-  const Histogram* oldHistogram() const;
+  const Histogram& newHistogram();
+  const Histogram& oldHistogram() const;
 
   QRect selection() const;
 
-  bool isRealtimeUpdateToggled() const;
+  bool isImageRealtimeUpdateToggled() const;
+  bool isHistogramRealtimeUpdateToggled() const;
+
   bool isNewImageUpToDate() const;
+  bool isNewHistogramUpToDate() const;
 
 public slots:
-  void toggleRealtimeUpdate(bool toggled);
+  void toggleImageRealtimeUpdate(bool toggled);
+  void toggleHistogramRealtimeUpdate(bool toggled);
 
   void setName(const QString& name);
 
-  int exec() const;
-
 signals:
   void propertyChanged();
-  void realtimeUpdatetoggled(bool toggled);
+  void imageRealtimeUpdateToggled(bool toggled);
+  void histogramRealtimeUpdateToggled(bool toggled);
+
   void newImageGenerated(const Image* new_image);
+  void newHistogramGenerated(const Histogram& histogram);
 
 protected:
   virtual void imageOperationImpl(Image* new_image) = 0;
 
 private:
   void generateNewImage();
+  void generateNewHistogram();
 
 private:
   Image* new_image_{nullptr};
   const Image* old_image_{nullptr};
+
+  Histogram new_image_histogram_;
+  Histogram old_image_histogram_;
+
   Document* referenced_document_{nullptr};
 
   QString name_{"undefined-operation"};
+
+  bool image_realtime_update_toggled_{true};
+  bool histogram_realtime_update_toggled_{false};
+
   bool new_image_up_to_date_{false};
-  bool realtime_update_toggled_{true};
+  bool new_histogram_up_to_date_{false};
 
   class ImageCommand;
 };

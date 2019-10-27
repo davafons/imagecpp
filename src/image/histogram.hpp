@@ -18,14 +18,20 @@ public:
   virtual ~Histogram() = default;
 
   Histogram(const Histogram &other);
+  Histogram(Histogram &&other);
+  Histogram &operator=(Histogram other);
 
   float mean() const;
   float stdev() const;
   float standardDeviation() const;
 
+  int pixelCount() const;
+
   const HistogramChannel &red() const;
   const HistogramChannel &green() const;
   const HistogramChannel &blue() const;
+
+  friend void swap(Histogram &first, Histogram &second);
 
 signals:
   void histogramChanged(const Histogram *histogram);
@@ -37,6 +43,8 @@ private:
   HistogramChannel red_;
   HistogramChannel green_;
   HistogramChannel blue_;
+
+  int pixel_count_;
 };
 
 }  // namespace imagecpp
