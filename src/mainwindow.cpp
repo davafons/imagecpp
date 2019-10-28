@@ -16,6 +16,7 @@
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
 #include "operations/transform/lineartransformdialog.hpp"
+#include "operations/digitalization/digitalization.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/imagesubwindow.hpp"
@@ -153,6 +154,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::imageDifference, this, [this] {
     executeOperation<ImageDifferenceDialog>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::digitalization, this, [this] {
+    executeOperation<Digitalization>(mdi_area_->activeDocument());
   });
 
   // Windows

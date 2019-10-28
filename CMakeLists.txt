@@ -31,6 +31,7 @@ add_executable(${PROJECT_NAME}
     src/operations/transform/lineartransform.cpp
     src/operations/transform/lineartransformdialog.cpp
     src/operations/bac/bac.cpp
+    src/operations/digitalization/digitalization.cpp
     src/operations/bac/bacdialog.cpp
     src/operations/private/pixeloperation.cpp
     src/operations/gammac/gammac.cpp

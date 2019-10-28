@@ -58,6 +58,12 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   connect(
       image_difference_act_, &QAction::triggered, this, &ImageMenu::imageDifference);
 
+  // Digitalization
+  digitalization_act_ = new QAction(tr("Digitalization..."), this);
+  digitalization_act_->setStatusTip(tr("Digitalization and sampling of the image"));
+
+  connect(digitalization_act_, &QAction::triggered, this, &ImageMenu::digitalization);
+
   // Menu layout
 
   addAction(duplicate_img_act_);
@@ -71,6 +77,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(bac_act_);
   addAction(gamma_corr_act_);
   addAction(image_difference_act_);
+  addAction(digitalization_act_);
 }
 
 }  // namespace imagecpp

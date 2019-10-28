@@ -40,6 +40,7 @@ signals:
   void brightnessAndConstrast();
   void gammaCorrection();
   void imageDifference();
+  void digitalization();
 
   void toggleTabsView(bool toggled);
 

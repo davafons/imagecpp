@@ -52,6 +52,7 @@ void MainMenuBar::createImageMenu() {
       &image_menu_, &ImageMenu::gammaCorrection, this, &MainMenuBar::gammaCorrection);
   connect(
       &image_menu_, &ImageMenu::imageDifference, this, &MainMenuBar::imageDifference);
+  connect(&image_menu_, &ImageMenu::digitalization, this, &MainMenuBar::digitalization);
 }
 
 void MainMenuBar::createSettingsMenu() {
