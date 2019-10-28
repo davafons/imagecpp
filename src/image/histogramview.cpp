@@ -65,6 +65,7 @@ HistogramView::HistogramView(QWidget *parent)
 
   // Important! Allow to register mouse over events handled on eventFilter
   chart_view_->setAttribute(Qt::WA_Hover);
+  chart_view_->setRubberBand(QChartView::HorizontalRubberBand);
   chart_view_->installEventFilter(this);
 
   // Setup additional widgets
