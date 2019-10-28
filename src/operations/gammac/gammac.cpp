@@ -12,7 +12,7 @@ namespace imagecpp {
  *  Construcs a GammaCorrection operation object.
  */
 GammaCorrection::GammaCorrection(Document *document)
-    : LutOperation(document, "Gamma Correction") {}
+    : LutOperation(document, tr("Gamma Correction")) {}
 
 /*!
  *  Returns the gamma factor used.

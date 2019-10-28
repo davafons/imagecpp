@@ -19,9 +19,9 @@ public:
   QRgb diffColor() const;
 
 public slots:
-  ImageDifference& setSecondImage(const Image* image);
-  ImageDifference& setThreshold(int threshold);
-  ImageDifference& setDiffColor(QRgb color);
+  void setSecondImage(const Image* image);
+  void setThreshold(int threshold);
+  void setDiffColor(QRgb color);
 
 protected:
   virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;

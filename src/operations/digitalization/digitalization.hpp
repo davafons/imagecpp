@@ -17,7 +17,7 @@ public:
   int samplingSize() const;
 
 public slots:
-  Digitalization& setSamplingSize(int size);
+  void setSamplingSize(int size);
 
 protected:
   virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;

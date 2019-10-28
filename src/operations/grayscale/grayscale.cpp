@@ -39,7 +39,7 @@ Grayscale::Format Grayscale::format() const {
  *  Sets the RGB factors used by the grayscale formula, depending on the Format (PAL or
  *  NSTC)
  */
-Grayscale &Grayscale::setFormat(const Format &format) {
+void Grayscale::setFormat(const Format &format) {
   format_ = format;
 
   red_factor_ = (format_ == Format::PAL) ? 0.222f : 0.299f;
@@ -47,8 +47,6 @@ Grayscale &Grayscale::setFormat(const Format &format) {
   blue_factor_ = (format_ == Format::PAL) ? 0.071f : 0.114f;
 
   emit propertyChanged();
-
-  return *this;
 }
 
 /*!

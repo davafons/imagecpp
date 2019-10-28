@@ -17,30 +17,24 @@ QRgb ImageDifference::diffColor() const {
   return diff_color_;
 }
 
-ImageDifference& ImageDifference::setSecondImage(const Image* image) {
+void ImageDifference::setSecondImage(const Image* image) {
   second_image_ = image;
 
   emit propertyChanged();
-
-  return *this;
 }
 
-ImageDifference& ImageDifference::setThreshold(int threshold) {
+void ImageDifference::setThreshold(int threshold) {
   threshold_ = threshold;
 
   qDebug() << threshold_;
 
   emit propertyChanged();
-
-  return *this;
 }
 
-ImageDifference& ImageDifference::setDiffColor(QRgb color) {
+void ImageDifference::setDiffColor(QRgb color) {
   diff_color_ = color;
 
   emit propertyChanged();
-
-  return *this;
 }
 
 QRgb ImageDifference::pixelOperationImpl(int x, int y, QRgb color) const {

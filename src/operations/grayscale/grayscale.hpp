@@ -19,7 +19,7 @@ public:
   Format format() const;
 
 public slots:
-  Grayscale &setFormat(const Format &format);
+  void setFormat(const Format &format);
 
 protected:
   virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;

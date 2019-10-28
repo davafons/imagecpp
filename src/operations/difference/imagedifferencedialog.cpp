@@ -17,17 +17,13 @@ ImageDifferenceDialog::ImageDifferenceDialog(Document *document, QWidget *parent
 
   connect(images_list_widget_,
           &ImagesListWidget::imageChanged,
-          this,
-          [this](const Image *image) {
-            operation().setSecondImage(image);
-            image_display_area_->onImageUpdated(image);
-            qDebug() << "Triggered";
-          });
+          &operation(),
+          &ImageDifference::setSecondImage);
 
   connect(threshold_spin_,
           qOverload<int>(&QSpinBox::valueChanged),
-          this,
-          [this](int value) { operation().setThreshold(value); });
+          &operation(),
+          &ImageDifference::setThreshold);
 
   settings_layout_->addWidget(images_list_widget_);
   settings_layout_->addWidget(image_display_area_);

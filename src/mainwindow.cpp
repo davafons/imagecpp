@@ -12,11 +12,11 @@
 #include "image/document.hpp"
 #include "operations/bac/bacdialog.hpp"
 #include "operations/difference/imagedifferencedialog.hpp"
+#include "operations/digitalization/digitalizationdialog.hpp"
 #include "operations/gammac/gammacdialog.hpp"
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
 #include "operations/transform/lineartransformdialog.hpp"
-#include "operations/digitalization/digitalization.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
 #include "widgets/image/imagesubwindow.hpp"
@@ -157,7 +157,7 @@ void MainWindow::createMenuBar() {
   });
 
   connect(&main_menu_bar_, &MainMenuBar::digitalization, this, [this] {
-    executeOperation<Digitalization>(mdi_area_->activeDocument());
+    executeOperation<DigitalizationDialog>(mdi_area_->activeDocument());
   });
 
   // Windows
