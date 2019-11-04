@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags)
 
   // UndoView
   undo_view_->setGroup(undo_group_);
+  undo_view_->setEmptyLabel("<Original image>");
 
   // MdiArea
   createSubWindowsArea();

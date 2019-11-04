@@ -16,8 +16,11 @@ int Digitalization::samplingSize() const {
 void Digitalization::setSamplingSize(int size) {
   sampling_size_ = size;
 
-  sampling_table_.resize(oldImage()->height() / sampling_size_,
-                         std::vector<QRgb>(oldImage()->width() / sampling_size_));
+  int table_cols = std::ceil(float(oldImage()->height()) / sampling_size_);
+  int table_rows = std::ceil(float(oldImage()->width()) / sampling_size_);
+
+  sampling_table_ =
+      std::vector<std::vector<QRgb>>(table_cols, std::vector<QRgb>(table_rows));
 
   sampling_table_up_to_date_ = false;
 
@@ -39,11 +42,11 @@ void Digitalization::imageOperationImpl(Image *new_image) {
 void Digitalization::fillSamplingTable() {
   for (int i = 0; i < sampling_table_.size(); ++i) {
     for (int j = 0; j < sampling_table_[i].size(); ++j) {
-      int red_av = 0;
-      int green_av = 0;
-      int blue_av = 0;
+      long int red_av = 0;
+      long int green_av = 0;
+      long int blue_av = 0;
 
-      int pixels = 1;
+      int pixels = 0;
 
       for (int y = i * sampling_size_; y < (i + 1) * sampling_size_; ++y) {
         for (int x = j * sampling_size_; x < (j + 1) * sampling_size_; ++x) {
@@ -62,14 +65,15 @@ void Digitalization::fillSamplingTable() {
         }
       }
 
+      // Avoid division by zero
+      pixels = std::max(pixels, 1);
+
       sampling_table_[i][j] =
           qRgb(red_av / pixels, green_av / pixels, blue_av / pixels);
     }
   }
 
   sampling_table_up_to_date_ = true;
-
-  qDebug() << "Sampling table calculated";
 }
 
 }  // namespace imagecpp
