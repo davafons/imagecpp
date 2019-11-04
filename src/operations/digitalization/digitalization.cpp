@@ -6,11 +6,16 @@ namespace imagecpp {
 
 Digitalization::Digitalization(Document *document)
     : PixelOperation(document, tr("Digitalization")) {
-  setSamplingSize(2);  // Must be called on constructor to initialize the sampling table
+  setSamplingSize(2);  // Must be called on constructor to initialize the
+                       // sampling table
 }
 
 int Digitalization::samplingSize() const {
   return sampling_size_;
+}
+
+int Digitalization::quantizationFactor() const {
+  return quantization_factor_;
 }
 
 void Digitalization::setSamplingSize(int size) {
@@ -27,8 +32,27 @@ void Digitalization::setSamplingSize(int size) {
   emit propertyChanged();
 }
 
+void Digitalization::setQuantizationFactor(int factor) {
+  quantization_factor_ = factor;
+
+  emit propertyChanged();
+}
+
 QRgb Digitalization::pixelOperationImpl(int x, int y, QRgb) const {
-  return sampling_table_[y / sampling_size_][x / sampling_size_];
+  QRgb color = sampling_table_[y / sampling_size_][x / sampling_size_];
+
+  const int range_step = 256 / std::pow(2, quantization_factor_);
+
+  int r_pos = qRed(color) / range_step;
+  // int g_pos = qGreen(color) / range_step;
+  // int b_pos = qBlue(color) / range_step;
+
+  int r_quantized_color = r_pos * range_step;
+  if (std::ceil(r_quantized_color) == std::pow(2, quantization_factor_)) {
+    r_quantized_color = 256;
+  }
+
+  return qRgb(r_quantized_color, r_quantized_color, r_quantized_color);
 }
 
 void Digitalization::imageOperationImpl(Image *new_image) {

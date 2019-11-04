@@ -15,9 +15,11 @@ public:
   virtual ~Digitalization() = default;
 
   int samplingSize() const;
+  int quantizationFactor() const;
 
 public slots:
   void setSamplingSize(int size);
+  void setQuantizationFactor(int factor);
 
 protected:
   virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
@@ -27,7 +29,8 @@ private:
   void fillSamplingTable();
 
 private:
-  int sampling_size_{2};
+  int sampling_size_;
+  int quantization_factor_{8};
 
   std::vector<std::vector<QRgb>> sampling_table_;
 

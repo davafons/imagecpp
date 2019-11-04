@@ -16,6 +16,7 @@ public:
 
 private:
   QSpinBox *sampling_spin_;
+  QSpinBox *quantization_spin_;
 };
 
 }  // namespace imagecpp
