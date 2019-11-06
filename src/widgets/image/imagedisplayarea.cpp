@@ -12,7 +12,7 @@ namespace imagecpp {
 ImageDisplayArea::ImageDisplayArea(QWidget *parent)
     : QScrollArea(parent), image_ref_(nullptr) {
   // Set widgets attributes and options
-  target_.setAttribute(Qt::WA_Hover); // Allow hover events
+  target_.setAttribute(Qt::WA_Hover);  // Allow hover events
   target_.setScaledContents(true);
 
   verticalScrollBar()->setEnabled(false);
@@ -29,8 +29,12 @@ ImageDisplayArea::ImageDisplayArea(QWidget *parent)
   setWidget(&target_);
 }
 
-float ImageDisplayArea::scaleFactor() const { return scale_factor_; }
-const Image *ImageDisplayArea::image() const { return image_ref_; }
+float ImageDisplayArea::scaleFactor() const {
+  return scale_factor_;
+}
+const Image *ImageDisplayArea::image() const {
+  return image_ref_;
+}
 
 void ImageDisplayArea::onImageOpened(const Image *image) {
   qInfo() << "Setting image" << image << "on the display";
@@ -62,7 +66,9 @@ void ImageDisplayArea::onImageUpdated(const Image *image) {
   emit imageUpdated(image_ref_);
 }
 
-void ImageDisplayArea::resetSize() { resize(1.0f); }
+void ImageDisplayArea::resetSize() {
+  resize(1.0f);
+}
 
 void ImageDisplayArea::resize(float scale_factor) {
   if (scale_factor <= 0) {
@@ -102,8 +108,9 @@ bool ImageDisplayArea::eventFilter(QObject *obj, QEvent *event) {
 }
 
 void ImageDisplayArea::mousePressEvent(QMouseEvent *event) {
-  if (event->buttons() & Qt::RightButton) {
+  if (event->buttons() & (Qt::LeftButton | Qt::RightButton)) {
     last_clicked_point_ = event->pos();
+    qDebug() << "Last" << last_clicked_point_;
   }
 
   QScrollArea::mousePressEvent(event);
@@ -116,6 +123,14 @@ void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
   }
 
   QScrollArea::mouseMoveEvent(event);
+}
+
+void ImageDisplayArea::mouseReleaseEvent(QMouseEvent *event) {
+  if (rect_selection_toggled_ && event->button() == Qt::LeftButton) {
+    qDebug() << "Rect" << createSelectionRect(last_clicked_point_, event->pos());
+  }
+
+  QScrollArea::mouseReleaseEvent(event);
 }
 
 // TODO: Transform literals to constants?
@@ -143,4 +158,33 @@ void ImageDisplayArea::wheelEvent(QWheelEvent *event) {
   QScrollArea::wheelEvent(event);
 }
 
-} // namespace imagecpp
+QRect ImageDisplayArea::createSelectionRect(QPoint a, QPoint b) {
+  if (a.x() > b.x()) {
+    int tmp = a.x();
+    a.setX(b.x());
+    b.setX(tmp);
+  }
+
+  if (a.y() > b.y()) {
+    int tmp = a.y();
+    a.setY(b.y());
+    b.setY(tmp);
+  }
+
+  if (a.x() < target_.x()) {
+    a.setX(0);
+  }
+
+  if (a.y() < target_.y()) {
+    a.setY(0);
+  }
+
+  b.setX(std::min((b.x() - target_.x()) / scale_factor_, float(image_ref_->width())));
+  b.setY(std::min((b.y() - target_.y()) / scale_factor_, float(image_ref_->height())));
+
+  qDebug() << scale_factor_;
+
+  return QRect(a, b);
+}
+
+}  // namespace imagecpp

@@ -43,7 +43,11 @@ protected:
   virtual bool eventFilter(QObject *obj, QEvent *event) override;
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseMoveEvent(QMouseEvent *event) override;
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
   virtual void wheelEvent(QWheelEvent *event) override;
+
+private:
+  QRect createSelectionRect(QPoint a, QPoint b);
 
 private:
   const Image *image_ref_;
@@ -52,6 +56,8 @@ private:
   float scale_factor_{1.0f};
   QPoint last_clicked_point_{0, 0};
   int numScheduledScalings_{0};
+
+  bool rect_selection_toggled_{true};
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp
