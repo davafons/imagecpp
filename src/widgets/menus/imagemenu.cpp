@@ -70,6 +70,12 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(equalization_act_, &QAction::triggered, this, &ImageMenu::equalization);
 
+  // Specification
+  specification_act_ = new QAction(tr("Specification"), this);
+  specification_act_->setStatusTip(tr("Image specification"));
+
+  connect(specification_act_, &QAction::triggered, this, &ImageMenu::specification);
+
   // Menu layout
 
   addAction(duplicate_img_act_);
@@ -85,6 +91,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(image_difference_act_);
   addAction(digitalization_act_);
   addAction(equalization_act_);
+  addAction(specification_act_);
 }
 
 }  // namespace imagecpp

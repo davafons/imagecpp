@@ -17,6 +17,7 @@ public:
 
   QtCharts::QBarSet *bars() const;
   QtCharts::QBarSet *cummulativeBars() const;
+  QtCharts::QBarSet *cummulativeBarsNormalized() const;
 
   float mean() const;
   float stdev() const;
@@ -40,7 +41,8 @@ private:
 
   static QtCharts::QBarSet *createBarSet(const HistArray &h,
                                          const QString &name,
-                                         const QColor &color);
+                                         const QColor &color,
+                                         int pixel_count = 1);
 
 private:
   HistArray h_;      // Histogram

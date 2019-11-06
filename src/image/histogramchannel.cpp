@@ -45,6 +45,10 @@ QtCharts::QBarSet *HistogramChannel::cummulativeBars() const {
   return createBarSet(acc_h_, name_, color_);
 }
 
+QtCharts::QBarSet *HistogramChannel::cummulativeBarsNormalized() const {
+  return createBarSet(acc_h_, name_, color_, pixelCount());
+}
+
 /*!
  *  Returns the mean of the histogram.
  */
@@ -207,13 +211,14 @@ float HistogramChannel::calculateEntropy(const HistArray &h, int pixel_count) {
  */
 QtCharts::QBarSet *HistogramChannel::createBarSet(const HistArray &h,
                                                   const QString &name,
-                                                  const QColor &color) {
+                                                  const QColor &color,
+                                                  int pixel_count) {
   QtCharts::QBarSet *barset = new QtCharts::QBarSet(name);
   barset->setColor(color);
   barset->setBorderColor(color);
 
   for (const auto &i : h) {
-    *barset << i;
+    *barset << float(i) / pixel_count;
   }
 
   return barset;

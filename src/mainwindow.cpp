@@ -17,6 +17,7 @@
 #include "operations/gammac/gammacdialog.hpp"
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
+#include "operations/specification/specification.hpp"
 #include "operations/transform/lineartransformdialog.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
 #include "widgets/image/imagedisplayarea.hpp"
@@ -164,6 +165,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::equalization, this, [this] {
     executeOperation<Equalization>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::specification, this, [this] {
+    executeOperation<Specification>(mdi_area_->activeDocument());
   });
 
   // Windows

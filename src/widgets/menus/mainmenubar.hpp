@@ -42,6 +42,7 @@ signals:
   void imageDifference();
   void digitalization();
   void equalization();
+  void specification();
 
   void toggleTabsView(bool toggled);
 

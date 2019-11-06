@@ -54,6 +54,7 @@ void MainMenuBar::createImageMenu() {
       &image_menu_, &ImageMenu::imageDifference, this, &MainMenuBar::imageDifference);
   connect(&image_menu_, &ImageMenu::digitalization, this, &MainMenuBar::digitalization);
   connect(&image_menu_, &ImageMenu::equalization, this, &MainMenuBar::equalization);
+  connect(&image_menu_, &ImageMenu::specification, this, &MainMenuBar::specification);
 }
 
 void MainMenuBar::createSettingsMenu() {

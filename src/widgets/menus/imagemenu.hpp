@@ -24,6 +24,7 @@ signals:
   void imageDifference();
   void digitalization();
   void equalization();
+  void specification();
 
 private:
   QAction *duplicate_img_act_;
@@ -37,6 +38,7 @@ private:
   QAction *image_difference_act_;
   QAction *digitalization_act_;
   QAction *equalization_act_;
+  QAction *specification_act_;
 };
 
 }  // namespace imagecpp
