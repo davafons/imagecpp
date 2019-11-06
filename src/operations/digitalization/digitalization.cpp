@@ -5,11 +5,7 @@
 namespace imagecpp {
 
 Digitalization::Digitalization(Document *document)
-    : PixelOperation(document, tr("Digitalization")) {
-  setSamplingSize(4);  // Must be called on constructor to initialize the
-                       // sampling table
-  setQuantizationFactor(8);
-}
+    : PixelOperation(document, tr("Digitalization")) {}
 
 int Digitalization::samplingSize() const {
   return sampling_size_;
@@ -21,12 +17,6 @@ int Digitalization::quantizationFactor() const {
 
 void Digitalization::setSamplingSize(int size) {
   sampling_size_ = size;
-
-  int table_cols = std::ceil(float(oldImage()->height()) / sampling_size_);
-  int table_rows = std::ceil(float(oldImage()->width()) / sampling_size_);
-
-  sampling_table_ =
-      std::vector<std::vector<QRgb>>(table_cols, std::vector<QRgb>(table_rows));
 
   sampling_table_up_to_date_ = false;
 
@@ -79,13 +69,18 @@ void Digitalization::fillQuantizationValues() {
 
   for (int i = 1; i < quantization_values_.size() - 1; ++i) {
     quantization_values_[i] = i * step;
-    qDebug() << "i" << quantization_values_[i];
   }
 
   quantization_values_up_to_date = true;
 }
 
 void Digitalization::fillSamplingTable() {
+  int table_cols = std::ceil(float(oldImage()->height()) / sampling_size_);
+  int table_rows = std::ceil(float(oldImage()->width()) / sampling_size_);
+
+  sampling_table_ =
+      std::vector<std::vector<QRgb>>(table_cols, std::vector<QRgb>(table_rows));
+
   for (int i = 0; i < sampling_table_.size(); ++i) {
     for (int j = 0; j < sampling_table_[i].size(); ++j) {
       long int red_av = 0;

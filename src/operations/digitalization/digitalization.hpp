@@ -30,10 +30,10 @@ private:
   void fillSamplingTable();
 
 private:
-  int sampling_size_;
+  int sampling_size_{4};
   std::vector<std::vector<QRgb>> sampling_table_{};
 
-  int quantization_factor_;
+  int quantization_factor_{8};
   std::vector<int> quantization_values_{};
 
   bool sampling_table_up_to_date_{false};

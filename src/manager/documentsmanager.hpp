@@ -27,7 +27,7 @@ public slots:
 
 private:
   static QMap<int, Document *> loaded_documents_;
-  QString filters_ = tr("Image Files(*.png *.jpg *.jpeg *.bmp)");
+  QString filters_ = tr("Image Files(*.png *.jpg *.jpeg *.bmp *.tif)");
 };
 
 }  // namespace imagecpp
