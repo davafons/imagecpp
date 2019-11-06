@@ -6,8 +6,9 @@ namespace imagecpp {
 
 Digitalization::Digitalization(Document *document)
     : PixelOperation(document, tr("Digitalization")) {
-  setSamplingSize(2);  // Must be called on constructor to initialize the
+  setSamplingSize(4);  // Must be called on constructor to initialize the
                        // sampling table
+  setQuantizationFactor(8);
 }
 
 int Digitalization::samplingSize() const {
@@ -35,24 +36,24 @@ void Digitalization::setSamplingSize(int size) {
 void Digitalization::setQuantizationFactor(int factor) {
   quantization_factor_ = factor;
 
+  quantization_values_up_to_date = false;
+
   emit propertyChanged();
 }
 
 QRgb Digitalization::pixelOperationImpl(int x, int y, QRgb) const {
   QRgb color = sampling_table_[y / sampling_size_][x / sampling_size_];
 
-  const int range_step = 256 / std::pow(2, quantization_factor_);
+  int red_idx =
+      std::round((float(qRed(color)) / 255) * (quantization_values_.size() - 1));
+  int green_idx =
+      std::round((float(qGreen(color)) / 255) * (quantization_values_.size() - 1));
+  int blue_idx =
+      std::round((float(qBlue(color)) / 255) * (quantization_values_.size() - 1));
 
-  int r_pos = qRed(color) / range_step;
-  // int g_pos = qGreen(color) / range_step;
-  // int b_pos = qBlue(color) / range_step;
-
-  int r_quantized_color = r_pos * range_step;
-  if (std::ceil(r_quantized_color) == std::pow(2, quantization_factor_)) {
-    r_quantized_color = 256;
-  }
-
-  return qRgb(r_quantized_color, r_quantized_color, r_quantized_color);
+  return qRgb(quantization_values_[red_idx],
+              quantization_values_[green_idx],
+              quantization_values_[blue_idx]);
 }
 
 void Digitalization::imageOperationImpl(Image *new_image) {
@@ -60,7 +61,28 @@ void Digitalization::imageOperationImpl(Image *new_image) {
     fillSamplingTable();
   }
 
+  if (!quantization_values_up_to_date) {
+    fillQuantizationValues();
+  }
+
   PixelOperation::imageOperationImpl(new_image);
+}
+
+void Digitalization::fillQuantizationValues() {
+  int colors = std::pow(2, quantization_factor_);
+  int step = 256 / colors;
+
+  quantization_values_ = std::vector<int>(colors);
+
+  quantization_values_[0] = 0;
+  quantization_values_[quantization_values_.size() - 1] = 255;
+
+  for (int i = 1; i < quantization_values_.size() - 1; ++i) {
+    quantization_values_[i] = i * step;
+    qDebug() << "i" << quantization_values_[i];
+  }
+
+  quantization_values_up_to_date = true;
 }
 
 void Digitalization::fillSamplingTable() {

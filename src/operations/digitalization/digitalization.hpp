@@ -26,15 +26,18 @@ protected:
   virtual void imageOperationImpl(Image* new_image) override;
 
 private:
+  void fillQuantizationValues();
   void fillSamplingTable();
 
 private:
   int sampling_size_;
-  int quantization_factor_{8};
+  std::vector<std::vector<QRgb>> sampling_table_{};
 
-  std::vector<std::vector<QRgb>> sampling_table_;
+  int quantization_factor_;
+  std::vector<int> quantization_values_{};
 
   bool sampling_table_up_to_date_{false};
+  bool quantization_values_up_to_date{false};
 };
 
 }  // namespace imagecpp
