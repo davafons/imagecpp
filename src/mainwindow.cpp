@@ -13,6 +13,7 @@
 #include "operations/bac/bacdialog.hpp"
 #include "operations/difference/imagedifferencedialog.hpp"
 #include "operations/digitalization/digitalizationdialog.hpp"
+#include "operations/equalization/equalization.hpp"
 #include "operations/gammac/gammacdialog.hpp"
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
@@ -159,6 +160,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::digitalization, this, [this] {
     executeOperation<DigitalizationDialog>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::equalization, this, [this] {
+    executeOperation<Equalization>(mdi_area_->activeDocument());
   });
 
   // Windows

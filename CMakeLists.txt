@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME}
     src/operations/difference/imagedifference.cpp
     src/operations/difference/imagedifferencedialog.cpp
     src/operations/inverse/inverse.cpp
+    src/operations/equalization/equalization.cpp
     src/operations/transform/lineartransform.cpp
     src/operations/transform/lineartransformdialog.cpp
     src/operations/bac/bac.cpp
