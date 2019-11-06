@@ -17,7 +17,7 @@ class HistogramView : public QWidget {
   Q_OBJECT
 
 public:
-  enum class Type { Default = 0, Cummulative = 1 };
+  enum class Type { Default = 0, Cummulative = 1, CNormalized = 2 };
 
   explicit HistogramView(QWidget *parent = nullptr);
   virtual ~HistogramView() { delete chart_; }

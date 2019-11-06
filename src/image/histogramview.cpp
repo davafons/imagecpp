@@ -18,11 +18,17 @@ using namespace QtCharts;
 namespace imagecpp {
 
 HistogramView::HistogramView(QWidget *parent)
-    : QWidget(parent), chart_view_(new QChartView()), chart_(new QChart()),
-      x_axis_(new QValueAxis()), y_axis_(new QValueAxis()),
-      type_(Type::Default), red_series_(new QBarSeries()),
-      green_series_(new QBarSeries()), blue_series_(new QBarSeries()),
-      histogram_type_selector_(new QComboBox()), active_histogram_(nullptr) {
+    : QWidget(parent),
+      chart_view_(new QChartView()),
+      chart_(new QChart()),
+      x_axis_(new QValueAxis()),
+      y_axis_(new QValueAxis()),
+      type_(Type::Default),
+      red_series_(new QBarSeries()),
+      green_series_(new QBarSeries()),
+      blue_series_(new QBarSeries()),
+      histogram_type_selector_(new QComboBox()),
+      active_histogram_(nullptr) {
 
   QFont axis_font;
   axis_font.setPixelSize(10);
@@ -83,6 +89,7 @@ HistogramView::HistogramView(QWidget *parent)
   // Add histogram types to the selector
   histogram_type_selector_->addItem("Default");
   histogram_type_selector_->addItem("Cummulative");
+  histogram_type_selector_->addItem("Cummul. Normalized");
 
   connect(histogram_type_selector_,
           QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -124,29 +131,37 @@ void HistogramView::updateHistogramSeries() {
   int max_y_value = 0;
 
   switch (type_) {
-  case Type::Default:
-    red_series_->append(active_histogram_->red().bars());
-    green_series_->append(active_histogram_->green().bars());
-    blue_series_->append(active_histogram_->blue().bars());
+    case Type::Default:
+      red_series_->append(active_histogram_->red().bars());
+      green_series_->append(active_histogram_->green().bars());
+      blue_series_->append(active_histogram_->blue().bars());
 
-    // Highest Y-axis value is the highest series
-    max_y_value = std::max(active_histogram_->red().modeValue(),
-                           std::max(active_histogram_->green().modeValue(),
-                                    active_histogram_->blue().modeValue()));
-    break;
+      // Highest Y-axis value is the highest series
+      max_y_value = std::max(active_histogram_->red().modeValue(),
+                             std::max(active_histogram_->green().modeValue(),
+                                      active_histogram_->blue().modeValue()));
+      break;
 
-  case Type::Cummulative:
-    red_series_->append(active_histogram_->red().cummulativeBars());
-    green_series_->append(active_histogram_->green().cummulativeBars());
-    blue_series_->append(active_histogram_->blue().cummulativeBars());
+    case Type::Cummulative:
+      red_series_->append(active_histogram_->red().cummulativeBars());
+      green_series_->append(active_histogram_->green().cummulativeBars());
+      blue_series_->append(active_histogram_->blue().cummulativeBars());
 
-    // Highest Y-axis value is the total of pixels on the image
-    max_y_value = active_histogram_->red().pixelCount();
-    break;
+      // Highest Y-axis value is the total of pixels on the image
+      max_y_value = active_histogram_->red().pixelCount();
+      break;
 
-  default:
-    qDebug() << "Unrecognised histogram type";
-    break;
+    case Type::CNormalized:
+      red_series_->append(active_histogram_->red().cummulativeBarsNormalized());
+      green_series_->append(active_histogram_->green().cummulativeBarsNormalized());
+      blue_series_->append(active_histogram_->blue().cummulativeBarsNormalized());
+
+      max_y_value = 1.0f;
+      break;
+
+    default:
+      qDebug() << "Unrecognised histogram type";
+      break;
   }
 
   // Set max y axis value
@@ -185,8 +200,8 @@ void HistogramView::setLabelsText() {
 
   // Execute "method" for each rgb channel, and return the result as a formatted
   // string
-  auto extract_rgb_values_as_text = [rgb_placeholder_text, &red, &green,
-                                     &blue](auto method) -> QString {
+  auto extract_rgb_values_as_text =
+      [rgb_placeholder_text, &red, &green, &blue](auto method) -> QString {
     return rgb_placeholder_text.arg(std::bind(method, red)())
         .arg(std::bind(method, green)())
         .arg(std::bind(method, blue)());
@@ -200,17 +215,17 @@ void HistogramView::setLabelsText() {
   mean_label_.setText(tr("Mean: ") +
                       extract_rgb_values_as_text(&HistogramChannel::mean));
 
-  std_label_.setText(tr("Std: ") + extract_rgb_values_as_text(
-                                       &HistogramChannel::standardDeviation));
+  std_label_.setText(tr("Std: ") +
+                     extract_rgb_values_as_text(&HistogramChannel::standardDeviation));
 
-  entropy_label_.setText(
-      tr("Entropy: ") + extract_rgb_values_as_text(&HistogramChannel::entropy));
+  entropy_label_.setText(tr("Entropy: ") +
+                         extract_rgb_values_as_text(&HistogramChannel::entropy));
 
-  min_label_.setText(tr("Min: ") + extract_rgb_values_as_text(
-                                       &HistogramChannel::minIntensity));
+  min_label_.setText(tr("Min: ") +
+                     extract_rgb_values_as_text(&HistogramChannel::minIntensity));
 
-  max_label_.setText(tr("Max: ") + extract_rgb_values_as_text(
-                                       &HistogramChannel::maxIntensity));
+  max_label_.setText(tr("Max: ") +
+                     extract_rgb_values_as_text(&HistogramChannel::maxIntensity));
 
   mode_label_.setText(tr("Mode: ") +
                       extract_rgb_values_as_text(&HistogramChannel::mode));
@@ -222,8 +237,7 @@ void HistogramView::setMarkerStyle(QLegendMarker *marker) {
   // Dim the marker, if series is not visible
   qreal alpha = 1.0;
 
-  if (!marker->series()->isVisible())
-    alpha = 0.5;
+  if (!marker->series()->isVisible()) alpha = 0.5;
 
   QColor color;
   QBrush brush = marker->labelBrush();
@@ -288,4 +302,4 @@ void HistogramView::updateLabelTextFromMousePosition(int index) {
 
   mouse_values_label_.setText(index_text + "\t\t" + rgb_values_text);
 }
-} // namespace imagecpp
+}  // namespace imagecpp
