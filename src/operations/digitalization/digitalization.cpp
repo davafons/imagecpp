@@ -5,7 +5,7 @@
 namespace imagecpp {
 
 Digitalization::Digitalization(Document *document)
-    : PixelOperation(document, tr("Digitalization")) {}
+    : PointOperation(document, tr("Digitalization")) {}
 
 int Digitalization::samplingSize() const {
   return sampling_size_;
@@ -31,7 +31,7 @@ void Digitalization::setQuantizationFactor(int factor) {
   emit propertyChanged();
 }
 
-QRgb Digitalization::pixelOperationImpl(int x, int y, QRgb) const {
+QRgb Digitalization::pointOperationImpl(int x, int y, QRgb) const {
   QRgb color = sampling_table_[y / sampling_size_][x / sampling_size_];
 
   int red_idx =
@@ -55,7 +55,7 @@ void Digitalization::imageOperationImpl(Image *new_image) {
     fillQuantizationValues();
   }
 
-  PixelOperation::imageOperationImpl(new_image);
+  PointOperation::imageOperationImpl(new_image);
 }
 
 void Digitalization::fillQuantizationValues() {

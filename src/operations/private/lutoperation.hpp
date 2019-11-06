@@ -1,17 +1,17 @@
 #pragma once
 
-#include "operations/private/pixeloperation.hpp"
+#include "operations/private/pointoperation.hpp"
 
 namespace imagecpp {
 
-class LutOperation : public PixelOperation {
+class LutOperation : public PointOperation {
 public:
   explicit LutOperation(Document *document, const QString &name = "");
   virtual ~LutOperation() = default;
 
 protected:
   virtual void imageOperationImpl(Image *new_image) override;
-  virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
+  virtual QRgb pointOperationImpl(int x, int y, QRgb color) const override;
 
   virtual void fillLutTablesImpl() = 0;
 

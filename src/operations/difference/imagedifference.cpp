@@ -3,7 +3,7 @@
 namespace imagecpp {
 
 ImageDifference::ImageDifference(Document* document)
-    : PixelOperation(document, tr("Image difference")) {}
+    : PointOperation(document, tr("Image difference")) {}
 
 const Image* ImageDifference::secondImage() const {
   return second_image_;
@@ -37,7 +37,7 @@ void ImageDifference::setDiffColor(QRgb color) {
   emit propertyChanged();
 }
 
-QRgb ImageDifference::pixelOperationImpl(int x, int y, QRgb color) const {
+QRgb ImageDifference::pointOperationImpl(int x, int y, QRgb color) const {
 
   QRgb second_image_color = second_image_->pixel(x, y);
 
@@ -62,7 +62,7 @@ void ImageDifference::imageOperationImpl(Image* new_image) {
     return;
   }
 
-  PixelOperation::imageOperationImpl(new_image);
+  PointOperation::imageOperationImpl(new_image);
 }
 
 }  // namespace imagecpp

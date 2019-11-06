@@ -15,7 +15,7 @@ namespace imagecpp {
 /*!
  *  Construcs a Grayscale operation object.
  */
-Grayscale::Grayscale(Document *document) : PixelOperation(document) {
+Grayscale::Grayscale(Document *document) : PointOperation(document) {
 
   // Update the operation name each time a property changes
   connect(this, &Grayscale::propertyChanged, this, [this] {
@@ -56,7 +56,7 @@ void Grayscale::setFormat(const Format &format) {
  *  together. The result will be the intensity of the pixel, which must be placed on the
  *  three RGB channels.
  */
-QRgb Grayscale::pixelOperationImpl(int, int, QRgb color) const {
+QRgb Grayscale::pointOperationImpl(int, int, QRgb color) const {
   uint8_t red = qRed(color) * red_factor_;
   uint8_t green = qGreen(color) * green_factor_;
   uint8_t blue = qBlue(color) * blue_factor_;

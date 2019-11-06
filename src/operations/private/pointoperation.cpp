@@ -1,4 +1,4 @@
-#include "operations/private/pixeloperation.hpp"
+#include "operations/private/pointoperation.hpp"
 
 #include <QElapsedTimer>
 
@@ -8,10 +8,10 @@
 namespace imagecpp {
 
 /*!
- *  \class PixelOperation
+ *  \class PointOperation
  *  \brief Base class for image operations that act on each pixel.
  *
- *  All the subclasses must implement pixelOperationImpl, which as a result should
+ *  All the subclasses must implement pointOperationImpl, which as a result should
  *  decide the color for every input pixel.
  */
 
@@ -19,16 +19,16 @@ namespace imagecpp {
  *  Constructs the pixel operation. Document and name are properties needed for the
  *  parent constructor.
  */
-PixelOperation::PixelOperation(Document *document, const QString &name)
+PointOperation::PointOperation(Document *document, const QString &name)
     : ImageOperation(document, name) {}
 
 /*!
  *  Iterates through each pixel of the old image, and sets the corresponding pixel on
- *  new_image to the resulting value of pixelOperationImpl.
+ *  new_image to the resulting value of pointOperationImpl.
  *
  *  TODO: Iterate only over the image selection
  */
-void PixelOperation::imageOperationImpl(Image *new_image) {
+void PointOperation::imageOperationImpl(Image *new_image) {
   QElapsedTimer timer;
   timer.start();
 
@@ -37,7 +37,7 @@ void PixelOperation::imageOperationImpl(Image *new_image) {
     QRgb *new_line = (QRgb *)new_image->scanLine(y);
 
     for (int x = 0; x < oldImage()->width(); ++x) {
-      new_line[x] = pixelOperationImpl(x, y, old_line[x]);
+      new_line[x] = pointOperationImpl(x, y, old_line[x]);
     }
   }
 

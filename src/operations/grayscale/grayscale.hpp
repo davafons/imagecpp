@@ -1,12 +1,12 @@
 #pragma once
 
-#include "operations/private/pixeloperation.hpp"
+#include "operations/private/pointoperation.hpp"
 
 class QRadioButton;
 
 namespace imagecpp {
 
-class Grayscale : public PixelOperation {
+class Grayscale : public PointOperation {
   Q_OBJECT
 
 public:
@@ -22,7 +22,7 @@ public slots:
   void setFormat(const Format &format);
 
 protected:
-  virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
+  virtual QRgb pointOperationImpl(int x, int y, QRgb color) const override;
 
 private:
   Format format_;

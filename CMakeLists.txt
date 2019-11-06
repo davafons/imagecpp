@@ -34,7 +34,7 @@ add_executable(${PROJECT_NAME}
     src/operations/digitalization/digitalization.cpp
     src/operations/digitalization/digitalizationdialog.cpp
     src/operations/bac/bacdialog.cpp
-    src/operations/private/pixeloperation.cpp
+    src/operations/private/pointoperation.cpp
     src/operations/gammac/gammac.cpp
     src/operations/gammac/gammacdialog.cpp
     src/operations/private/imageoperation.cpp

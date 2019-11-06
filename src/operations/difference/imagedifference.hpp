@@ -1,13 +1,13 @@
 #pragma once
 
-#include "operations/private/pixeloperation.hpp"
+#include "operations/private/pointoperation.hpp"
 
 namespace imagecpp {
 
 class Document;
 class Image;
 
-class ImageDifference : public PixelOperation {
+class ImageDifference : public PointOperation {
   Q_OBJECT
 
 public:
@@ -24,7 +24,7 @@ public slots:
   void setDiffColor(QRgb color);
 
 protected:
-  virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
+  virtual QRgb pointOperationImpl(int x, int y, QRgb color) const override;
   virtual void imageOperationImpl(Image* new_image) override;
 
 private:

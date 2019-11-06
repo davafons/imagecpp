@@ -21,7 +21,7 @@ namespace imagecpp {
  *  parent constructor.
  */
 LutOperation::LutOperation(Document *document, const QString &name)
-    : PixelOperation(document, name) {
+    : PointOperation(document, name) {
   r_lut_.fill(0);
   g_lut_.fill(0);
   b_lut_.fill(0);
@@ -33,7 +33,7 @@ LutOperation::LutOperation(Document *document, const QString &name)
 void LutOperation::imageOperationImpl(Image *new_image) {
   fillLutTablesImpl();
 
-  PixelOperation::imageOperationImpl(new_image);
+  PointOperation::imageOperationImpl(new_image);
 }
 
 /*!
@@ -42,7 +42,7 @@ void LutOperation::imageOperationImpl(Image *new_image) {
  *
  * Note: Alpha channel will be left as is.
  */
-QRgb LutOperation::pixelOperationImpl(int x, int y, QRgb color) const {
+QRgb LutOperation::pointOperationImpl(int x, int y, QRgb color) const {
   return qRgba(
       r_lut_[qRed(color)], g_lut_[qGreen(color)], b_lut_[qBlue(color)], qAlpha(color));
 }

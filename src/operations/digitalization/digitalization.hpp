@@ -1,13 +1,13 @@
 #pragma once
 
-#include "operations/private/pixeloperation.hpp"
+#include "operations/private/pointoperation.hpp"
 
 namespace imagecpp {
 
 class Document;
 class Image;
 
-class Digitalization : public PixelOperation {
+class Digitalization : public PointOperation {
   Q_OBJECT
 
 public:
@@ -22,7 +22,7 @@ public slots:
   void setQuantizationFactor(int factor);
 
 protected:
-  virtual QRgb pixelOperationImpl(int x, int y, QRgb color) const override;
+  virtual QRgb pointOperationImpl(int x, int y, QRgb color) const override;
   virtual void imageOperationImpl(Image* new_image) override;
 
 private:
