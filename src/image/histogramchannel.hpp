@@ -42,7 +42,7 @@ private:
   static QtCharts::QBarSet *createBarSet(const HistArray &h,
                                          const QString &name,
                                          const QColor &color,
-                                         int pixel_count = 1);
+                                         int normalization_factor = 1);
 
 private:
   HistArray h_;      // Histogram
