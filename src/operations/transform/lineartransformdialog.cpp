@@ -65,19 +65,19 @@ LinearTransformDialog::LinearTransformDialog(Document *document, QWidget *parent
           &LinearTransformDialog::addNextEmptyStep);
 
   // Setup  chart
-  QtCharts::QValueAxis *x_axis = new QtCharts::QValueAxis();
-  x_axis->setRange(0, 255);
-  x_axis->setLabelFormat("%d");
-  x_axis->setTickCount(5);
+  x_axis_ = new QtCharts::QValueAxis();
+  x_axis_->setRange(0, 255);
+  x_axis_->setLabelFormat("%d");
+  x_axis_->setTickCount(5);
 
-  QtCharts::QValueAxis *y_axis = new QtCharts::QValueAxis();
-  y_axis->setRange(0, 255);
-  y_axis->setLabelFormat("%d");
-  y_axis->setTickCount(5);
+  y_axis_ = new QtCharts::QValueAxis();
+  y_axis_->setRange(0, 255);
+  y_axis_->setLabelFormat("%d");
+  y_axis_->setTickCount(5);
 
   line_chart_->legend()->hide();
-  line_chart_->addAxis(x_axis, Qt::AlignBottom);
-  line_chart_->addAxis(y_axis, Qt::AlignLeft);
+  line_chart_->addAxis(x_axis_, Qt::AlignBottom);
+  line_chart_->addAxis(y_axis_, Qt::AlignLeft);
 
   QtCharts::QChartView *chart_view = new QtCharts::QChartView(line_chart_);
   chart_view->setRenderHint(QPainter::Antialiasing);
@@ -125,16 +125,28 @@ void LinearTransformDialog::inModified(Step *step) {
 
 void LinearTransformDialog::updateSteps() {
   std::map<int, int> steps_map;
+
   QtCharts::QLineSeries *series = new QtCharts::QLineSeries();
 
   for (const auto &step : steps_list_) {
     steps_map[step->in()] = step->out();
   }
 
+  if (steps_map.count(0) == 0) {
+    steps_map[0] = 0;
+  }
+
+  if (steps_map.count(255) == 0) {
+    steps_map[255] = 255;
+  }
+
   // Now its sorted
   for (const auto &pair : steps_map) {
     series->append(pair.first, pair.second);
   }
+
+  series->attachAxis(y_axis_);
+  series->attachAxis(x_axis_);
 
   line_chart_->removeAllSeries();
   line_chart_->addSeries(series);
