@@ -19,9 +19,11 @@ public:
 private:
   ImagesListWidget *images_list_widget_{nullptr};
 
-  ImageDisplayArea *image_display_area_{nullptr};
+  // ImageDisplayArea *image_display_area_{nullptr};
 
   QSpinBox *threshold_spin_{nullptr};
+
+  QPushButton *color_picker_button_{nullptr};
 };
 
 }  // namespace imagecpp

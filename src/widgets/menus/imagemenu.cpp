@@ -46,7 +46,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   connect(bac_act_, &QAction::triggered, this, &ImageMenu::brightnessAndConstrast);
 
   // Gamma correction
-  gamma_corr_act_ = new QAction(tr("Gamma cammaCorrection..."), this);
+  gamma_corr_act_ = new QAction(tr("Gamma correction..."), this);
   gamma_corr_act_->setStatusTip(tr("Gamma correction"));
 
   connect(gamma_corr_act_, &QAction::triggered, this, &ImageMenu::gammaCorrection);
