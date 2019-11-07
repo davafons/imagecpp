@@ -78,6 +78,11 @@ void ImageOperationDialog<OpType>::addConnections() {
           preview_display_,
           &ImageDisplayArea::onImageUpdated);
 
+  connect(preview_display_,
+          &ImageDisplayArea::selectionCreated,
+          &operation_,
+          &ImageOperation::setSelection);
+
   // Realtime checkbox
   connect(image_rtupdate_checkbox_,
           &QCheckBox::stateChanged,

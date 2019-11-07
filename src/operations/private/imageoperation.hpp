@@ -47,6 +47,8 @@ public slots:
 
   void setName(const QString& name);
 
+  void setSelection(const QRect& rect);
+
 signals:
   void propertyChanged();
   void imageRealtimeUpdateToggled(bool toggled);
@@ -65,6 +67,8 @@ private:
 private:
   Image* new_image_{nullptr};
   const Image* old_image_{nullptr};
+
+  QRect selection_;
 
   Histogram new_image_histogram_;
   Histogram old_image_histogram_;

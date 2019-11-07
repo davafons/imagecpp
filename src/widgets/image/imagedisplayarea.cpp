@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QHoverEvent>
+#include <QPainter>
 #include <QScrollBar>
 #include <QTimeLine>
 
@@ -42,11 +43,15 @@ void ImageDisplayArea::onImageOpened(const Image *image) {
   image_ref_ = image;
   scale_factor_ = 1.0f;
 
+  result_image_ = QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
+  selection_draw_area_ =
+      QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
+
   // Fit image to the window frame
   fitOnFrame();
 
   // Display image at full size
-  target_.setPixmap(image_ref_->getPixmap());
+  recalculateResult();
 
   emit imageOpened(image_ref_);
 }
@@ -54,10 +59,14 @@ void ImageDisplayArea::onImageOpened(const Image *image) {
 void ImageDisplayArea::onImageUpdated(const Image *image) {
   image_ref_ = image;
 
+  result_image_ = QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
+  selection_draw_area_ =
+      QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
+
   // Save current position of the image on the area
   QPoint target_old_pos = target_.pos();
 
-  target_.setPixmap(image_ref_->getPixmap());
+  recalculateResult();
   target_.resize(scale_factor_ * image_ref_->size());
 
   // Restore the image position
@@ -110,7 +119,6 @@ bool ImageDisplayArea::eventFilter(QObject *obj, QEvent *event) {
 void ImageDisplayArea::mousePressEvent(QMouseEvent *event) {
   if (event->buttons() & (Qt::LeftButton | Qt::RightButton)) {
     last_clicked_point_ = event->pos();
-    qDebug() << "Last" << last_clicked_point_;
   }
 
   QScrollArea::mousePressEvent(event);
@@ -122,12 +130,24 @@ void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
     last_clicked_point_ = event->pos();
   }
 
+  if (event->buttons() & Qt::LeftButton) {
+    QRect rect = createSelectionRect(last_clicked_point_, event->pos());
+
+    emit selectionCreated(rect);
+  }
+
   QScrollArea::mouseMoveEvent(event);
 }
 
 void ImageDisplayArea::mouseReleaseEvent(QMouseEvent *event) {
   if (rect_selection_toggled_ && event->button() == Qt::LeftButton) {
-    qDebug() << "Rect" << createSelectionRect(last_clicked_point_, event->pos());
+    QRect rect = createSelectionRect(last_clicked_point_, event->pos());
+
+    if (rect.width() <= 1 / scale_factor_ && rect.height() <= 1 / scale_factor_) {
+      rect = QRect(0, 0, 0, 0);
+    }
+
+    emit selectionCreated(rect);
   }
 
   QScrollArea::mouseReleaseEvent(event);
@@ -158,33 +178,29 @@ void ImageDisplayArea::wheelEvent(QWheelEvent *event) {
   QScrollArea::wheelEvent(event);
 }
 
+void ImageDisplayArea::recalculateResult() {
+  QPainter painter(&result_image_);
+  painter.setCompositionMode(QPainter::CompositionMode_Source);
+  painter.fillRect(result_image_.rect(), Qt::transparent);
+  painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+  painter.drawPixmap(0, 0, image_ref_->getPixmap());
+  painter.setCompositionMode(QPainter::CompositionMode_Xor);
+  painter.drawImage(0, 0, selection_draw_area_);
+  painter.end();
+
+  target_.setPixmap(image_ref_->getPixmap());  // TODO: Change
+}
+
 QRect ImageDisplayArea::createSelectionRect(QPoint a, QPoint b) {
-  if (a.x() > b.x()) {
-    int tmp = a.x();
-    a.setX(b.x());
-    b.setX(tmp);
-  }
+  QRect rect(a, b);
 
-  if (a.y() > b.y()) {
-    int tmp = a.y();
-    a.setY(b.y());
-    b.setY(tmp);
-  }
+  // rect.setX(rect.x());
+  // rect.setY((rect.y() - target_.y()) / scale_factor_);
 
-  if (a.x() < target_.x()) {
-    a.setX(0);
-  }
+  rect.setWidth((rect.width()) / scale_factor_);
+  rect.setHeight((rect.height()) / scale_factor_);
 
-  if (a.y() < target_.y()) {
-    a.setY(0);
-  }
-
-  b.setX(std::min((b.x() - target_.x()) / scale_factor_, float(image_ref_->width())));
-  b.setY(std::min((b.y() - target_.y()) / scale_factor_, float(image_ref_->height())));
-
-  qDebug() << scale_factor_;
-
-  return QRect(a, b);
+  return rect;
 }
 
 }  // namespace imagecpp

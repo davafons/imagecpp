@@ -43,8 +43,6 @@ public:
   Histogram *histogram() { return histogram_; }
   const Histogram *histogram() const { return histogram_; }
 
-  QRect selection() const { return selection_; }
-
   // Functions
   Image *copyImage() const;
 
@@ -57,7 +55,6 @@ signals:
 public slots:
   void setFilePath(QString file_path);
   void setImage(Image *image);
-  void setSelection(const QRect &selection);
 
 protected:
   static int next_id_;
@@ -74,8 +71,6 @@ private:
   Image *image_;
   QUndoStack *undo_stack_;
   Histogram *histogram_;
-
-  QRect selection_;
 };
 
 } // namespace imagecpp

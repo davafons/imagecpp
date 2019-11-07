@@ -31,6 +31,8 @@ signals:
   void imageOpened(const Image *image);
   void imageUpdated(const Image *image);
 
+  void selectionCreated(const QRect& rect);
+
 public slots:
   void onImageOpened(const Image *image);
   void onImageUpdated(const Image *image);
@@ -47,11 +49,16 @@ protected:
   virtual void wheelEvent(QWheelEvent *event) override;
 
 private:
+  void recalculateResult();
+
   QRect createSelectionRect(QPoint a, QPoint b);
 
 private:
   const Image *image_ref_;
   QLabel target_;
+
+  QImage result_image_;
+  QImage selection_draw_area_;
 
   float scale_factor_{1.0f};
   QPoint last_clicked_point_{0, 0};

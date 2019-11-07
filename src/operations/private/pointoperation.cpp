@@ -37,7 +37,11 @@ void PointOperation::imageOperationImpl(Image *new_image) {
     QRgb *new_line = (QRgb *)new_image->scanLine(y);
 
     for (int x = 0; x < oldImage()->width(); ++x) {
-      new_line[x] = pointOperationImpl(x, y, old_line[x]);
+      if (selection().contains(x, y)) {
+        new_line[x] = pointOperationImpl(x, y, old_line[x]);
+      } else {
+        new_line[x] = old_line[x];
+      }
     }
   }
 

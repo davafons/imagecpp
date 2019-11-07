@@ -19,6 +19,7 @@ namespace imagecpp {
 ImageOperation::ImageOperation(Document* referenced_document, const QString& name)
     : new_image_(Image::empty(*referenced_document->image())),
       old_image_(referenced_document->copyImage()),
+      selection_(old_image_->rect()),
       referenced_document_(referenced_document),
       name_(name) {
 
@@ -128,7 +129,7 @@ const Histogram& ImageOperation::oldHistogram() const {
  *  selection is invalid, the whole image will be used.
  */
 QRect ImageOperation::selection() const {
-  return referenced_document_->selection();
+  return selection_;
 }
 
 /*!
@@ -216,6 +217,18 @@ void ImageOperation::toggleHistogramRealtimeUpdate(bool toggled) {
  */
 void ImageOperation::setName(const QString& name) {
   name_ = name;
+}
+
+void ImageOperation::setSelection(const QRect& rect) {
+  if (rect.isNull()) {
+    selection_ = oldImage()->rect();
+  } else {
+    selection_ = rect;
+  }
+
+  qDebug() << selection_;
+
+  emit propertyChanged();
 }
 
 /*!
