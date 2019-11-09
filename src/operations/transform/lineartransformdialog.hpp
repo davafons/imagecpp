@@ -59,9 +59,6 @@ private:
   QPushButton *add_button_;
 
   QtCharts::QChart *line_chart_;
-
-  QtCharts::QValueAxis *x_axis_;
-  QtCharts::QValueAxis *y_axis_;
 };
 
 }  // namespace imagecpp
