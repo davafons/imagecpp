@@ -1,5 +1,6 @@
 #include "imagedisplayarea.hpp"
 
+#include <QDebug>
 #include <QHoverEvent>
 #include <QPainter>
 #include <QScrollBar>
@@ -133,6 +134,14 @@ void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
     QRect rect = createSelectionRect(last_clicked_point_, event->pos());
 
     emit selectionCreated(rect);
+
+    QPainter painter(&selection_draw_area_);
+    selection_draw_area_.fill(Qt::transparent);
+    painter.setPen(Qt::red);
+    painter.drawRect(rect);
+    painter.end();
+
+    recalculateResult();
   }
 
   QScrollArea::mouseMoveEvent(event);
@@ -179,9 +188,11 @@ void ImageDisplayArea::recalculateResult() {
   painter.fillRect(result_image_.rect(), Qt::transparent);
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
   painter.drawPixmap(0, 0, image_ref_->getPixmap());
+  painter.setCompositionMode(QPainter::CompositionMode_Xor);
+  painter.drawImage(0, 0, selection_draw_area_);
   painter.end();
 
-  target_.setPixmap(QPixmap::fromImage(result_image_));  // TODO: Change
+  target_.setPixmap(QPixmap::fromImage(result_image_));
 }
 
 QRect ImageDisplayArea::createSelectionRect(QPoint a, QPoint b) {
