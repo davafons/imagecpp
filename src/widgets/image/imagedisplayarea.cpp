@@ -39,6 +39,7 @@ const Image *ImageDisplayArea::image() const {
 
 void ImageDisplayArea::onImageOpened(const Image *image) {
   qInfo() << "Setting image" << image << "on the display";
+
   // Reset attributes
   image_ref_ = image;
   scale_factor_ = 1.0f;
@@ -46,6 +47,7 @@ void ImageDisplayArea::onImageOpened(const Image *image) {
   result_image_ = QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
   selection_draw_area_ =
       QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
+  selection_draw_area_.fill(Qt::transparent);
 
   // Fit image to the window frame
   fitOnFrame();
@@ -62,11 +64,13 @@ void ImageDisplayArea::onImageUpdated(const Image *image) {
   result_image_ = QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
   selection_draw_area_ =
       QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
+  selection_draw_area_.fill(Qt::transparent);
+
+  recalculateResult();
 
   // Save current position of the image on the area
   QPoint target_old_pos = target_.pos();
 
-  recalculateResult();
   target_.resize(scale_factor_ * image_ref_->size());
 
   // Restore the image position
@@ -133,15 +137,14 @@ void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
   if (event->buttons() & Qt::LeftButton) {
     QRect rect = createSelectionRect(last_clicked_point_, event->pos());
 
-    emit selectionCreated(rect);
-
     QPainter painter(&selection_draw_area_);
     selection_draw_area_.fill(Qt::transparent);
-    painter.setPen(Qt::red);
     painter.drawRect(rect);
     painter.end();
 
     recalculateResult();
+
+    emit selectionCreated(rect);
   }
 
   QScrollArea::mouseMoveEvent(event);
@@ -150,6 +153,13 @@ void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
 void ImageDisplayArea::mouseReleaseEvent(QMouseEvent *event) {
   if (rect_selection_toggled_ && event->button() == Qt::LeftButton) {
     QRect rect = createSelectionRect(last_clicked_point_, event->pos());
+
+    QPainter painter(&selection_draw_area_);
+    selection_draw_area_.fill(Qt::transparent);
+    painter.drawRect(rect);
+    painter.end();
+
+    recalculateResult();
 
     emit selectionCreated(rect);
   }
