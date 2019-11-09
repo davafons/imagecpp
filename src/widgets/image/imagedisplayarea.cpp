@@ -1,6 +1,5 @@
 #include "imagedisplayarea.hpp"
 
-#include <QDebug>
 #include <QHoverEvent>
 #include <QPainter>
 #include <QScrollBar>
@@ -143,10 +142,6 @@ void ImageDisplayArea::mouseReleaseEvent(QMouseEvent *event) {
   if (rect_selection_toggled_ && event->button() == Qt::LeftButton) {
     QRect rect = createSelectionRect(last_clicked_point_, event->pos());
 
-    if (rect.width() <= 1 / scale_factor_ && rect.height() <= 1 / scale_factor_) {
-      rect = QRect(0, 0, 0, 0);
-    }
-
     emit selectionCreated(rect);
   }
 
@@ -184,21 +179,26 @@ void ImageDisplayArea::recalculateResult() {
   painter.fillRect(result_image_.rect(), Qt::transparent);
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
   painter.drawPixmap(0, 0, image_ref_->getPixmap());
-  painter.setCompositionMode(QPainter::CompositionMode_Xor);
-  painter.drawImage(0, 0, selection_draw_area_);
   painter.end();
 
-  target_.setPixmap(image_ref_->getPixmap());  // TODO: Change
+  target_.setPixmap(QPixmap::fromImage(result_image_));  // TODO: Change
 }
 
 QRect ImageDisplayArea::createSelectionRect(QPoint a, QPoint b) {
+  a = (a - target_.pos()) / scale_factor_;
+  b = (b - target_.pos()) / scale_factor_;
+
+  std::max(a.x(), 0);
+  std::max(a.y(), 0);
+  std::min(b.x(), image_ref_->width());
+  std::min(b.y(), image_ref_->height());
+
   QRect rect(a, b);
+  rect = rect.normalized();
 
-  // rect.setX(rect.x());
-  // rect.setY((rect.y() - target_.y()) / scale_factor_);
-
-  rect.setWidth((rect.width()) / scale_factor_);
-  rect.setHeight((rect.height()) / scale_factor_);
+  if (rect.width() <= 1 / scale_factor_ && rect.height() <= 1 / scale_factor_) {
+    rect = QRect(0, 0, 0, 0);
+  }
 
   return rect;
 }
