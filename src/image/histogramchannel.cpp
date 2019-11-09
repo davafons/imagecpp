@@ -212,13 +212,13 @@ float HistogramChannel::calculateEntropy(const HistArray &h, int pixel_count) {
 QtCharts::QBarSet *HistogramChannel::createBarSet(const HistArray &h,
                                                   const QString &name,
                                                   const QColor &color,
-                                                  int pixel_count) {
+                                                  int normalization_factor) {
   QtCharts::QBarSet *barset = new QtCharts::QBarSet(name);
   barset->setColor(color);
   barset->setBorderColor(color);
 
   for (const auto &i : h) {
-    *barset << float(i) / pixel_count;
+    *barset << float(i) / normalization_factor;
   }
 
   return barset;

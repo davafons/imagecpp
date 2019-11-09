@@ -65,14 +65,15 @@ void LinearTransform::removeStep(int in) {
  *  and fill the lut table on the corresponding range.
  */
 void LinearTransform::fillLutTablesImpl() {
-  int x_i = steps_.begin()->first;
-  int y_i = steps_.begin()->second;
+  // TODO: Clean
 
-  for (auto it = std::next(steps_.cbegin()); it != steps_.cend(); ++it) {
-    int x_f = it->first;
-    int y_f = it->second;
+  auto lut_values_range = [this](int x_i, int y_i, int x_f, int y_f) {
+    float m = 0;
 
-    int m = (y_f - y_i) / (x_f - x_i);
+    if (x_f - x_i > 0) {
+      m = float(y_f - y_i) / (x_f - x_i);
+    }
+
     int n = y_i - m * x_i;
 
     for (int vin = x_i; vin <= x_f; ++vin) {
@@ -80,9 +81,39 @@ void LinearTransform::fillLutTablesImpl() {
       g_lut_[vin] = m * vin + n;
       b_lut_[vin] = m * vin + n;
     }
+  };
 
+  // From zero to first step
+  int x_i = 0;
+  int y_i = 0;
+
+  int x_f = steps_.begin()->first;
+  int y_f = steps_.begin()->second;
+
+  lut_values_range(x_i, y_i, x_f, y_f);
+
+  // All steps
+  for (auto it = std::next(steps_.cbegin()); it != steps_.cend(); ++it) {
     x_i = x_f;
     y_i = y_f;
+
+    x_f = it->first;
+    y_f = it->second;
+
+    lut_values_range(x_i, y_i, x_f, y_f);
+  }
+
+  // From last step to 255
+  x_i = x_f;
+  y_i = y_f;
+
+  x_f = 255;
+  y_f = 255;
+
+  lut_values_range(x_i, y_i, x_f, y_f);
+
+  for (int i = 0; i < 256; ++i) {
+    qDebug() << i << r_lut_[i] << g_lut_[i] << b_lut_[i];
   }
 }
 
