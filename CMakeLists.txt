@@ -55,6 +55,7 @@ add_executable(${PROJECT_NAME}
     src/widgets/statusbar/mainstatusbar.cpp
     src/widgets/statusbar/pixelinformationwidget.cpp
     src/widgets/image/subwindowsarea.cpp
+    src/widgets/utils/sliderwithvalues.cpp
     src/manager/documentsmanager.cpp
 )
 
