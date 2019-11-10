@@ -48,6 +48,7 @@ signals:
   void horizontalMirror();
   void verticalMirror();
   void transpose();
+  void rotation();
 
   void toggleTabsView(bool toggled);
 

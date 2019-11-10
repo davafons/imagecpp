@@ -44,6 +44,8 @@ add_executable(${PROJECT_NAME}
     src/operations/mirror/transpose.cpp
     src/operations/private/imageoperation.cpp
     src/operations/private/lutoperation.cpp
+    src/operations/rotation/rotation.cpp
+    src/operations/rotation/rotationdialog.cpp
     src/widgets/image/imagedisplayarea.cpp
     src/widgets/image/imagesubwindow.cpp
     src/widgets/image/imageslistwidget.cpp

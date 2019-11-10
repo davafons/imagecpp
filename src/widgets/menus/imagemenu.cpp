@@ -103,10 +103,18 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(transpose_act_, &QAction::triggered, this, &ImageMenu::transpose);
 
+  // Rotation
+
+  rotation_act_ = new QAction(tr("Rotation"), this);
+  rotation_act_->setStatusTip(tr("Rotate an image"));
+
+  connect(rotation_act_, &QAction::triggered, this, &ImageMenu::rotation);
+
   transform_menu_ = new QMenu(tr("Transform..."), this);
   transform_menu_->addAction(hmirror_act_);
   transform_menu_->addAction(vmirror_act_);
   transform_menu_->addAction(transpose_act_);
+  transform_menu_->addAction(rotation_act_);
 
   // Menu layout
 

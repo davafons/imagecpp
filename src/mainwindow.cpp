@@ -19,6 +19,7 @@
 #include "operations/inverse/inverse.hpp"
 #include "operations/mirror/mirror.hpp"
 #include "operations/mirror/transpose.hpp"
+#include "operations/rotation/rotationdialog.hpp"
 #include "operations/specification/specificationdialog.hpp"
 #include "operations/transform/lineartransformdialog.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
@@ -175,6 +176,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::transpose, this, [this] {
     executeOperation<Transpose>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::rotation, this, [this] {
+    executeOperation<RotationDialog>(mdi_area_->activeDocument());
   });
 
   // Windows

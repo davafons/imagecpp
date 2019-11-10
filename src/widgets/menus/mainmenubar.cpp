@@ -61,6 +61,7 @@ void MainMenuBar::createImageMenu() {
       &image_menu_, &ImageMenu::horizontalMirror, this, &MainMenuBar::horizontalMirror);
   connect(&image_menu_, &ImageMenu::verticalMirror, this, &MainMenuBar::verticalMirror);
   connect(&image_menu_, &ImageMenu::transpose, this, &MainMenuBar::transpose);
+  connect(&image_menu_, &ImageMenu::rotation, this, &MainMenuBar::rotation);
 }
 
 void MainMenuBar::createSettingsMenu() {
