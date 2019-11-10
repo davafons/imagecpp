@@ -43,6 +43,7 @@ signals:
   void digitalization();
   void equalization();
   void specification();
+  void profile();
 
   void toggleTabsView(bool toggled);
 

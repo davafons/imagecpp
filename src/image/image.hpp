@@ -25,6 +25,8 @@ public:
 
   Image &operator=(Image other);
 
+  void setImage(const Image& image);
+
   // Image Operations
   QPixmap getPixmap() const noexcept;
   Image *copy(const QRect &rectangle = QRect()) const;

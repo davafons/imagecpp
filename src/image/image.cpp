@@ -16,6 +16,7 @@ Image::Image(int width, int height, QImage::Format format)
 Image::Image(const Image &other) {
   image_ = other.image_.copy();
 }
+
 Image::Image(Image &&other) {
   swap(*this, other);
 }
@@ -24,6 +25,10 @@ Image &Image::operator=(Image other) {
   swap(*this, other);
 
   return *this;
+}
+
+void Image::setImage(const Image &other) {
+  image_ = other.image_.copy();
 }
 
 // Image Operations

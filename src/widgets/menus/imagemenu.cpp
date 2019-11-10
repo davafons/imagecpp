@@ -76,6 +76,12 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(specification_act_, &QAction::triggered, this, &ImageMenu::specification);
 
+  // Profile
+  profile_act_ = new QAction(tr("Profile"), this);
+  profile_act_->setStatusTip(tr("Profile"));
+
+  connect(profile_act_, &QAction::triggered, this, &ImageMenu::profile);
+
   // Menu layout
 
   addAction(duplicate_img_act_);
@@ -92,6 +98,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(digitalization_act_);
   addAction(equalization_act_);
   addAction(specification_act_);
+  addAction(profile_act_);
 }
 
 }  // namespace imagecpp

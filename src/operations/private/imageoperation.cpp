@@ -240,7 +240,12 @@ void ImageOperation::setSelection(const QRect& rect) {
 void ImageOperation::generateNewImage() {
   if (!isNewImageUpToDate()) {
 
+    QElapsedTimer timer;
+    timer.start();
+
     imageOperationImpl(new_image_);
+
+    qInfo() << "The operation took" << timer.elapsed() << "milliseconds";
 
     new_image_up_to_date_ = true;
 

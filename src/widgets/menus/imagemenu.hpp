@@ -25,6 +25,7 @@ signals:
   void digitalization();
   void equalization();
   void specification();
+  void profile();
 
 private:
   QAction *duplicate_img_act_;
@@ -39,6 +40,7 @@ private:
   QAction *digitalization_act_;
   QAction *equalization_act_;
   QAction *specification_act_;
+  QAction *profile_act_;
 };
 
 }  // namespace imagecpp
