@@ -25,11 +25,13 @@ public:
 
   Image &operator=(Image other);
 
-  void setImage(const Image& image);
+  void setImage(const Image &image);
 
   // Image Operations
   QPixmap getPixmap() const noexcept;
   Image *copy(const QRect &rectangle = QRect()) const;
+
+  void reset(int width, int height);
 
   // Properties
   int width() const noexcept;
@@ -70,4 +72,4 @@ private:
   QImage image_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

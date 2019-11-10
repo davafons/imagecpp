@@ -82,20 +82,31 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(profile_act_, &QAction::triggered, this, &ImageMenu::profile);
 
-  // Transform groups
+  // Horizontal mirror
+
   hmirror_act_ = new QAction(tr("Horizontal mirror"), this);
   hmirror_act_->setStatusTip(tr("Mirror image horizontally"));
 
   connect(hmirror_act_, &QAction::triggered, this, &ImageMenu::horizontalMirror);
+
+  // Vertical mirror
 
   vmirror_act_ = new QAction(tr("Vertical mirror"), this);
   vmirror_act_->setStatusTip(tr("Mirror image vertically"));
 
   connect(vmirror_act_, &QAction::triggered, this, &ImageMenu::verticalMirror);
 
+  // Transpose
+
+  transpose_act_ = new QAction(tr("Transpose"), this);
+  transpose_act_->setStatusTip(tr("Transpose image (interchange cols and rows)"));
+
+  connect(transpose_act_, &QAction::triggered, this, &ImageMenu::transpose);
+
   transform_menu_ = new QMenu(tr("Transform..."), this);
   transform_menu_->addAction(hmirror_act_);
   transform_menu_->addAction(vmirror_act_);
+  transform_menu_->addAction(transpose_act_);
 
   // Menu layout
 

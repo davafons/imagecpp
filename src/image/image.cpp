@@ -39,6 +39,10 @@ Image *Image::copy(const QRect &rectangle) const {
   return new Image(image_.copy(rectangle));
 }
 
+void Image::reset(int width, int height) {
+  image_ = QImage(width, height, format());
+}
+
 // Iterators
 // QRgb *Image::begin() { return (QRgb *)image_.bits(); }
 // const QRgb *Image::begin() const { return cbegin(); }

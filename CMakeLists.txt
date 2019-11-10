@@ -41,6 +41,7 @@ add_executable(${PROJECT_NAME}
     src/operations/gammac/gammac.cpp
     src/operations/gammac/gammacdialog.cpp
     src/operations/mirror/mirror.cpp
+    src/operations/mirror/transpose.cpp
     src/operations/private/imageoperation.cpp
     src/operations/private/lutoperation.cpp
     src/widgets/image/imagedisplayarea.cpp

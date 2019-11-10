@@ -29,6 +29,7 @@ signals:
 
   void horizontalMirror();
   void verticalMirror();
+  void transpose();
 
 private:
   QAction *duplicate_img_act_;
@@ -48,6 +49,7 @@ private:
   QMenu *transform_menu_;
   QAction *hmirror_act_;
   QAction *vmirror_act_;
+  QAction *transpose_act_;
 };
 
 }  // namespace imagecpp

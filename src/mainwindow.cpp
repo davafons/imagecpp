@@ -18,6 +18,7 @@
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
 #include "operations/mirror/mirror.hpp"
+#include "operations/mirror/transpose.hpp"
 #include "operations/specification/specificationdialog.hpp"
 #include "operations/transform/lineartransformdialog.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
@@ -170,6 +171,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::verticalMirror, this, [this] {
     executeOperation<Mirror>(mdi_area_->activeDocument(), Mirror::Direction::Vertical);
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::transpose, this, [this] {
+    executeOperation<Transpose>(mdi_area_->activeDocument());
   });
 
   // Windows
