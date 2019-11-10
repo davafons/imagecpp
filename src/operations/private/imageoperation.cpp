@@ -18,12 +18,13 @@ namespace imagecpp {
  */
 ImageOperation::ImageOperation(Document* referenced_document, const QString& name)
     : new_image_(Image::empty(*referenced_document->image())),
-      old_image_(referenced_document->copyImage()),
-      selection_(old_image_->rect()),
+      old_image_(referenced_document->image()->copy()),
       referenced_document_(referenced_document),
       name_(name) {
 
   old_image_histogram_ = Histogram(*referenced_document->histogram());
+
+  setSelection(referenced_document->selection());
 
   // After receiving the propertyChanged signal, generate new_image if the
   // "realtime update" option is toggled. Generate new_histogram if the "realtime

@@ -209,10 +209,10 @@ QRect ImageDisplayArea::createSelectionRect(QPoint a, QPoint b) {
   a = (a - target_.pos()) / scale_factor_;
   b = (b - target_.pos()) / scale_factor_;
 
-  std::max(a.x(), 0);
-  std::max(a.y(), 0);
-  std::min(b.x(), image_ref_->width());
-  std::min(b.y(), image_ref_->height());
+  a.setX(std::max(a.x(), 0));
+  a.setY(std::max(a.y(), 0));
+  b.setX(std::min(b.x(), image_ref_->width()));
+  b.setY(std::min(b.y(), image_ref_->height()));
 
   QRect rect(a, b);
   rect = rect.normalized();

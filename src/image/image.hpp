@@ -25,15 +25,6 @@ public:
 
   Image &operator=(Image other);
 
-  // Iterators
-  // QRgb *begin();
-  // const QRgb *begin() const;
-  // const QRgb *cbegin() const;
-  //
-  // QRgb *end();
-  // const QRgb *end() const;
-  // const QRgb *cend() const;
-
   // Image Operations
   QPixmap getPixmap() const noexcept;
   Image *copy(const QRect &rectangle = QRect()) const;

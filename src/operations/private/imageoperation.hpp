@@ -68,12 +68,12 @@ private:
   Image* new_image_{nullptr};
   const Image* old_image_{nullptr};
 
-  QRect selection_;
-
   Histogram new_image_histogram_;
   Histogram old_image_histogram_;
 
   Document* referenced_document_{nullptr};
+
+  QRect selection_{};
 
   QString name_{"undefined-operation"};
 
