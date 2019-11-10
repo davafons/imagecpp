@@ -45,6 +45,9 @@ signals:
   void specification();
   void profile();
 
+  void horizontalMirror();
+  void verticalMirror();
+
   void toggleTabsView(bool toggled);
 
   void toggleHistoryWindow(bool toggled);

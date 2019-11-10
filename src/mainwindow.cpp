@@ -17,6 +17,7 @@
 #include "operations/gammac/gammacdialog.hpp"
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
+#include "operations/mirror/mirror.hpp"
 #include "operations/specification/specificationdialog.hpp"
 #include "operations/transform/lineartransformdialog.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
@@ -162,6 +163,15 @@ void MainWindow::createMenuBar() {
     executeOperation<SpecificationDialog>(mdi_area_->activeDocument());
   });
 
+  connect(&main_menu_bar_, &MainMenuBar::horizontalMirror, this, [this] {
+    executeOperation<Mirror>(mdi_area_->activeDocument(),
+                             Mirror::Direction::Horizontal);
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::verticalMirror, this, [this] {
+    executeOperation<Mirror>(mdi_area_->activeDocument(), Mirror::Direction::Vertical);
+  });
+
   // Windows
 
   // TODO: Change with the dock toggle actions
@@ -239,13 +249,13 @@ void MainWindow::showHistogram() {
   dialog->show();
 }
 
-template <class Operation>
-void MainWindow::executeOperation(Document *document) {
+template <class Operation, typename... Args>
+void MainWindow::executeOperation(Document *document, Args &&... args) {
   if (document == nullptr) {
     return;
   }
 
-  Operation op(document);
+  Operation op(document, std::forward<Args>(args)...);
   int return_type = op.exec();
 
   if (return_type == 1) {

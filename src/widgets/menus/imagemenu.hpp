@@ -27,6 +27,9 @@ signals:
   void specification();
   void profile();
 
+  void horizontalMirror();
+  void verticalMirror();
+
 private:
   QAction *duplicate_img_act_;
   QAction *show_histogram_act_;
@@ -41,6 +44,10 @@ private:
   QAction *equalization_act_;
   QAction *specification_act_;
   QAction *profile_act_;
+
+  QMenu *transform_menu_;
+  QAction *hmirror_act_;
+  QAction *vmirror_act_;
 };
 
 }  // namespace imagecpp

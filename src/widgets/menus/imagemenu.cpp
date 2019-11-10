@@ -82,6 +82,21 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(profile_act_, &QAction::triggered, this, &ImageMenu::profile);
 
+  // Transform groups
+  hmirror_act_ = new QAction(tr("Horizontal mirror"), this);
+  hmirror_act_->setStatusTip(tr("Mirror image horizontally"));
+
+  connect(hmirror_act_, &QAction::triggered, this, &ImageMenu::horizontalMirror);
+
+  vmirror_act_ = new QAction(tr("Vertical mirror"), this);
+  vmirror_act_->setStatusTip(tr("Mirror image vertically"));
+
+  connect(vmirror_act_, &QAction::triggered, this, &ImageMenu::verticalMirror);
+
+  transform_menu_ = new QMenu(tr("Transform..."), this);
+  transform_menu_->addAction(hmirror_act_);
+  transform_menu_->addAction(vmirror_act_);
+
   // Menu layout
 
   addAction(duplicate_img_act_);
@@ -99,6 +114,8 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(equalization_act_);
   addAction(specification_act_);
   addAction(profile_act_);
+
+  addMenu(transform_menu_);
 }
 
 }  // namespace imagecpp

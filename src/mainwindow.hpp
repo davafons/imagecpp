@@ -37,8 +37,8 @@ private:
 
   void showHistogram();
 
-  template <class Operation>
-  void executeOperation(Document *document);
+  template <class Operation, typename... Args>
+  void executeOperation(Document *document, Args &&... args);
 
 private:
   MainMenuBar main_menu_bar_;
