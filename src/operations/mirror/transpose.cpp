@@ -4,7 +4,7 @@ namespace imagecpp {
 
 Transpose::Transpose(Document *document) : PointOperation(document, tr("Transpose")) {}
 
-QRgb Transpose::pointOperationImpl(int x, int y, QRgb) const {
+QRgb Transpose::pointOperationImpl(int x, int y, QRgb) {
   return oldImage()->pixel(y, x);
 }
 

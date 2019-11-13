@@ -11,7 +11,7 @@ public:
 
 protected:
   virtual void imageOperationImpl(Image *new_image) override;
-  virtual QRgb pointOperationImpl(int x, int y, QRgb color) const override;
+  virtual QRgb pointOperationImpl(int x, int y, QRgb color) override;
 
   virtual void fillLutTablesImpl() = 0;
 

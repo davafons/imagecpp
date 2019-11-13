@@ -22,7 +22,7 @@ public slots:
   void setFormat(const Format &format);
 
 protected:
-  virtual QRgb pointOperationImpl(int x, int y, QRgb color) const override;
+  virtual QRgb pointOperationImpl(int x, int y, QRgb color) override;
 
 private:
   Format format_;

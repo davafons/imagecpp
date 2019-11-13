@@ -40,6 +40,7 @@ signals:
   void brightnessAndConstrast();
   void gammaCorrection();
   void imageDifference();
+  void imageChange();
   void digitalization();
   void equalization();
   void specification();

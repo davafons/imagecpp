@@ -53,10 +53,16 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   // Image difference
   image_difference_act_ = new QAction(tr("Image difference..."), this);
-  image_difference_act_->setStatusTip(tr("Image difference between two images."));
+  image_difference_act_->setStatusTip(tr("Image difference between two images"));
 
   connect(
       image_difference_act_, &QAction::triggered, this, &ImageMenu::imageDifference);
+
+  // Image change
+  image_change_act_ = new QAction(tr("Image change"), this);
+  image_change_act_->setStatusTip(tr("Image change between two images"));
+
+  connect(image_change_act_, &QAction::triggered, this, &ImageMenu::imageChange);
 
   // Digitalization
   digitalization_act_ = new QAction(tr("Digitalization..."), this);
@@ -129,6 +135,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(bac_act_);
   addAction(gamma_corr_act_);
   addAction(image_difference_act_);
+  addAction(image_change_act_);
   addAction(digitalization_act_);
   addAction(equalization_act_);
   addAction(specification_act_);

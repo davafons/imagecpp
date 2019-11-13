@@ -12,6 +12,7 @@
 #include "image/document.hpp"
 #include "operations/bac/bacdialog.hpp"
 #include "operations/difference/imagedifferencedialog.hpp"
+#include "operations/change/imagechangedialog.hpp"
 #include "operations/digitalization/digitalizationdialog.hpp"
 #include "operations/equalization/equalization.hpp"
 #include "operations/gammac/gammacdialog.hpp"
@@ -151,6 +152,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::imageDifference, this, [this] {
     executeOperation<ImageDifferenceDialog>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::imageChange, this, [this] {
+    executeOperation<ImageChangeDialog>(mdi_area_->activeDocument());
   });
 
   connect(&main_menu_bar_, &MainMenuBar::digitalization, this, [this] {

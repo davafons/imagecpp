@@ -26,6 +26,8 @@ add_executable(${PROJECT_NAME}
     src/operations/grayscale/grayscale.cpp
     src/operations/grayscale/grayscaledialog.cpp
     src/operations/difference/imagedifference.cpp
+    src/operations/change/imagechangedialog.cpp
+    src/operations/change/imagechange.cpp
     src/operations/difference/imagedifferencedialog.cpp
     src/operations/inverse/inverse.cpp
     src/operations/equalization/equalization.cpp

@@ -23,7 +23,7 @@ Equalization::Equalization(Document* document)
 /*!
  *  Implementation of the Equalization operation.
  */
-QRgb Equalization::pointOperationImpl(int, int, QRgb color) const {
+QRgb Equalization::pointOperationImpl(int, int, QRgb color) {
   int red_ch_value = red_ch_->at(qRed(color));
   int green_ch_value = green_ch_->at(qGreen(color));
   int blue_ch_value = blue_ch_->at(qBlue(color));

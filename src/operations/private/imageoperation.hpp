@@ -54,6 +54,7 @@ signals:
   void imageRealtimeUpdateToggled(bool toggled);
   void histogramRealtimeUpdateToggled(bool toggled);
 
+  void newSelection(QRect selection);
   void newImageGenerated(const Image* new_image);
   void newHistogramGenerated(const Histogram& histogram);
 

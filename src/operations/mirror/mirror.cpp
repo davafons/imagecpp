@@ -15,7 +15,7 @@ void Mirror::setDirection(const Direction& dir) {
   emit propertyChanged();
 }
 
-QRgb Mirror::pointOperationImpl(int x, int y, QRgb color) const {
+QRgb Mirror::pointOperationImpl(int x, int y, QRgb color) {
   switch (dir_) {
     case Direction::Horizontal:
       return oldImage()->pixel(oldImage()->width() - x - 1, y);

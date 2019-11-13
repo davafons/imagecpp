@@ -14,7 +14,7 @@ void Rotation::setDegrees(int degrees) {
   emit propertyChanged();
 }
 
-QRgb Rotation::pointOperationImpl(int x, int y, QRgb) const {
+QRgb Rotation::pointOperationImpl(int x, int y, QRgb) {
   switch (degrees_) {
     case 90:
       return oldImage()->pixel(y, oldImage()->height() - x - 1);

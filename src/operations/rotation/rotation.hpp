@@ -17,8 +17,8 @@ public slots:
   void setDegrees(int degrees);
 
 protected:
-  QRgb pointOperationImpl(int x, int y, QRgb) const;
-  void imageOperationImpl(Image *new_image);
+  virtual QRgb pointOperationImpl(int x, int y, QRgb) override;
+  virtual void imageOperationImpl(Image *new_image) override;
 
 private:
   int degrees_{0};

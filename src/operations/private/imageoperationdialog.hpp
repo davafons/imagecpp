@@ -34,10 +34,10 @@ private:
 protected:
   QVBoxLayout *settings_layout_{nullptr};
 
+  ImageDisplayArea *preview_display_{nullptr};
+
 private:
   OpType operation_;
-
-  ImageDisplayArea *preview_display_{nullptr};
 
   QCheckBox *image_rtupdate_checkbox_{nullptr};
 

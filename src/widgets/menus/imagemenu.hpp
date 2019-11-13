@@ -22,6 +22,7 @@ signals:
   void brightnessAndConstrast();
   void gammaCorrection();
   void imageDifference();
+  void imageChange();
   void digitalization();
   void equalization();
   void specification();
@@ -42,6 +43,7 @@ private:
   QAction *bac_act_;
   QAction *gamma_corr_act_;
   QAction *image_difference_act_;
+  QAction *image_change_act_;
   QAction *digitalization_act_;
   QAction *equalization_act_;
   QAction *specification_act_;
