@@ -56,6 +56,7 @@ void MainMenuBar::createImageMenu() {
   connect(&image_menu_, &ImageMenu::digitalization, this, &MainMenuBar::digitalization);
   connect(&image_menu_, &ImageMenu::equalization, this, &MainMenuBar::equalization);
   connect(&image_menu_, &ImageMenu::specification, this, &MainMenuBar::specification);
+  connect(&image_menu_, &ImageMenu::filter, this, &MainMenuBar::filter);
   connect(&image_menu_, &ImageMenu::profile, this, &MainMenuBar::profile);
 
   connect(

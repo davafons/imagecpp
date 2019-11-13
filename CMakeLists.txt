@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME}
     src/operations/grayscale/grayscaledialog.cpp
     src/operations/difference/imagedifference.cpp
     src/operations/change/imagechangedialog.cpp
+    src/operations/filter/filter.cpp
     src/operations/change/imagechange.cpp
     src/operations/difference/imagedifferencedialog.cpp
     src/operations/inverse/inverse.cpp
@@ -40,6 +41,7 @@ add_executable(${PROJECT_NAME}
     src/operations/digitalization/digitalizationdialog.cpp
     src/operations/bac/bacdialog.cpp
     src/operations/private/pointoperation.cpp
+    src/operations/private/filteroperation.cpp
     src/operations/gammac/gammac.cpp
     src/operations/gammac/gammacdialog.cpp
     src/operations/mirror/mirror.cpp

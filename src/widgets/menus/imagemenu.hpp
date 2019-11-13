@@ -26,6 +26,7 @@ signals:
   void digitalization();
   void equalization();
   void specification();
+  void filter();
   void profile();
 
   void horizontalMirror();
@@ -47,6 +48,7 @@ private:
   QAction *digitalization_act_;
   QAction *equalization_act_;
   QAction *specification_act_;
+  QAction *filter_act_;
   QAction *profile_act_;
 
   QMenu *transform_menu_;

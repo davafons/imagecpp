@@ -11,10 +11,11 @@
 
 #include "image/document.hpp"
 #include "operations/bac/bacdialog.hpp"
-#include "operations/difference/imagedifferencedialog.hpp"
 #include "operations/change/imagechangedialog.hpp"
+#include "operations/difference/imagedifferencedialog.hpp"
 #include "operations/digitalization/digitalizationdialog.hpp"
 #include "operations/equalization/equalization.hpp"
+#include "operations/filter/filter.hpp"
 #include "operations/gammac/gammacdialog.hpp"
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
@@ -168,6 +169,10 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::specification, this, [this] {
     executeOperation<SpecificationDialog>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::filter, this, [this] {
+    executeOperation<Filter>(mdi_area_->activeDocument());
   });
 
   connect(&main_menu_bar_, &MainMenuBar::horizontalMirror, this, [this] {

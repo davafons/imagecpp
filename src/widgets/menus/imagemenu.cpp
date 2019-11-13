@@ -82,6 +82,12 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(specification_act_, &QAction::triggered, this, &ImageMenu::specification);
 
+  // Filter
+  filter_act_ = new QAction(tr("Filter..."), this);
+  filter_act_->setStatusTip(tr("Filter"));
+
+  connect(filter_act_, &QAction::triggered, this, &ImageMenu::filter);
+
   // Profile
   profile_act_ = new QAction(tr("Profile"), this);
   profile_act_->setStatusTip(tr("Profile"));
@@ -139,6 +145,7 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(digitalization_act_);
   addAction(equalization_act_);
   addAction(specification_act_);
+  addAction(filter_act_);
   addAction(profile_act_);
 
   addMenu(transform_menu_);

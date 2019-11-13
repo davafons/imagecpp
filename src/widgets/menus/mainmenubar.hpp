@@ -44,6 +44,7 @@ signals:
   void digitalization();
   void equalization();
   void specification();
+  void filter();
   void profile();
 
   void horizontalMirror();
