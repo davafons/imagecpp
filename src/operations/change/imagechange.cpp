@@ -26,6 +26,10 @@ const Image* ImageChange::secondImage() const {
   return image_difference_operation_.secondImage();
 }
 
+const Image* ImageChange::differenceImage() {
+  return image_difference_operation_.newImage();
+}
+
 void ImageChange::setThreshold(int threshold) {
   threshold_ = threshold;
 
@@ -44,7 +48,7 @@ void ImageChange::setDiffColor(const QColor& color) {
 void ImageChange::setSecondImage(const Image* image) {
   image_difference_operation_.setSecondImage(image);
 
-  difference_image_histogram_.generateHistogram(image);
+  difference_image_histogram_.generateHistogram(image_difference_operation_.newImage());
 
   setThreshold(difference_image_histogram_.mean());
 

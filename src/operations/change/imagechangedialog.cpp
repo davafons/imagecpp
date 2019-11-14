@@ -63,6 +63,10 @@ void ImageChangeDialog::keyPressEvent(QKeyEvent *event) {
         preview_display_->onImageUpdated(operation().secondImage());
       }
       break;
+
+    case Qt::Key::Key_4:
+      preview_display_->onImageUpdated(operation().differenceImage());
+      break;
   }
 
   ImageOperationDialog::keyPressEvent(event);

@@ -20,6 +20,8 @@ public:
 
   const Image* secondImage() const;
 
+  const Image* differenceImage();
+
 signals:
   void thresholdChanged(int threshold);
 
