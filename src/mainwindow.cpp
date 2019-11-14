@@ -15,7 +15,7 @@
 #include "operations/difference/imagedifferencedialog.hpp"
 #include "operations/digitalization/digitalizationdialog.hpp"
 #include "operations/equalization/equalization.hpp"
-#include "operations/filter/filter.hpp"
+#include "operations/filter/filterdialog.hpp"
 #include "operations/gammac/gammacdialog.hpp"
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
@@ -172,7 +172,7 @@ void MainWindow::createMenuBar() {
   });
 
   connect(&main_menu_bar_, &MainMenuBar::filter, this, [this] {
-    executeOperation<Filter>(mdi_area_->activeDocument());
+    executeOperation<FilterDialog>(mdi_area_->activeDocument());
   });
 
   connect(&main_menu_bar_, &MainMenuBar::horizontalMirror, this, [this] {

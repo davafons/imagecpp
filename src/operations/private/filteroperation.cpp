@@ -8,22 +8,31 @@ FilterOperation::FilterOperation(Document* document, const QString& name)
 void FilterOperation::imageOperationImpl(Image* new_image) {
   fillKernel();
 
+  for (const auto& row : kernel_) {
+    for (const auto& col : row) {
+      qDebug() << col;
+    }
+    qDebug() << "---";
+  }
+
   PointOperation::imageOperationImpl(new_image);
 }
 
-QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb) {
+QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb color) {
   int r_acc = 0;
   int g_acc = 0;
   int b_acc = 0;
 
   int pixels_count = 0;
 
-  int kernel_half = kernel_.size() / 2;
-
   // qDebug() << x << y;
 
-  for (int i = -kernel_half; i < kernel_half; ++i) {
-    for (int j = -kernel_half; j < kernel_half; ++j) {
+  int kernel_h_rad = kernel_.size() / 2;
+
+  for (int i = -kernel_h_rad; i < kernel_h_rad; ++i) {
+    int kernel_v_rad = kernel_[i].size() / 2;
+
+    for (int j = -kernel_v_rad; j < kernel_v_rad; ++j) {
       int lx = x + i;
       int ly = y + j;
 
@@ -33,9 +42,12 @@ QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb) {
 
       QRgb pixel = oldImage()->pixel(lx, ly);
 
-      r_acc += qRed(pixel);
-      g_acc += qGreen(pixel);
-      b_acc += qBlue(pixel);
+      int kx = i + kernel_h_rad;
+      int ky = j + kernel_v_rad;
+
+      r_acc += qRed(pixel) * kernel_[kx][ky];
+      g_acc += qGreen(pixel) * kernel_[kx][ky];
+      b_acc += qBlue(pixel) * kernel_[kx][ky];
 
       ++pixels_count;
     }
@@ -47,7 +59,7 @@ QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb) {
   g_acc /= pixels_count;
   b_acc /= pixels_count;
 
-  return qRgb(r_acc, g_acc, b_acc);
+  return qRgba(r_acc, g_acc, b_acc, qAlpha(color));
 }
 
 }  // namespace imagecpp

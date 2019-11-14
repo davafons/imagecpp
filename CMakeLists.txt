@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME}
     src/operations/difference/imagedifference.cpp
     src/operations/change/imagechangedialog.cpp
     src/operations/filter/filter.cpp
+    src/operations/filter/filterdialog.cpp
     src/operations/change/imagechange.cpp
     src/operations/difference/imagedifferencedialog.cpp
     src/operations/inverse/inverse.cpp
