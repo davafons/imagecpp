@@ -1,6 +1,7 @@
 #include "imagedisplayarea.hpp"
 
 #include <QDebug>
+#include <QDialog>
 #include <QHoverEvent>
 #include <QPainter>
 #include <QScrollBar>
@@ -10,11 +11,43 @@
 
 namespace imagecpp {
 
+// TODO: Fix this class
+
 ImageDisplayArea::ImageDisplayArea(QWidget *parent)
     : QScrollArea(parent), image_ref_(nullptr) {
   // Set widgets attributes and options
   target_.setAttribute(Qt::WA_Hover);  // Allow hover events
   target_.setScaledContents(true);
+
+  x_axis_ = new QValueAxis();
+  x_axis_->setRange(0, 1);
+  x_axis_->setLabelFormat("%d");
+  x_axis_->setTickCount(5);
+
+  y_axis_ = new QValueAxis();
+  y_axis_->setRange(0, 256);
+  y_axis_->setLabelFormat("%d");
+  y_axis_->setTickCount(5);
+
+  chart_ = new QChart();
+  r_series_ = new QBarSeries();
+  g_series_ = new QBarSeries();
+  b_series_ = new QBarSeries();
+  chart_->addSeries(r_series_);
+  chart_->addSeries(g_series_);
+  chart_->addSeries(b_series_);
+
+  // chart_->addAxis(x_axis_, Qt::AlignBottom);
+  chart_->addAxis(y_axis_, Qt::AlignLeft);
+  chart_view_ = new QChartView(chart_);
+  chart_view_->setRenderHint(QPainter::Antialiasing);
+
+  profile_dialog = new QDialog(this);
+
+  QVBoxLayout *l = new QVBoxLayout();
+  l->addWidget(chart_view_);
+
+  profile_dialog->setLayout(l);
 
   verticalScrollBar()->setEnabled(false);
   horizontalScrollBar()->setEnabled(false);
@@ -28,6 +61,11 @@ ImageDisplayArea::ImageDisplayArea(QWidget *parent)
   target_.installEventFilter(this);
 
   setWidget(&target_);
+
+  connect(this,
+          &ImageDisplayArea::profileSelection,
+          this,
+          &ImageDisplayArea::calculateProfile);
 }
 
 float ImageDisplayArea::scaleFactor() const {
@@ -105,6 +143,22 @@ void ImageDisplayArea::fitOnFrame() {
   resize(scale_factor_);
 }
 
+void ImageDisplayArea::setDrawingFigure(Figure figure) {
+  drawing_figure_ = figure;
+
+  if (drawing_figure_ == Figure::RECT) {
+    toggle_selection_ = true;
+    profile_dialog->hide();
+  } else {
+    toggle_selection_ = false;
+    profile_dialog->show();
+  }
+}
+
+void ImageDisplayArea::toggleImageSelection(bool toggle) {
+  toggle_selection_ = toggle;
+}
+
 bool ImageDisplayArea::eventFilter(QObject *obj, QEvent *event) {
   if (obj == &target_ && event->type() == QEvent::HoverMove) {
     QHoverEvent *hover_event = static_cast<QHoverEvent *>(event);
@@ -139,12 +193,32 @@ void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
 
     QPainter painter(&selection_draw_area_);
     selection_draw_area_.fill(Qt::transparent);
-    painter.drawRect(rect);
+
+    painter.setPen(QPen(Qt::red, 5));
+
+    auto normalize = [this](QPoint p) { return (p - target_.pos()) / scale_factor_; };
+
+    QPoint a = normalize(last_clicked_point_);
+    QPoint b = normalize(event->pos());
+
+    switch (drawing_figure_) {
+      case Figure::RECT:
+        painter.drawRect(rect);
+        break;
+
+      case Figure::LINE:
+        painter.drawLine(a, b);
+
+        emit profileSelection(a, b, image_ref_);
+        break;
+    }
     painter.end();
 
     recalculateResult();
 
-    emit selectionCreated(rect);
+    if (toggle_selection_) {
+      emit selectionCreated(rect);
+    }
   }
 
   QScrollArea::mouseMoveEvent(event);
@@ -156,12 +230,34 @@ void ImageDisplayArea::mouseReleaseEvent(QMouseEvent *event) {
 
     QPainter painter(&selection_draw_area_);
     selection_draw_area_.fill(Qt::transparent);
-    painter.drawRect(rect);
+
+    painter.setPen(QPen(Qt::red, 5));
+
+    auto normalize = [this](QPoint p) { return (p - target_.pos()) / scale_factor_; };
+
+    QPoint a = normalize(last_clicked_point_);
+    QPoint b = normalize(event->pos());
+
+    switch (drawing_figure_) {
+      case Figure::RECT:
+        painter.drawRect(rect);
+        break;
+
+      case Figure::LINE:
+        painter.drawLine(a, b);
+
+        emit profileSelection(a, b, image_ref_);
+
+        break;
+    }
+
     painter.end();
 
     recalculateResult();
 
-    emit selectionCreated(rect);
+    if (toggle_selection_) {
+      emit selectionCreated(rect);
+    }
   }
 
   QScrollArea::mouseReleaseEvent(event);
@@ -192,10 +288,28 @@ void ImageDisplayArea::wheelEvent(QWheelEvent *event) {
   QScrollArea::wheelEvent(event);
 }
 
+void ImageDisplayArea::keyPressEvent(QKeyEvent *event) {
+
+  switch (event->key()) {
+    case Qt::Key::Key_R:
+      setDrawingFigure(Figure::RECT);
+      break;
+
+    case Qt::Key::Key_T:
+      setDrawingFigure(Figure::LINE);
+      break;
+  }
+
+  QScrollArea::keyPressEvent(event);
+}
+
+// TODO: This is such a bad method name, yknow
 void ImageDisplayArea::recalculateResult() {
   QPainter painter(&result_image_);
   painter.setCompositionMode(QPainter::CompositionMode_Source);
+
   painter.fillRect(result_image_.rect(), Qt::transparent);
+
   painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
   painter.drawPixmap(0, 0, image_ref_->getPixmap());
   painter.setCompositionMode(QPainter::CompositionMode_Xor);
@@ -222,6 +336,81 @@ QRect ImageDisplayArea::createSelectionRect(QPoint a, QPoint b) {
   }
 
   return rect;
+}
+
+void ImageDisplayArea::calculateProfile(QPoint s, QPoint e, const Image *image) {
+
+  QBarSet *r = new QBarSet("Red");
+  r->setColor(Qt::red);
+  r->setBorderColor(Qt::red);
+  QBarSet *g = new QBarSet("Green");
+  g->setColor(Qt::green);
+  g->setBorderColor(Qt::green);
+  QBarSet *b = new QBarSet("Blue");
+  b->setColor(Qt::blue);
+  b->setBorderColor(Qt::blue);
+
+  int x0 = s.x();
+  int y0 = s.y();
+  int x1 = e.x();
+  int y1 = e.y();
+
+  bool steep = false;
+
+  if (std::abs(x0 - x1) < std::abs(y0 - y1)) {
+    std::swap(x0, y0);
+    std::swap(x1, y1);
+
+    steep = true;
+  }
+
+  if (x0 > x1) {
+    std::swap(x0, x1);
+    std::swap(y0, y1);
+  }
+
+  int dx = x1 - x0;
+  int dy = y1 - y0;
+
+  int derror2 = std::abs(dy) * 2;
+  int error2 = 0;
+
+  int y = y0;
+
+  for (int x = x0; x <= x1; ++x) {
+    if (steep) {
+      QRgb color = image->pixel(y, x);
+      *r << qRed(color);
+      *g << qGreen(color);
+      *b << qBlue(color);
+    } else {
+      QRgb color = image->pixel(x, y);
+      *r << qRed(color);
+      *g << qGreen(color);
+      *b << qBlue(color);
+    }
+
+    error2 += derror2;
+
+    if (error2 > dx) {
+      y += (y1 > y0 ? 1 : -1);
+      error2 -= dx * 2;
+    }
+  }
+
+  // Graph generation
+  r_series_->clear();
+  r_series_->append(r);
+
+  g_series_->clear();
+  g_series_->append(g);
+
+  b_series_->clear();
+  b_series_->append(b);
+
+  chart_->createDefaultAxes();
+
+  chart_->axes()[1]->setRange(0, 255);
 }
 
 }  // namespace imagecpp

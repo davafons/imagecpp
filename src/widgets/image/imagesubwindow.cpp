@@ -1,5 +1,7 @@
 #include "imagesubwindow.hpp"
 
+#include <QStatusBar>
+
 #include "image/document.hpp"
 #include "image/image.hpp"
 #include "widgets/image/imagedisplayarea.hpp"

@@ -2,6 +2,8 @@
 
 #include <QMdiSubWindow>
 #include <QPainter>
+#include <QPushButton>
+#include <QStatusBar>
 
 namespace imagecpp {
 
@@ -29,4 +31,4 @@ private:
   Document *const document_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp
