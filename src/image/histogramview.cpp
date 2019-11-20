@@ -74,6 +74,8 @@ HistogramView::HistogramView(QWidget *parent)
   chart_view_->setRubberBand(QChartView::HorizontalRubberBand);
   chart_view_->installEventFilter(this);
 
+  chart_view_->setMinimumSize(QSize(200, 200));
+
   // Setup additional widgets
   QGroupBox *information_box = new QGroupBox();
   QVBoxLayout *information_layout = new QVBoxLayout();

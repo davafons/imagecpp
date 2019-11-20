@@ -19,11 +19,13 @@ public:
   QColor diffColor();
 
   const Image* secondImage() const;
-
   const Image* differenceImage();
+
+  const Histogram* diffImageHistogram() const;
 
 signals:
   void thresholdChanged(int threshold);
+  void diffHistogramGenerated(const Histogram* histogram);
 
 public slots:
   void setThreshold(int threshold);
@@ -37,7 +39,7 @@ protected:
 private:
   ImageDifference image_difference_operation_;
 
-  Histogram difference_image_histogram_;
+  Histogram* difference_image_histogram_;
 
   int threshold_{0};
 

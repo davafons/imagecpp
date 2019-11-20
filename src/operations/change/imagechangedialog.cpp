@@ -7,8 +7,10 @@ namespace imagecpp {
 
 ImageChangeDialog::ImageChangeDialog(Document *document, QWidget *parent)
     : ImageOperationDialog<ImageChange>(document, parent) {
+  operation().toggleHistogramRealtimeUpdate(true);
 
   images_list_widget_ = DocumentsManager::createImagesListWidget();
+  diff_image_hist_view_ = new HistogramView();
 
   threshold_spin_ = new QSpinBox();
 
@@ -43,9 +45,16 @@ ImageChangeDialog::ImageChangeDialog(Document *document, QWidget *parent)
           &operation(),
           &ImageChange::setSecondImage);
 
+  connect(&operation(),
+          &ImageChange::diffHistogramGenerated,
+          diff_image_hist_view_,
+          &HistogramView::setHistogram);
+
   settings_layout_->addWidget(images_list_widget_);
+  settings_layout_->addWidget(new QLabel("Threshold"));
   settings_layout_->addWidget(threshold_spin_);
   settings_layout_->addWidget(color_picker_button_);
+  settings_layout_->addWidget(diff_image_hist_view_);
 }
 
 void ImageChangeDialog::keyPressEvent(QKeyEvent *event) {

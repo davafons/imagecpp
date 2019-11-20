@@ -4,12 +4,24 @@ namespace imagecpp {
 
 ImageChange::ImageChange(Document* document)
     : PointOperation(document, tr("Image change")),
-      image_difference_operation_(document) {
+      image_difference_operation_(document),
+      difference_image_histogram_(new Histogram()) {
 
   connect(this,
           &ImageOperation::newSelection,
           &image_difference_operation_,
           &ImageOperation::setSelection);
+
+  connect(
+      &image_difference_operation_,
+      &ImageOperation::newHistogramGenerated,
+      this,
+      [this](const Histogram& histogram) { emit diffHistogramGenerated(&histogram); });
+
+  connect(&image_difference_operation_,
+          &ImageDifference::newHistogramGenerated,
+          this,
+          [](const Histogram& h) { qDebug() << "Histogram diff generated"; });
 
   emit propertyChanged();
 }
@@ -30,6 +42,10 @@ const Image* ImageChange::differenceImage() {
   return image_difference_operation_.newImage();
 }
 
+const Histogram* ImageChange::diffImageHistogram() const {
+  return difference_image_histogram_;
+}
+
 void ImageChange::setThreshold(int threshold) {
   threshold_ = threshold;
 
@@ -48,11 +64,9 @@ void ImageChange::setDiffColor(const QColor& color) {
 void ImageChange::setSecondImage(const Image* image) {
   image_difference_operation_.setSecondImage(image);
 
-  difference_image_histogram_.generateHistogram(image_difference_operation_.newImage());
+  setThreshold(image_difference_operation_.newHistogram().mean());
 
-  setThreshold(difference_image_histogram_.mean());
-
-  qDebug() << "New second image";
+  qDebug() << ">>>>>>> New second image";
 
   emit propertyChanged();
 }

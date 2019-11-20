@@ -1,5 +1,6 @@
 #pragma once
 
+#include "image/histogramview.hpp"
 #include "imagechange.hpp"
 #include "operations/private/imageoperationdialog.hpp"
 
@@ -17,6 +18,7 @@ protected:
 
 private:
   ImagesListWidget *images_list_widget_{nullptr};
+  HistogramView *diff_image_hist_view_{nullptr};
 
   QSpinBox *threshold_spin_{nullptr};
   QPushButton *color_picker_button_{nullptr};
