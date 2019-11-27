@@ -11,12 +11,17 @@
 
 #include "image/document.hpp"
 #include "operations/bac/bacdialog.hpp"
+#include "operations/change/imagechangedialog.hpp"
 #include "operations/difference/imagedifferencedialog.hpp"
 #include "operations/digitalization/digitalizationdialog.hpp"
 #include "operations/equalization/equalization.hpp"
+#include "operations/filter/filterdialog.hpp"
 #include "operations/gammac/gammacdialog.hpp"
 #include "operations/grayscale/grayscaledialog.hpp"
 #include "operations/inverse/inverse.hpp"
+#include "operations/mirror/mirror.hpp"
+#include "operations/mirror/transpose.hpp"
+#include "operations/rotation/rotationdialog.hpp"
 #include "operations/specification/specificationdialog.hpp"
 #include "operations/transform/lineartransformdialog.hpp"
 #include "widgets/dock/resizabledockwidget.hpp"
@@ -150,6 +155,10 @@ void MainWindow::createMenuBar() {
     executeOperation<ImageDifferenceDialog>(mdi_area_->activeDocument());
   });
 
+  connect(&main_menu_bar_, &MainMenuBar::imageChange, this, [this] {
+    executeOperation<ImageChangeDialog>(mdi_area_->activeDocument());
+  });
+
   connect(&main_menu_bar_, &MainMenuBar::digitalization, this, [this] {
     executeOperation<DigitalizationDialog>(mdi_area_->activeDocument());
   });
@@ -160,6 +169,27 @@ void MainWindow::createMenuBar() {
 
   connect(&main_menu_bar_, &MainMenuBar::specification, this, [this] {
     executeOperation<SpecificationDialog>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::filter, this, [this] {
+    executeOperation<FilterDialog>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::horizontalMirror, this, [this] {
+    executeOperation<Mirror>(mdi_area_->activeDocument(),
+                             Mirror::Direction::Horizontal);
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::verticalMirror, this, [this] {
+    executeOperation<Mirror>(mdi_area_->activeDocument(), Mirror::Direction::Vertical);
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::transpose, this, [this] {
+    executeOperation<Transpose>(mdi_area_->activeDocument());
+  });
+
+  connect(&main_menu_bar_, &MainMenuBar::rotation, this, [this] {
+    executeOperation<RotationDialog>(mdi_area_->activeDocument());
   });
 
   // Windows
@@ -239,13 +269,13 @@ void MainWindow::showHistogram() {
   dialog->show();
 }
 
-template <class Operation>
-void MainWindow::executeOperation(Document *document) {
+template <class Operation, typename... Args>
+void MainWindow::executeOperation(Document *document, Args &&... args) {
   if (document == nullptr) {
     return;
   }
 
-  Operation op(document);
+  Operation op(document, std::forward<Args>(args)...);
   int return_type = op.exec();
 
   if (return_type == 1) {

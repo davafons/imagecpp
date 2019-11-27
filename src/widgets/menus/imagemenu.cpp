@@ -53,10 +53,16 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   // Image difference
   image_difference_act_ = new QAction(tr("Image difference..."), this);
-  image_difference_act_->setStatusTip(tr("Image difference between two images."));
+  image_difference_act_->setStatusTip(tr("Image difference between two images"));
 
   connect(
       image_difference_act_, &QAction::triggered, this, &ImageMenu::imageDifference);
+
+  // Image change
+  image_change_act_ = new QAction(tr("Image change"), this);
+  image_change_act_->setStatusTip(tr("Image change between two images"));
+
+  connect(image_change_act_, &QAction::triggered, this, &ImageMenu::imageChange);
 
   // Digitalization
   digitalization_act_ = new QAction(tr("Digitalization..."), this);
@@ -76,6 +82,52 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(specification_act_, &QAction::triggered, this, &ImageMenu::specification);
 
+  // Filter
+  filter_act_ = new QAction(tr("Filter..."), this);
+  filter_act_->setStatusTip(tr("Filter"));
+
+  connect(filter_act_, &QAction::triggered, this, &ImageMenu::filter);
+
+  // Profile
+  profile_act_ = new QAction(tr("Profile"), this);
+  profile_act_->setStatusTip(tr("Profile"));
+
+  connect(profile_act_, &QAction::triggered, this, &ImageMenu::profile);
+
+  // Horizontal mirror
+
+  hmirror_act_ = new QAction(tr("Horizontal mirror"), this);
+  hmirror_act_->setStatusTip(tr("Mirror image horizontally"));
+
+  connect(hmirror_act_, &QAction::triggered, this, &ImageMenu::horizontalMirror);
+
+  // Vertical mirror
+
+  vmirror_act_ = new QAction(tr("Vertical mirror"), this);
+  vmirror_act_->setStatusTip(tr("Mirror image vertically"));
+
+  connect(vmirror_act_, &QAction::triggered, this, &ImageMenu::verticalMirror);
+
+  // Transpose
+
+  transpose_act_ = new QAction(tr("Transpose"), this);
+  transpose_act_->setStatusTip(tr("Transpose image (interchange cols and rows)"));
+
+  connect(transpose_act_, &QAction::triggered, this, &ImageMenu::transpose);
+
+  // Rotation
+
+  rotation_act_ = new QAction(tr("Rotation"), this);
+  rotation_act_->setStatusTip(tr("Rotate an image"));
+
+  connect(rotation_act_, &QAction::triggered, this, &ImageMenu::rotation);
+
+  transform_menu_ = new QMenu(tr("Transform..."), this);
+  transform_menu_->addAction(hmirror_act_);
+  transform_menu_->addAction(vmirror_act_);
+  transform_menu_->addAction(transpose_act_);
+  transform_menu_->addAction(rotation_act_);
+
   // Menu layout
 
   addAction(duplicate_img_act_);
@@ -89,9 +141,14 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
   addAction(bac_act_);
   addAction(gamma_corr_act_);
   addAction(image_difference_act_);
+  addAction(image_change_act_);
   addAction(digitalization_act_);
   addAction(equalization_act_);
   addAction(specification_act_);
+  addAction(filter_act_);
+  addAction(profile_act_);
+
+  addMenu(transform_menu_);
 }
 
 }  // namespace imagecpp

@@ -64,20 +64,7 @@ LinearTransformDialog::LinearTransformDialog(Document *document, QWidget *parent
           this,
           &LinearTransformDialog::addNextEmptyStep);
 
-  // Setup  chart
-  x_axis_ = new QtCharts::QValueAxis();
-  x_axis_->setRange(0, 255);
-  x_axis_->setLabelFormat("%d");
-  x_axis_->setTickCount(5);
-
-  y_axis_ = new QtCharts::QValueAxis();
-  y_axis_->setRange(0, 255);
-  y_axis_->setLabelFormat("%d");
-  y_axis_->setTickCount(5);
-
   line_chart_->legend()->hide();
-  line_chart_->addAxis(x_axis_, Qt::AlignBottom);
-  line_chart_->addAxis(y_axis_, Qt::AlignLeft);
 
   QtCharts::QChartView *chart_view = new QtCharts::QChartView(line_chart_);
   chart_view->setRenderHint(QPainter::Antialiasing);
@@ -143,17 +130,17 @@ void LinearTransformDialog::updateSteps() {
   // Now its sorted
   for (const auto &pair : steps_map) {
     series->append(pair.first, pair.second);
+    qDebug() << "x" << pair.first << "y" << pair.second;
   }
-
-  series->attachAxis(y_axis_);
-  series->attachAxis(x_axis_);
 
   line_chart_->removeAllSeries();
   line_chart_->addSeries(series);
+  line_chart_->createDefaultAxes();
+
+  line_chart_->axes()[0]->setRange(0, 255);
+  line_chart_->axes()[1]->setRange(0, 255);
 
   operation().setSteps(steps_map);
-
-  // QLineSeries *series
 }
 
 void LinearTransformDialog::outModified(Step *step) {
@@ -161,7 +148,7 @@ void LinearTransformDialog::outModified(Step *step) {
 }
 
 void LinearTransformDialog::addNextEmptyStep() {
-  if (steps_list_.size() == 256) {
+  if (steps_list_.size() == 255) {
     qDebug() << "Can't add more steps";
     // TODO: Popup?
   }

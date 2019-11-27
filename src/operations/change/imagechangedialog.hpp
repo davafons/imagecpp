@@ -1,26 +1,25 @@
 #pragma once
 
-#include "imagedifference.hpp"
+#include "imagechange.hpp"
 #include "operations/private/imageoperationdialog.hpp"
-
-class QSpinBox;
 
 namespace imagecpp {
 
 class ImagesListWidget;
-class ImageDisplayArea;
 
-class ImageDifferenceDialog : public ImageOperationDialog<ImageDifference> {
+class ImageChangeDialog : public ImageOperationDialog<ImageChange> {
   Q_OBJECT
-
 public:
-  explicit ImageDifferenceDialog(Document *document, QWidget *parent = nullptr);
+  explicit ImageChangeDialog(Document *document, QWidget *parent = nullptr);
 
 protected:
   virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
   ImagesListWidget *images_list_widget_{nullptr};
+
+  QSpinBox *threshold_spin_{nullptr};
+  QPushButton *color_picker_button_{nullptr};
 };
 
 }  // namespace imagecpp

@@ -29,9 +29,6 @@ PointOperation::PointOperation(Document *document, const QString &name)
  *  TODO: Iterate only over the image selection
  */
 void PointOperation::imageOperationImpl(Image *new_image) {
-  QElapsedTimer timer;
-  timer.start();
-
   for (int y = 0; y < oldImage()->height(); ++y) {
     const QRgb *old_line = (QRgb *)(oldImage()->constScanLine(y));
     QRgb *new_line = (QRgb *)new_image->scanLine(y);
@@ -44,8 +41,6 @@ void PointOperation::imageOperationImpl(Image *new_image) {
       }
     }
   }
-
-  qInfo() << "The operation took" << timer.elapsed() << "milliseconds";
 }
 
 }  // namespace imagecpp

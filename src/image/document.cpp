@@ -34,13 +34,14 @@ Document::Document(const Document &other) {
   file_path_ = QString(other_file_path.completeBaseName() + "_copy." +
                        other_file_path.completeSuffix());
 
-  image_ = other.copyImage();
+  image_ = nullptr;
+  if (other.image_ != nullptr) {
+    qDebug() << "Copying selection" << other.selection();
+    image_ = other.image_->copy(other.selection());
+  }
+
   undo_stack_ = new QUndoStack();
   histogram_ = new Histogram(*other.histogram());
-}
-
-Image *Document::copyImage() const {
-  return image_->copy();
 }
 
 void Document::setFilePath(QString file_path) {
@@ -59,6 +60,12 @@ void Document::setImage(Image *image) {
   }
 
   emit imageChanged(image);
+}
+
+void Document::setSelection(const QRect &selection) {
+  qDebug() << selection;
+
+  selection_ = selection;
 }
 
 }  // namespace imagecpp

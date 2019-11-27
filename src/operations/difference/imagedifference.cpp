@@ -9,35 +9,13 @@ const Image* ImageDifference::secondImage() const {
   return second_image_;
 }
 
-int ImageDifference::threshold() const {
-  return threshold_;
-}
-
-QColor ImageDifference::diffColor() const {
-  return diff_color_;
-}
-
 void ImageDifference::setSecondImage(const Image* image) {
   second_image_ = image;
 
   emit propertyChanged();
 }
 
-void ImageDifference::setThreshold(int threshold) {
-  threshold_ = threshold;
-
-  qDebug() << threshold_;
-
-  emit propertyChanged();
-}
-
-void ImageDifference::setDiffColor(const QColor& color) {
-  diff_color_ = color;
-
-  emit propertyChanged();
-}
-
-QRgb ImageDifference::pointOperationImpl(int x, int y, QRgb color) const {
+QRgb ImageDifference::pointOperationImpl(int x, int y, QRgb color) {
 
   QRgb second_image_color = second_image_->pixel(x, y);
 
@@ -45,11 +23,7 @@ QRgb ImageDifference::pointOperationImpl(int x, int y, QRgb color) const {
   int green_diff = std::abs(qGreen(color) - qGreen(second_image_color));
   int blue_diff = std::abs(qBlue(color) - qBlue(second_image_color));
 
-  if (red_diff > threshold_ && green_diff > threshold_ && blue_diff > threshold_) {
-    return diff_color_.rgba();
-  }
-
-  return color;
+  return qRgb(red_diff, green_diff, blue_diff);
 }
 
 void ImageDifference::imageOperationImpl(Image* new_image) {

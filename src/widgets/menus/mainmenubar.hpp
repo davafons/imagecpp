@@ -40,9 +40,17 @@ signals:
   void brightnessAndConstrast();
   void gammaCorrection();
   void imageDifference();
+  void imageChange();
   void digitalization();
   void equalization();
   void specification();
+  void filter();
+  void profile();
+
+  void horizontalMirror();
+  void verticalMirror();
+  void transpose();
+  void rotation();
 
   void toggleTabsView(bool toggled);
 

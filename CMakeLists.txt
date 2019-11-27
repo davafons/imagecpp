@@ -26,6 +26,10 @@ add_executable(${PROJECT_NAME}
     src/operations/grayscale/grayscale.cpp
     src/operations/grayscale/grayscaledialog.cpp
     src/operations/difference/imagedifference.cpp
+    src/operations/change/imagechangedialog.cpp
+    src/operations/filter/filter.cpp
+    src/operations/filter/filterdialog.cpp
+    src/operations/change/imagechange.cpp
     src/operations/difference/imagedifferencedialog.cpp
     src/operations/inverse/inverse.cpp
     src/operations/equalization/equalization.cpp
@@ -38,10 +42,15 @@ add_executable(${PROJECT_NAME}
     src/operations/digitalization/digitalizationdialog.cpp
     src/operations/bac/bacdialog.cpp
     src/operations/private/pointoperation.cpp
+    src/operations/private/filteroperation.cpp
     src/operations/gammac/gammac.cpp
     src/operations/gammac/gammacdialog.cpp
+    src/operations/mirror/mirror.cpp
+    src/operations/mirror/transpose.cpp
     src/operations/private/imageoperation.cpp
     src/operations/private/lutoperation.cpp
+    src/operations/rotation/rotation.cpp
+    src/operations/rotation/rotationdialog.cpp
     src/widgets/image/imagedisplayarea.cpp
     src/widgets/image/imagesubwindow.cpp
     src/widgets/image/imageslistwidget.cpp
@@ -55,6 +64,7 @@ add_executable(${PROJECT_NAME}
     src/widgets/statusbar/mainstatusbar.cpp
     src/widgets/statusbar/pixelinformationwidget.cpp
     src/widgets/image/subwindowsarea.cpp
+    src/widgets/utils/sliderwithvalues.cpp
     src/manager/documentsmanager.cpp
 )
 

@@ -12,7 +12,7 @@ public:
   virtual ~Equalization() = default;
 
 protected:
-  virtual QRgb pointOperationImpl(int x, int y, QRgb color) const override;
+  virtual QRgb pointOperationImpl(int x, int y, QRgb color) override;
 
 private:
   const QBarSet* red_ch_{nullptr};

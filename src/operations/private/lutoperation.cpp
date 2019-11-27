@@ -42,7 +42,7 @@ void LutOperation::imageOperationImpl(Image *new_image) {
  *
  * Note: Alpha channel will be left as is.
  */
-QRgb LutOperation::pointOperationImpl(int x, int y, QRgb color) const {
+QRgb LutOperation::pointOperationImpl(int x, int y, QRgb color) {
   return qRgba(
       r_lut_[qRed(color)], g_lut_[qGreen(color)], b_lut_[qBlue(color)], qAlpha(color));
 }

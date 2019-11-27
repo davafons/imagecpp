@@ -31,7 +31,7 @@ void Digitalization::setQuantizationFactor(int factor) {
   emit propertyChanged();
 }
 
-QRgb Digitalization::pointOperationImpl(int x, int y, QRgb) const {
+QRgb Digitalization::pointOperationImpl(int x, int y, QRgb) {
   QRgb color = sampling_table_[y / sampling_size_][x / sampling_size_];
 
   int red_idx =

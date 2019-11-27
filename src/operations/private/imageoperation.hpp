@@ -54,6 +54,7 @@ signals:
   void imageRealtimeUpdateToggled(bool toggled);
   void histogramRealtimeUpdateToggled(bool toggled);
 
+  void newSelection(QRect selection);
   void newImageGenerated(const Image* new_image);
   void newHistogramGenerated(const Histogram& histogram);
 
@@ -68,12 +69,12 @@ private:
   Image* new_image_{nullptr};
   const Image* old_image_{nullptr};
 
-  QRect selection_;
-
   Histogram new_image_histogram_;
   Histogram old_image_histogram_;
 
   Document* referenced_document_{nullptr};
+
+  QRect selection_{};
 
   QString name_{"undefined-operation"};
 

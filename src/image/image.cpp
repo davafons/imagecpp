@@ -16,6 +16,7 @@ Image::Image(int width, int height, QImage::Format format)
 Image::Image(const Image &other) {
   image_ = other.image_.copy();
 }
+
 Image::Image(Image &&other) {
   swap(*this, other);
 }
@@ -26,12 +27,20 @@ Image &Image::operator=(Image other) {
   return *this;
 }
 
+void Image::setImage(const Image &other) {
+  image_ = other.image_.copy();
+}
+
 // Image Operations
 QPixmap Image::getPixmap() const noexcept {
   return QPixmap::fromImage(image_);
 }
 Image *Image::copy(const QRect &rectangle) const {
   return new Image(image_.copy(rectangle));
+}
+
+void Image::reset(int width, int height) {
+  image_ = QImage(width, height, format());
 }
 
 // Iterators

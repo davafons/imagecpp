@@ -39,6 +39,7 @@ const Image *ImageDisplayArea::image() const {
 
 void ImageDisplayArea::onImageOpened(const Image *image) {
   qInfo() << "Setting image" << image << "on the display";
+
   // Reset attributes
   image_ref_ = image;
   scale_factor_ = 1.0f;
@@ -46,6 +47,7 @@ void ImageDisplayArea::onImageOpened(const Image *image) {
   result_image_ = QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
   selection_draw_area_ =
       QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
+  selection_draw_area_.fill(Qt::transparent);
 
   // Fit image to the window frame
   fitOnFrame();
@@ -62,11 +64,13 @@ void ImageDisplayArea::onImageUpdated(const Image *image) {
   result_image_ = QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
   selection_draw_area_ =
       QImage(image_ref_->size(), QImage::Format_ARGB32_Premultiplied);
+  selection_draw_area_.fill(Qt::transparent);
+
+  recalculateResult();
 
   // Save current position of the image on the area
   QPoint target_old_pos = target_.pos();
 
-  recalculateResult();
   target_.resize(scale_factor_ * image_ref_->size());
 
   // Restore the image position
@@ -133,6 +137,13 @@ void ImageDisplayArea::mouseMoveEvent(QMouseEvent *event) {
   if (event->buttons() & Qt::LeftButton) {
     QRect rect = createSelectionRect(last_clicked_point_, event->pos());
 
+    QPainter painter(&selection_draw_area_);
+    selection_draw_area_.fill(Qt::transparent);
+    painter.drawRect(rect);
+    painter.end();
+
+    recalculateResult();
+
     emit selectionCreated(rect);
   }
 
@@ -143,9 +154,12 @@ void ImageDisplayArea::mouseReleaseEvent(QMouseEvent *event) {
   if (rect_selection_toggled_ && event->button() == Qt::LeftButton) {
     QRect rect = createSelectionRect(last_clicked_point_, event->pos());
 
-    if (rect.width() <= 1 / scale_factor_ && rect.height() <= 1 / scale_factor_) {
-      rect = QRect(0, 0, 0, 0);
-    }
+    QPainter painter(&selection_draw_area_);
+    selection_draw_area_.fill(Qt::transparent);
+    painter.drawRect(rect);
+    painter.end();
+
+    recalculateResult();
 
     emit selectionCreated(rect);
   }
@@ -188,17 +202,24 @@ void ImageDisplayArea::recalculateResult() {
   painter.drawImage(0, 0, selection_draw_area_);
   painter.end();
 
-  target_.setPixmap(image_ref_->getPixmap());  // TODO: Change
+  target_.setPixmap(QPixmap::fromImage(result_image_));
 }
 
 QRect ImageDisplayArea::createSelectionRect(QPoint a, QPoint b) {
+  a = (a - target_.pos()) / scale_factor_;
+  b = (b - target_.pos()) / scale_factor_;
+
+  a.setX(std::max(a.x(), 0));
+  a.setY(std::max(a.y(), 0));
+  b.setX(std::min(b.x(), image_ref_->width()));
+  b.setY(std::min(b.y(), image_ref_->height()));
+
   QRect rect(a, b);
+  rect = rect.normalized();
 
-  // rect.setX(rect.x());
-  // rect.setY((rect.y() - target_.y()) / scale_factor_);
-
-  rect.setWidth((rect.width()) / scale_factor_);
-  rect.setHeight((rect.height()) / scale_factor_);
+  if (rect.width() <= 1 / scale_factor_ && rect.height() <= 1 / scale_factor_) {
+    rect = QRect(0, 0, 0, 0);
+  }
 
   return rect;
 }

@@ -25,18 +25,13 @@ public:
 
   Image &operator=(Image other);
 
-  // Iterators
-  // QRgb *begin();
-  // const QRgb *begin() const;
-  // const QRgb *cbegin() const;
-  //
-  // QRgb *end();
-  // const QRgb *end() const;
-  // const QRgb *cend() const;
+  void setImage(const Image &image);
 
   // Image Operations
   QPixmap getPixmap() const noexcept;
   Image *copy(const QRect &rectangle = QRect()) const;
+
+  void reset(int width, int height);
 
   // Properties
   int width() const noexcept;
@@ -77,4 +72,4 @@ private:
   QImage image_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

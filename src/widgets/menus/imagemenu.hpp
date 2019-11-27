@@ -22,9 +22,17 @@ signals:
   void brightnessAndConstrast();
   void gammaCorrection();
   void imageDifference();
+  void imageChange();
   void digitalization();
   void equalization();
   void specification();
+  void filter();
+  void profile();
+
+  void horizontalMirror();
+  void verticalMirror();
+  void transpose();
+  void rotation();
 
 private:
   QAction *duplicate_img_act_;
@@ -36,9 +44,18 @@ private:
   QAction *bac_act_;
   QAction *gamma_corr_act_;
   QAction *image_difference_act_;
+  QAction *image_change_act_;
   QAction *digitalization_act_;
   QAction *equalization_act_;
   QAction *specification_act_;
+  QAction *filter_act_;
+  QAction *profile_act_;
+
+  QMenu *transform_menu_;
+  QAction *hmirror_act_;
+  QAction *vmirror_act_;
+  QAction *transpose_act_;
+  QAction *rotation_act_;
 };
 
 }  // namespace imagecpp

@@ -43,8 +43,10 @@ public:
   Histogram *histogram() { return histogram_; }
   const Histogram *histogram() const { return histogram_; }
 
+  QRect selection() const { return selection_; }
+
   // Functions
-  Image *copyImage() const;
+  Image *copyImage(const QRect& rect) const;
 
 signals:
   void filePathChanged(const QString &file_path);
@@ -55,6 +57,7 @@ signals:
 public slots:
   void setFilePath(QString file_path);
   void setImage(Image *image);
+  void setSelection(const QRect &selection);
 
 protected:
   static int next_id_;
@@ -66,6 +69,7 @@ private:
   // Document properties
   QString file_path_;
   QSize dimensions_;
+  QRect selection_;
 
   // Document objects
   Image *image_;
@@ -73,4 +77,4 @@ private:
   Histogram *histogram_;
 };
 
-} // namespace imagecpp
+}  // namespace imagecpp

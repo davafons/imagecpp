@@ -92,7 +92,7 @@ void LinearTransform::fillLutTablesImpl() {
 
   lut_values_range(x_i, y_i, x_f, y_f);
 
-  // All steps
+  // From first step to last step
   for (auto it = std::next(steps_.cbegin()); it != steps_.cend(); ++it) {
     x_i = x_f;
     y_i = y_f;
@@ -111,10 +111,6 @@ void LinearTransform::fillLutTablesImpl() {
   y_f = 255;
 
   lut_values_range(x_i, y_i, x_f, y_f);
-
-  for (int i = 0; i < 256; ++i) {
-    qDebug() << i << r_lut_[i] << g_lut_[i] << b_lut_[i];
-  }
 }
 
 }  // namespace imagecpp

@@ -56,7 +56,7 @@ void Grayscale::setFormat(const Format &format) {
  *  together. The result will be the intensity of the pixel, which must be placed on the
  *  three RGB channels.
  */
-QRgb Grayscale::pointOperationImpl(int, int, QRgb color) const {
+QRgb Grayscale::pointOperationImpl(int, int, QRgb color) {
   uint8_t red = qRed(color) * red_factor_;
   uint8_t green = qGreen(color) * green_factor_;
   uint8_t blue = qBlue(color) * blue_factor_;

@@ -22,15 +22,21 @@ ImageSubWindow::ImageSubWindow(Document *document)
 
   // Make connections with the loaded objects
 
-  connect(display_, &ImageDisplayArea::pixelInformation, this,
+  connect(display_,
+          &ImageDisplayArea::pixelInformation,
+          this,
           &ImageSubWindow::pixelInformation);
 
   // Set the title of the window according to the name of the open document
-  connect(document_, &Document::filePathChanged, this,
-          &ImageSubWindow::setWindowTitle);
+  connect(document_, &Document::filePathChanged, this, &ImageSubWindow::setWindowTitle);
 
-  connect(document_, &Document::imageChanged, display_,
-          &ImageDisplayArea::onImageUpdated);
+  connect(
+      document_, &Document::imageChanged, display_, &ImageDisplayArea::onImageUpdated);
+
+  connect(display_,
+          &ImageDisplayArea::selectionCreated,
+          document_,
+          &Document::setSelection);
 }
 
-} // namespace imagecpp
+}  // namespace imagecpp
