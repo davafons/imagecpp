@@ -331,7 +331,7 @@ QRect ImageDisplayArea::createSelectionRect(QPoint a, QPoint b) {
   QRect rect(a, b);
   rect = rect.normalized();
 
-  if (rect.width() / scale_factor_ <= 1 && rect.height() / scale_factor_ <= 1) {
+  if (rect.width() * scale_factor_ <= 2 && rect.height() * scale_factor_ <= 2) {
     rect = QRect(0, 0, 0, 0);
   }
 
