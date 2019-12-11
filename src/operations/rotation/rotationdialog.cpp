@@ -9,22 +9,54 @@ namespace imagecpp {
 RotationDialog::RotationDialog(Document *document, QWidget *parent)
     : ImageOperationDialog<Rotation>(document, parent) {
 
-  degrees_spin_ = new QSpinBox();
-  degrees_spin_->setRange(std::numeric_limits<int>::min(),
-                          std::numeric_limits<int>::max());
+  angle_spin_ = new QSpinBox();
+  angle_spin_->setRange(std::numeric_limits<int>::min(),
+                        std::numeric_limits<int>::max());
 
   QFormLayout *layout = new QFormLayout();
 
-  layout->addRow(tr("Degrees"), degrees_spin_);
+  layout->addRow(tr("Angle"), angle_spin_);
 
   settings_layout_->addLayout(layout);
 
+  nn_radio_ = new QRadioButton("Nearest Neighbour");
+  bilineal_radio_ = new QRadioButton("Bilineal");
+
+  if (operation().interpolation() == Rotation::Interpolation::NN) {
+    nn_radio_->setChecked(true);
+  } else {
+    bilineal_radio_->setChecked(true);
+  }
+
+  QGroupBox *interpolation_group = new QGroupBox("Interpolation");
+  QVBoxLayout *interpolation_group_layout = new QVBoxLayout();
+
+  interpolation_group_layout->addWidget(nn_radio_);
+  interpolation_group_layout->addWidget(bilineal_radio_);
+  interpolation_group_layout->addSpacerItem(new QSpacerItem(200, 400));
+
+  interpolation_group->setLayout(interpolation_group_layout);
+
+  settings_layout_->addWidget(interpolation_group);
+
   // Connections
 
-  connect(degrees_spin_,
+  connect(angle_spin_,
           QOverload<int>::of(&QSpinBox::valueChanged),
           &operation(),
-          &Rotation::setDegrees);
+          &Rotation::setAngle);
+
+  connect(nn_radio_, &QRadioButton::toggled, this, [this](bool checked) {
+    if (checked) {
+      operation().setInterpolation(Rotation::Interpolation::NN);
+    }
+  });
+
+  connect(bilineal_radio_, &QRadioButton::toggled, this, [this](bool checked) {
+    if (checked) {
+      operation().setInterpolation(Rotation::Interpolation::Bilineal);
+    }
+  });
 }
 
 }  // namespace imagecpp

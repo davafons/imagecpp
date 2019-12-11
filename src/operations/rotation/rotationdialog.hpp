@@ -12,7 +12,11 @@ public:
   explicit RotationDialog(Document *document, QWidget *parent = nullptr);
 
 private:
-  QSpinBox *degrees_spin_{nullptr};
+  QSpinBox *angle_spin_{nullptr};
+
+
+  QRadioButton* nn_radio_{nullptr};
+  QRadioButton* bilineal_radio_{nullptr};
 };
 
 }  // namespace imagecpp
