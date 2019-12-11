@@ -33,6 +33,7 @@ signals:
   void verticalMirror();
   void transpose();
   void rotation();
+  void scale();
 
 private:
   QAction *duplicate_img_act_;
@@ -56,6 +57,7 @@ private:
   QAction *vmirror_act_;
   QAction *transpose_act_;
   QAction *rotation_act_;
+  QAction *scale_act_;
 };
 
 }  // namespace imagecpp

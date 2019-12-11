@@ -29,11 +29,11 @@ PointOperation::PointOperation(Document *document, const QString &name)
  *  TODO: Iterate only over the image selection
  */
 void PointOperation::imageOperationImpl(Image *new_image) {
-  for (int y = 0; y < oldImage()->height(); ++y) {
+  for (int y = 0; y < new_image->height(); ++y) {
     const QRgb *old_line = (QRgb *)(oldImage()->constScanLine(y));
     QRgb *new_line = (QRgb *)new_image->scanLine(y);
 
-    for (int x = 0; x < oldImage()->width(); ++x) {
+    for (int x = 0; x < new_image->width(); ++x) {
       if (selection().contains(x, y)) {
         new_line[x] = pointOperationImpl(x, y, old_line[x]);
       } else {

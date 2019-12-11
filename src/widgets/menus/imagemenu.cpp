@@ -122,11 +122,18 @@ ImageMenu::ImageMenu(QWidget *parent) : QMenu(tr("Image"), parent) {
 
   connect(rotation_act_, &QAction::triggered, this, &ImageMenu::rotation);
 
+  // Scale
+  scale_act_ = new QAction(tr("Scale"), this);
+  scale_act_->setStatusTip(tr("Scale an image"));
+
+  connect(scale_act_, &QAction::triggered, this, &ImageMenu::scale);
+
   transform_menu_ = new QMenu(tr("Transform..."), this);
   transform_menu_->addAction(hmirror_act_);
   transform_menu_->addAction(vmirror_act_);
   transform_menu_->addAction(transpose_act_);
   transform_menu_->addAction(rotation_act_);
+  transform_menu_->addAction(scale_act_);
 
   // Menu layout
 
