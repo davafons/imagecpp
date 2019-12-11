@@ -19,6 +19,7 @@ public slots:
   void setScaleY(int percentage);
 
 protected:
+  virtual void imageOperationImpl(Image* new_image) override;
   virtual QRgb pointOperationImpl(int x, int y, QRgb color) override;
 
 private:

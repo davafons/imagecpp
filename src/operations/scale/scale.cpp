@@ -14,7 +14,7 @@ namespace imagecpp {
 Scale::Scale(Document* document) : PointOperation(document) {
   // Update the operation name each time a property changes
   connect(this, &Scale::propertyChanged, this, [this] {
-    setName(tr("Scale (%1 - %2)").arg(x_percentage, y_percentage));
+    setName(tr("Scale (%1 - %2)").arg(x_percentage).arg(y_percentage));
   });
 }
 
@@ -38,8 +38,24 @@ void Scale::setScaleY(int percentage) {
   emit propertyChanged();
 }
 
-QRgb Scale::pointOperationImpl(int, int, QRgb color) {
-  return color;
+void Scale::imageOperationImpl(Image* new_image) {
+  // Set the new scale of the image
+  int new_width = oldImage()->width() * x_percentage / 100;
+  int new_height = oldImage()->height() * y_percentage / 100;
+
+  new_image->reset(new_width, new_height);
+
+  for (int y = 0; y < new_image->height(); ++y) {
+    QRgb* new_line = (QRgb*)new_image->scanLine(y);
+
+    for (int x = 0; x < new_image->width(); ++x) {
+      new_line[x] = pointOperationImpl(x, y, 0);
+    }
+  }
+}
+
+QRgb Scale::pointOperationImpl(int x, int y, QRgb) {
+  return oldImage()->pixel(x, y);
 }
 
 }  // namespace imagecpp
