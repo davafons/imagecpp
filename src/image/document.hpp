@@ -31,7 +31,7 @@ public:
   // Property getters
   int id() const noexcept { return id_; }
   QString filePath() const noexcept { return file_path_; }
-  QSize dimensions() const noexcept { return dimensions_; }
+  QSize dimensions() const noexcept { return (image_) ? image_->size() : QSize(); }
 
   // Object getters
   Image *image() { return image_; }
@@ -46,7 +46,7 @@ public:
   QRect selection() const { return selection_; }
 
   // Functions
-  Image *copyImage(const QRect& rect) const;
+  Image *copyImage(const QRect &rect) const;
 
 signals:
   void filePathChanged(const QString &file_path);
@@ -68,7 +68,6 @@ private:
 
   // Document properties
   QString file_path_;
-  QSize dimensions_;
   QRect selection_;
 
   // Document objects

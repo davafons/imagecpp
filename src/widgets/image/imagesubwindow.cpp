@@ -8,7 +8,7 @@
 
 namespace imagecpp {
 
-ImageSubWindow::ImageSubWindow(Document *document)
+ImageSubWindow::ImageSubWindow(Document* document)
     : display_(new ImageDisplayArea()), document_(document) {
 
   // Setup properties
@@ -23,6 +23,14 @@ ImageSubWindow::ImageSubWindow(Document *document)
   display_->onImageOpened(document->image());
 
   // Make connections with the loaded objects
+
+  connect(document_, &Document::imageChanged, this, [this](const Image* img) {
+    QString window_title = tr("(%1 x %2) %3")
+                               .arg(document_->dimensions().width())
+                               .arg(document_->dimensions().height())
+                               .arg(document_->filePath());
+    setWindowTitle(window_title);
+  });
 
   connect(display_,
           &ImageDisplayArea::pixelInformation,
