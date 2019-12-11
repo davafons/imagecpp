@@ -18,5 +18,8 @@ public:
 private:
   QSpinBox* x_scale_spin_{nullptr};
   QSpinBox* y_scale_spin_{nullptr};
+
+  QRadioButton* nn_radio_{nullptr};
+  QRadioButton* bilineal_radio_{nullptr};
 };
 }  // namespace imagecpp

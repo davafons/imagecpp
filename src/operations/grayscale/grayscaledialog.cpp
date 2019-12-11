@@ -17,6 +17,7 @@ GrayscaleDialog::GrayscaleDialog(Document *document, QWidget *parent)
   QGroupBox *formats_box = new QGroupBox("Format");
   QVBoxLayout *formats_layout = new QVBoxLayout();
 
+  // Clamp values to 1x1
   formats_layout->addWidget(pal_radio_);
   formats_layout->addWidget(ntsc_radio_);
   formats_layout->addSpacerItem(new QSpacerItem(200, 400));
