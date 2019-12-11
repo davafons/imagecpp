@@ -8,6 +8,9 @@ class Scale : public PointOperation {
   Q_OBJECT
 
 public:
+  enum class Interpolation { NN, Bilineal };
+
+public:
   explicit Scale(Document* document);
   virtual ~Scale() = default;
 
@@ -21,6 +24,9 @@ public slots:
 protected:
   virtual void imageOperationImpl(Image* new_image) override;
   virtual QRgb pointOperationImpl(int x, int y, QRgb color) override;
+
+private:
+  QRgb nearestNeighbour(float x, float y, const Image* old_image) const;
 
 private:
   int x_percentage{100};

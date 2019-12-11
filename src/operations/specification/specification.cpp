@@ -13,8 +13,6 @@ void Specification::setSecondImage(const Image* image) {
 }
 
 void Specification::fillLutTablesImpl() {
-  qDebug() << "Filled";
-
   auto fill_lut = [this](auto& lut, const auto* p_o, const auto* p_r) {
     const int K = LUT_SIZE;
 

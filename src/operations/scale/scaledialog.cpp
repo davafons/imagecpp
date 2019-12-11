@@ -10,8 +10,8 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
   x_scale_spin_ = new QSpinBox();
   y_scale_spin_ = new QSpinBox();
 
-  x_scale_spin_->setMaximum(1000);
-  y_scale_spin_->setMaximum(1000);
+  x_scale_spin_->setRange(1, 1000);
+  y_scale_spin_->setRange(1, 1000);
 
   x_scale_spin_->setValue(operation().scaleX());
   y_scale_spin_->setValue(operation().scaleY());

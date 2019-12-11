@@ -55,7 +55,17 @@ void Scale::imageOperationImpl(Image* new_image) {
 }
 
 QRgb Scale::pointOperationImpl(int x, int y, QRgb) {
-  return oldImage()->pixel(x, y);
+  float original_x = float(x / (float(x_percentage) / 100));
+  float original_y = float(y / (float(y_percentage) / 100));
+
+  return nearestNeighbour(original_x, original_y, oldImage());
+}
+
+QRgb Scale::nearestNeighbour(float x, float y, const Image* old_image) const {
+  int rounded_x = std::round(x);
+  int rounded_y = std::round(y);
+
+  return old_image->pixel(x, y);
 }
 
 }  // namespace imagecpp
