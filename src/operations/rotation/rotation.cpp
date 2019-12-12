@@ -95,7 +95,6 @@ void Rotation::imageOperationImpl(Image *new_image) {
   float max_y = std::max(A.y(), std::max(B.y(), std::max(C.y(), D.y())));
 
   upper_left_ = QPoint(min_x, min_y);
-  lower_right_ = QPoint(max_x, max_y);
 
   new_image->reset(max_x - min_x, max_y - min_y);
 

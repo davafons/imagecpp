@@ -37,7 +37,6 @@ private:
   int angle_{0};
 
   QPointF upper_left_;
-  QPointF lower_right_;
 
   Interpolation interpolation_type_{Interpolation::NN};
 };
