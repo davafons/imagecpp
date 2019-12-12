@@ -129,6 +129,10 @@ void Histogram::generateHistogram(const Image *image) {
   const QRgb *pixels = image->constBits();
 
   for (int p = 0; p < image->pixelCount(); ++p) {
+    if (qAlpha(pixels[p]) == 0) {
+      continue;
+    }
+
     r_h[qRed(pixels[p])] += 1;
     g_h[qGreen(pixels[p])] += 1;
     b_h[qBlue(pixels[p])] += 1;
