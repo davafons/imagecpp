@@ -40,10 +40,10 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
 
   // TODO: Add desired size also
 
-  connect(&operation(), &ImageOperation::propertyChanged, this, [this]() {
-    qDebug() << "Fit on frame";
-    preview_display_->fitOnFrame();
-  });
+  // connect(&operation(), &ImageOperation::propertyChanged, this, [this]() {
+  //   qDebug() << "Fit on frame";
+  //   preview_display_->fitOnFrame();
+  // });
 
   connect(x_scale_spin_,
           qOverload<int>(&QSpinBox::valueChanged),

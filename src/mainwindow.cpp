@@ -246,7 +246,10 @@ void MainWindow::createDocks() {
 
 void MainWindow::updateViews(Document *document) {
   // TODO: Set null if nullptr passed? (To reset interface)
+
+  qDebug() << "UpdateViews";
   if (document) {
+    qDebug() << "For document " << document;
     undo_group_->setActiveStack(document->undoStack());
     hist_view_->setHistogram(document->histogram());
   }

@@ -139,6 +139,7 @@ void ImageDisplayArea::resize(float scale_factor) {
 void ImageDisplayArea::fitOnFrame() {
   int longest_side = std::max(image_ref_->width(), image_ref_->height());
   scale_factor_ = float(size().width()) / longest_side;
+  scale_factor_ = 1;
 
   resize(scale_factor_);
 }
