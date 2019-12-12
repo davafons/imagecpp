@@ -21,11 +21,20 @@ RotationDialog::RotationDialog(Document *document, QWidget *parent)
 
   nn_radio_ = new QRadioButton("Nearest Neighbour");
   bilineal_radio_ = new QRadioButton("Bilineal");
+  rotate_and_paint_radio_ = new QRadioButton("Rotate and Paint");
 
-  if (operation().interpolation() == Rotation::Interpolation::NN) {
-    nn_radio_->setChecked(true);
-  } else {
-    bilineal_radio_->setChecked(true);
+  switch (operation().interpolation()) {
+    case Rotation::Interpolation::NN:
+      nn_radio_->setChecked(true);
+      break;
+
+    case Rotation::Interpolation::Bilineal:
+      bilineal_radio_->setChecked(true);
+      break;
+
+    case Rotation::Interpolation::RotateAndPaint:
+      rotate_and_paint_radio_->setChecked(true);
+      break;
   }
 
   QGroupBox *interpolation_group = new QGroupBox("Interpolation");
@@ -33,6 +42,7 @@ RotationDialog::RotationDialog(Document *document, QWidget *parent)
 
   interpolation_group_layout->addWidget(nn_radio_);
   interpolation_group_layout->addWidget(bilineal_radio_);
+  interpolation_group_layout->addWidget(rotate_and_paint_radio_);
   interpolation_group_layout->addSpacerItem(new QSpacerItem(200, 400));
 
   interpolation_group->setLayout(interpolation_group_layout);
@@ -55,6 +65,12 @@ RotationDialog::RotationDialog(Document *document, QWidget *parent)
   connect(bilineal_radio_, &QRadioButton::toggled, this, [this](bool checked) {
     if (checked) {
       operation().setInterpolation(Rotation::Interpolation::Bilineal);
+    }
+  });
+
+  connect(rotate_and_paint_radio_, &QRadioButton::toggled, this, [this](bool checked) {
+    if (checked) {
+      operation().setInterpolation(Rotation::Interpolation::RotateAndPaint);
     }
   });
 }

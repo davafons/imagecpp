@@ -57,6 +57,8 @@ public:
   void setPixelColor(int x, int y, const QColor &color);
   void setPixelColor(const QPoint &position, const QColor &color);
 
+  void fill(const QColor& color);
+
   // Static functions
   static Image *empty(const Image &other);
   static Image *empty(size_t width, size_t height, QImage::Format format);

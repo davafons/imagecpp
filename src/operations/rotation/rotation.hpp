@@ -8,7 +8,7 @@ class Rotation : public PointOperation {
   Q_OBJECT
 
 public:
-  enum class Interpolation { NN, Bilineal };
+  enum class Interpolation { NN, Bilineal, RotateAndPaint };
 
 public:
   explicit Rotation(Document* document);

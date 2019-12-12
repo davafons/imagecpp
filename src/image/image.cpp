@@ -102,6 +102,10 @@ void Image::setPixel(const QPoint &position, uint index_or_rgb) {
   image_.setPixel(position, index_or_rgb);
 }
 
+void Image::fill(const QColor &color) {
+  image_.fill(color);
+}
+
 QColor Image::pixelColor(const QPoint &position) const {
   return image_.pixelColor(position);
 }

@@ -17,6 +17,7 @@ private:
 
   QRadioButton* nn_radio_{nullptr};
   QRadioButton* bilineal_radio_{nullptr};
+  QRadioButton* rotate_and_paint_radio_{nullptr};
 };
 
 }  // namespace imagecpp

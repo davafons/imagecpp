@@ -14,7 +14,11 @@ namespace imagecpp {
 Scale::Scale(Document* document) : PointOperation(document) {
   // Update the operation name each time a property changes
   connect(this, &Scale::propertyChanged, this, [this] {
-    setName(tr("Scale (%1 - %2)").arg(x_percentage).arg(y_percentage));
+    setName(tr("Scale [%1%x%2% - %3]")
+                .arg(x_percentage)
+                .arg(y_percentage)
+                .arg((interpolation_type_ == Interpolation::NN ? "NearestNeighbour"
+                                                               : "Bilineal")));
   });
 }
 

@@ -5,7 +5,18 @@
 
 namespace imagecpp {
 
-Rotation::Rotation(Document *document) : PointOperation(document, tr("Rotation")) {}
+Rotation::Rotation(Document *document) : PointOperation(document, tr("Rotation")) {
+  // Update the operation name each time a property changes
+  connect(this, &Rotation::propertyChanged, this, [this] {
+    setName(tr("Rotation [%1º - %2]")
+                .arg(angle_)
+                .arg((interpolation_type_ == Interpolation::NN
+                          ? "NearestNeighbour"
+                          : (interpolation_type_ == Interpolation::Bilineal)
+                                ? "Bilineal"
+                                : "Rotate and Paint")));
+  });
+}
 
 int Rotation::angle() const {
   return angle_;
@@ -86,15 +97,26 @@ void Rotation::imageOperationImpl(Image *new_image) {
   upper_left_ = QPoint(min_x, min_y);
   lower_right_ = QPoint(max_x, max_y);
 
-  qDebug() << upper_left_ << " and " << lower_right_;
-
   new_image->reset(max_x - min_x, max_y - min_y);
 
-  for (int y = 0; y < new_image->height(); ++y) {
-    QRgb *new_line = (QRgb *)new_image->scanLine(y);
+  if (interpolation_type_ == Interpolation::RotateAndPaint) {
+    new_image->fill(Qt::transparent);
 
-    for (int x = 0; x < new_image->width(); ++x) {
-      new_line[x] = pointOperationImpl(x, y, 0);
+    for (int y = 0; y < oldImage()->height(); ++y) {
+      const QRgb *old_line = (QRgb *)(oldImage()->constScanLine(y));
+
+      for (int x = 0; x < oldImage()->width(); ++x) {
+        QPointF new_point = rotate(QPointF(x, y), angle_) - upper_left_;
+        new_image->setPixel(new_point.x(), new_point.y(), old_line[x]);
+      }
+    }
+  } else {
+    for (int y = 0; y < new_image->height(); ++y) {
+      QRgb *new_line = (QRgb *)new_image->scanLine(y);
+
+      for (int x = 0; x < new_image->width(); ++x) {
+        new_line[x] = pointOperationImpl(x, y, 0);
+      }
     }
   }
 }
