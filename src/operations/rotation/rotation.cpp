@@ -40,7 +40,10 @@ void Rotation::setInterpolation(Interpolation interpolation) {
 
 QRgb Rotation::pointOperationImpl(int x, int y, QRgb) {
   switch (angle_) {
-      // T.I
+    case 0:
+      return oldImage()->pixel(x, y);
+      break;
+
     case 90:
       return oldImage()->pixel(y, oldImage()->height() - x - 1);
       break;
@@ -53,16 +56,12 @@ QRgb Rotation::pointOperationImpl(int x, int y, QRgb) {
     case 270:
       return oldImage()->pixel(oldImage()->width() - y - 1, x);
       break;
-
-    default:
-      break;
   }
 
   // T.I
   QPointF original = rotate(QPoint(x, y) + upper_left_, -angle_);
 
-  if (!oldImage()->rect().contains(
-          QPoint(std::round(original.x()), std::round(original.y())))) {
+  if (!oldImage()->rect().contains(original.x(), original.y(), true)) {
     return qRgba(0, 0, 0, 0);
   }
 
@@ -94,7 +93,7 @@ void Rotation::imageOperationImpl(Image *new_image) {
   float min_y = std::min(A.y(), std::min(B.y(), std::min(C.y(), D.y())));
   float max_y = std::max(A.y(), std::max(B.y(), std::max(C.y(), D.y())));
 
-  upper_left_ = QPoint(min_x, min_y);
+  upper_left_ = QPointF(min_x, min_y);
 
   new_image->reset(max_x - min_x, max_y - min_y);
 
@@ -123,7 +122,7 @@ void Rotation::imageOperationImpl(Image *new_image) {
 QPointF Rotation::rotate(QPointF point, float angle) {
   float x = point.x() * std::cos(radians(angle)) - point.y() * std::sin(radians(angle));
   float y = point.x() * std::sin(radians(angle)) + point.y() * std::cos(radians(angle));
-  return QPoint(x, y);
+  return QPointF(x, y);
 }
 
 float Rotation::radians(float angle) {
