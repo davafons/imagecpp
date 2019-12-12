@@ -3,7 +3,7 @@
 #include "operations/private/imageoperationdialog.hpp"
 #include "scale.hpp"
 
-class QSpinBox;
+class QDoubleSpinBox;
 
 namespace imagecpp {
 
@@ -16,8 +16,11 @@ public:
   explicit ScaleDialog(Document* document, QWidget* parent = nullptr);
 
 private:
-  QSpinBox* x_scale_spin_{nullptr};
-  QSpinBox* y_scale_spin_{nullptr};
+  QDoubleSpinBox* x_scale_spin_{nullptr};
+  QDoubleSpinBox* y_scale_spin_{nullptr};
+
+  QSpinBox* width_spin_{nullptr};
+  QSpinBox* height_spin_{nullptr};
 
   QRadioButton* nn_radio_{nullptr};
   QRadioButton* bilineal_radio_{nullptr};

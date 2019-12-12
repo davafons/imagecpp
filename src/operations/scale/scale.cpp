@@ -15,33 +15,45 @@ Scale::Scale(Document* document) : PointOperation(document) {
   // Update the operation name each time a property changes
   connect(this, &Scale::propertyChanged, this, [this] {
     setName(tr("Scale [%1%x%2% - %3]")
-                .arg(x_percentage)
-                .arg(y_percentage)
+                .arg(x_percentage_)
+                .arg(y_percentage_)
                 .arg((interpolation_type_ == Interpolation::NN ? "NearestNeighbour"
                                                                : "Bilineal")));
   });
 }
 
-int Scale::scaleX() const {
-  return x_percentage;
+float Scale::scaleX() const {
+  return x_percentage_;
 }
 
-int Scale::scaleY() const {
-  return y_percentage;
+float Scale::scaleY() const {
+  return y_percentage_;
 }
 
 Scale::Interpolation Scale::interpolation() const {
   return interpolation_type_;
 }
 
-void Scale::setScaleX(int percentage) {
-  x_percentage = percentage;
+void Scale::setScaleX(float percentage) {
+  x_percentage_ = percentage;
 
   emit propertyChanged();
 }
 
-void Scale::setScaleY(int percentage) {
-  y_percentage = percentage;
+void Scale::setScaleY(float percentage) {
+  y_percentage_ = percentage;
+
+  emit propertyChanged();
+}
+
+void Scale::setWidth(int width) {
+  x_percentage_ = (float(width+1) / oldImage()->width()) * 100;
+
+  emit propertyChanged();
+}
+
+void Scale::setHeight(int height) {
+  y_percentage_ = (float(height+1) / oldImage()->height()) * 100;
 
   emit propertyChanged();
 }
@@ -54,8 +66,8 @@ void Scale::setInterpolation(Interpolation interpolation) {
 
 void Scale::imageOperationImpl(Image* new_image) {
   // Set the new scale of the image (T.D)
-  int new_width = (oldImage()->width() - 1) * x_percentage / 100;
-  int new_height = (oldImage()->height() - 1) * y_percentage / 100;
+  int new_width = (oldImage()->width() - 1) * x_percentage_ / 100;
+  int new_height = (oldImage()->height() - 1) * y_percentage_ / 100;
 
   // Clamp values to 1x1
   new_width = std::max(1, new_width);
@@ -74,8 +86,8 @@ void Scale::imageOperationImpl(Image* new_image) {
 
 QRgb Scale::pointOperationImpl(int x, int y, QRgb) {
   // T.I.
-  float original_x = float(x / (float(x_percentage) / 100));
-  float original_y = float(y / (float(y_percentage) / 100));
+  float original_x = float(x / (x_percentage_ / 100));
+  float original_y = float(y / (y_percentage_ / 100));
 
   switch (interpolation_type_) {
     case Interpolation::NN:

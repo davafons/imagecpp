@@ -14,13 +14,18 @@ public:
   explicit Scale(Document* document);
   virtual ~Scale() = default;
 
-  int scaleX() const;
-  int scaleY() const;
+  float scaleX() const;
+  float scaleY() const;
+
   Interpolation interpolation() const;
 
 public slots:
-  void setScaleX(int percentage);
-  void setScaleY(int percentage);
+  void setScaleX(float percentage);
+  void setScaleY(float percentage);
+
+  void setWidth(int width);
+  void setHeight(int height);
+
   void setInterpolation(Interpolation interpolation);
 
 protected:
@@ -32,8 +37,8 @@ private:
   QRgb bilineal(float x, float y, const Image* old_image) const;
 
 private:
-  int x_percentage{100};
-  int y_percentage{100};
+  float x_percentage_{100};
+  float y_percentage_{100};
 
   Interpolation interpolation_type_{Interpolation::NN};
 };
