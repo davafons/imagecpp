@@ -96,6 +96,8 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
         operation().setWidth(width);
 
         if (operation().aspectRatioToggled()) {
+          operation().setHeight(width * operation().aspectRatio());
+
           y_scale_spin_->blockSignals(true);
           y_scale_spin_->setValue(width * operation().aspectRatio());
           y_scale_spin_->blockSignals(false);
@@ -103,8 +105,6 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
           height_spin_->blockSignals(true);
           height_spin_->setValue(operation().newHeight());
           height_spin_->blockSignals(false);
-
-          operation().setHeight(width * operation().aspectRatio());
         }
 
         x_scale_spin_->blockSignals(true);
@@ -122,6 +122,8 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
         operation().setHeight(height);
 
         if (operation().aspectRatioToggled()) {
+          operation().setWidth(height / operation().aspectRatio());
+
           x_scale_spin_->blockSignals(true);
           x_scale_spin_->setValue(height / operation().aspectRatio());
           x_scale_spin_->blockSignals(false);
@@ -129,8 +131,6 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
           width_spin_->blockSignals(true);
           width_spin_->setValue(operation().newWidth());
           width_spin_->blockSignals(false);
-
-          operation().setWidth(height / operation().aspectRatio());
         }
 
         y_scale_spin_->blockSignals(true);
