@@ -8,12 +8,12 @@ FilterOperation::FilterOperation(Document* document, const QString& name)
 void FilterOperation::imageOperationImpl(Image* new_image) {
   fillKernel();
 
-  for (const auto& row : kernel_) {
-    for (const auto& col : row) {
-      qDebug() << col;
-    }
-    qDebug() << "---";
-  }
+  // for (const auto& row : kernel_) {
+  //   for (const auto& col : row) {
+  //     qDebug() << col;
+  //   }
+  //   qDebug() << "---";
+  // }
 
   PointOperation::imageOperationImpl(new_image);
 }
@@ -23,20 +23,22 @@ QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb color) {
   int g_acc = 0;
   int b_acc = 0;
 
-  int pixels_count = 0;
+  int value = 0;
 
-  // qDebug() << x << y;
+  int kernel_v_rad = kernel_.size() / 2;
 
-  int kernel_h_rad = kernel_.size() / 2;
+  for (int i = -kernel_v_rad; i <= kernel_v_rad; ++i) {
+    int ly = y + i;
 
-  for (int i = -kernel_h_rad; i < kernel_h_rad; ++i) {
-    int kernel_v_rad = kernel_[i].size() / 2;
+    if (ly < 0 || ly >= oldImage()->height()) {
+      continue;
+    }
 
-    for (int j = -kernel_v_rad; j < kernel_v_rad; ++j) {
-      int lx = x + i;
-      int ly = y + j;
+    int kernel_h_rad = kernel_[i + kernel_v_rad].size() / 2;
+    for (int j = -kernel_h_rad; j <= kernel_h_rad; ++j) {
+      int lx = x + j;
 
-      if (lx < 0 || ly < 0 || lx >= oldImage()->width() || ly >= oldImage()->height()) {
+      if (lx < 0 || lx >= oldImage()->width()) {
         continue;
       }
 
@@ -49,15 +51,15 @@ QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb color) {
       g_acc += qGreen(pixel) * kernel_[kx][ky];
       b_acc += qBlue(pixel) * kernel_[kx][ky];
 
-      ++pixels_count;
+      value += kernel_[kx][ky];
     }
   }
 
-  pixels_count = std::max(pixels_count, 1);
+  value = std::max(value, 1);
 
-  r_acc /= pixels_count;
-  g_acc /= pixels_count;
-  b_acc /= pixels_count;
+  r_acc /= value;
+  g_acc /= value;
+  b_acc /= value;
 
   return qRgba(r_acc, g_acc, b_acc, qAlpha(color));
 }
