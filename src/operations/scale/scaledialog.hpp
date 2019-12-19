@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QCheckBox>
+
 #include "operations/private/imageoperationdialog.hpp"
 #include "scale.hpp"
 
@@ -24,5 +26,7 @@ private:
 
   QRadioButton* nn_radio_{nullptr};
   QRadioButton* bilineal_radio_{nullptr};
+
+  QCheckBox* aspect_ratio_checkbox_{nullptr};
 };
 }  // namespace imagecpp

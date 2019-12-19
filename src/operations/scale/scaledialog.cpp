@@ -1,6 +1,7 @@
 #include "scaledialog.hpp"
 
 #include <QDoubleSpinBox>
+#include <numeric>
 
 namespace imagecpp {
 
@@ -8,6 +9,9 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
     : ImageOperationDialog<Scale>(document, parent) {
 
   QFormLayout* form_layout = new QFormLayout();
+
+  aspect_ratio_checkbox_ = new QCheckBox("Keep Aspect Ratio");
+  aspect_ratio_checkbox_->setChecked(operation().aspectRatioToggled());
 
   x_scale_spin_ = new QDoubleSpinBox();
   y_scale_spin_ = new QDoubleSpinBox();
@@ -29,17 +33,16 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
 
   interpolation_group_layout->addWidget(nn_radio_);
   interpolation_group_layout->addWidget(bilineal_radio_);
-  interpolation_group_layout->addSpacerItem(new QSpacerItem(200, 400));
 
   interpolation_group->setLayout(interpolation_group_layout);
 
-  x_scale_spin_->setRange(1, 1000);
-  y_scale_spin_->setRange(1, 1000);
+  x_scale_spin_->setRange(1, std::numeric_limits<int>::max());
+  y_scale_spin_->setRange(1, std::numeric_limits<int>::max());
   x_scale_spin_->setValue(operation().scaleX());
   y_scale_spin_->setValue(operation().scaleY());
 
-  width_spin_->setRange(1, 100000000);
-  height_spin_->setRange(1, 100000000);
+  width_spin_->setRange(1, std::numeric_limits<int>::max());
+  height_spin_->setRange(1, std::numeric_limits<int>::max());
   width_spin_->setValue(operation().newImage()->width());
   height_spin_->setValue(operation().newImage()->height());
 
@@ -49,49 +52,91 @@ ScaleDialog::ScaleDialog(Document* document, QWidget* parent)
   form_layout->addRow("Width: ", width_spin_);
   form_layout->addRow("Height: ", height_spin_);
 
-  form_layout->addWidget(interpolation_group);
-
   settings_layout_->addLayout(form_layout);
+  settings_layout_->addWidget(interpolation_group);
+  settings_layout_->addWidget(aspect_ratio_checkbox_);
+  settings_layout_->addWidget(new QLabel(tr("Initial Dimensions: %1 x %2")
+                                             .arg(operation().oldImage()->width())
+                                             .arg(operation().oldImage()->height())));
 
-  // TODO: Add desired size also
-
-  connect(&operation(), &ImageOperation::propertyChanged, this, [this]() {
-    x_scale_spin_->blockSignals(true);
-    x_scale_spin_->setValue(operation().scaleX());
-    x_scale_spin_->blockSignals(false);
-
-    y_scale_spin_->blockSignals(true);
-    y_scale_spin_->setValue(operation().scaleY());
-    y_scale_spin_->blockSignals(false);
-
-    width_spin_->blockSignals(true);
-    width_spin_->setValue(operation().oldImage()->width() * operation().scaleX() / 100);
-    width_spin_->blockSignals(false);
-
-    height_spin_->blockSignals(true);
-    height_spin_->setValue(operation().oldImage()->height() * operation().scaleY() / 100);
-    height_spin_->blockSignals(false);
-  });
+  settings_layout_->addSpacerItem(new QSpacerItem(200, 400));
 
   connect(x_scale_spin_,
           qOverload<double>(&QDoubleSpinBox::valueChanged),
-          &operation(),
-          &Scale::setScaleX);
+          this,
+          [this](double value) {
+            operation().setScaleX(value);
+
+            if (operation().aspectRatioToggled()) {
+              y_scale_spin_->setValue(value);
+            }
+
+            width_spin_->blockSignals(true);
+            width_spin_->setValue(operation().newWidth());
+            width_spin_->blockSignals(false);
+          });
 
   connect(y_scale_spin_,
           qOverload<double>(&QDoubleSpinBox::valueChanged),
-          &operation(),
-          &Scale::setScaleY);
+          this,
+          [this](double value) {
+            operation().setScaleY(value);
 
-  connect(width_spin_,
-          qOverload<int>(&QSpinBox::valueChanged),
-          &operation(),
-          &Scale::setWidth);
+            if (operation().aspectRatioToggled()) {
+              x_scale_spin_->setValue(value);
+            }
 
-  connect(height_spin_,
-          qOverload<int>(&QSpinBox::valueChanged),
+            height_spin_->blockSignals(true);
+            height_spin_->setValue(operation().newHeight());
+            height_spin_->blockSignals(false);
+          });
+
+  connect(
+      width_spin_, qOverload<int>(&QSpinBox::valueChanged), this, [this](int width) {
+        operation().setWidth(width);
+
+        if (operation().aspectRatioToggled()) {
+          y_scale_spin_->blockSignals(true);
+          y_scale_spin_->setValue(width * operation().aspectRatio());
+          y_scale_spin_->blockSignals(false);
+
+          height_spin_->blockSignals(true);
+          height_spin_->setValue(operation().newHeight());
+          height_spin_->blockSignals(false);
+
+          operation().setHeight(width * operation().aspectRatio());
+        }
+
+        x_scale_spin_->blockSignals(true);
+        x_scale_spin_->setValue(operation().scaleX());
+        x_scale_spin_->blockSignals(false);
+      });
+
+  connect(aspect_ratio_checkbox_,
+          &QCheckBox::stateChanged,
           &operation(),
-          &Scale::setHeight);
+          &Scale::toggleKeepAspectRatio);
+
+  connect(
+      height_spin_, qOverload<int>(&QSpinBox::valueChanged), this, [this](int height) {
+        operation().setHeight(height);
+
+        if (operation().aspectRatioToggled()) {
+          x_scale_spin_->blockSignals(true);
+          x_scale_spin_->setValue(height / operation().aspectRatio());
+          x_scale_spin_->blockSignals(false);
+
+          width_spin_->blockSignals(true);
+          width_spin_->setValue(operation().newWidth());
+          width_spin_->blockSignals(false);
+
+          operation().setWidth(height / operation().aspectRatio());
+        }
+
+        y_scale_spin_->blockSignals(true);
+        y_scale_spin_->setValue(operation().scaleY());
+        y_scale_spin_->blockSignals(false);
+      });
 
   connect(nn_radio_, &QRadioButton::toggled, this, [this](bool checked) {
     if (checked) {

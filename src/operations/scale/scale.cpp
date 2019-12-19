@@ -30,6 +30,22 @@ float Scale::scaleY() const {
   return y_percentage_;
 }
 
+int Scale::newWidth() const {
+  return oldImage()->width() * (x_percentage_ / 100);
+}
+
+int Scale::newHeight() const {
+  return oldImage()->height() * (y_percentage_ / 100);
+}
+
+float Scale::aspectRatio() const {
+  return float(oldImage()->height()) / oldImage()->width();
+}
+
+bool Scale::aspectRatioToggled() const {
+  return keep_aspect_ratio_;
+}
+
 Scale::Interpolation Scale::interpolation() const {
   return interpolation_type_;
 }
@@ -47,15 +63,19 @@ void Scale::setScaleY(float percentage) {
 }
 
 void Scale::setWidth(int width) {
-  x_percentage_ = (float(width+1) / oldImage()->width()) * 100;
+  x_percentage_ = (float(width) / oldImage()->width()) * 100;
 
   emit propertyChanged();
 }
 
 void Scale::setHeight(int height) {
-  y_percentage_ = (float(height+1) / oldImage()->height()) * 100;
+  y_percentage_ = (float(height) / oldImage()->height()) * 100;
 
   emit propertyChanged();
+}
+
+void Scale::toggleKeepAspectRatio(bool toggle) {
+  keep_aspect_ratio_ = toggle;
 }
 
 void Scale::setInterpolation(Interpolation interpolation) {

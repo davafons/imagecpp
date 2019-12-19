@@ -17,6 +17,13 @@ public:
   float scaleX() const;
   float scaleY() const;
 
+  int newWidth() const;
+  int newHeight() const;
+
+  float aspectRatio() const;
+
+  bool aspectRatioToggled() const;
+
   Interpolation interpolation() const;
 
 public slots:
@@ -25,6 +32,8 @@ public slots:
 
   void setWidth(int width);
   void setHeight(int height);
+
+  void toggleKeepAspectRatio(bool toggle);
 
   void setInterpolation(Interpolation interpolation);
 
@@ -39,6 +48,8 @@ private:
 private:
   float x_percentage_{100};
   float y_percentage_{100};
+
+  bool keep_aspect_ratio_{false};
 
   Interpolation interpolation_type_{Interpolation::NN};
 };
