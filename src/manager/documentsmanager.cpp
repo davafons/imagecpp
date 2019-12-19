@@ -50,7 +50,7 @@ void DocumentsManager::saveAs(Document *document, QString file_path) const {
   }
 
   if (file_path.isEmpty()) {
-    file_path = QFileDialog::getOpenFileName(nullptr, tr("Open Image"), "~", filters_);
+    file_path = QFileDialog::getSaveFileName(nullptr, tr("Save Image"), "~", filters_);
     document->setFilePath(file_path);
   }
 
