@@ -8,13 +8,6 @@ FilterOperation::FilterOperation(Document* document, const QString& name)
 void FilterOperation::imageOperationImpl(Image* new_image) {
   fillKernel();
 
-  // for (const auto& row : kernel_) {
-  //   for (const auto& col : row) {
-  //     qDebug() << col;
-  //   }
-  //   qDebug() << "---";
-  // }
-
   PointOperation::imageOperationImpl(new_image);
 }
 
@@ -60,6 +53,10 @@ QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb color) {
   r_acc /= value;
   g_acc /= value;
   b_acc /= value;
+
+  r_acc = std::max(r_acc, 0);
+  g_acc = std::max(g_acc, 0);
+  b_acc = std::max(b_acc, 0);
 
   return qRgba(r_acc, g_acc, b_acc, qAlpha(color));
 }
