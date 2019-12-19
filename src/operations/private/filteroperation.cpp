@@ -37,14 +37,14 @@ QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb color) {
 
       QRgb pixel = oldImage()->pixel(lx, ly);
 
-      int kx = i + kernel_h_rad;
-      int ky = j + kernel_v_rad;
+      int kx = j + kernel_h_rad;
+      int ky = i + kernel_v_rad;
 
-      r_acc += qRed(pixel) * kernel_[kx][ky];
-      g_acc += qGreen(pixel) * kernel_[kx][ky];
-      b_acc += qBlue(pixel) * kernel_[kx][ky];
+      r_acc += qRed(pixel) * kernel_[ky][kx];
+      g_acc += qGreen(pixel) * kernel_[ky][kx];
+      b_acc += qBlue(pixel) * kernel_[ky][kx];
 
-      value += kernel_[kx][ky];
+      value += kernel_[ky][kx];
     }
   }
 
@@ -54,9 +54,9 @@ QRgb FilterOperation::pointOperationImpl(int x, int y, QRgb color) {
   g_acc /= value;
   b_acc /= value;
 
-  r_acc = std::max(r_acc, 0);
-  g_acc = std::max(g_acc, 0);
-  b_acc = std::max(b_acc, 0);
+  r_acc = std::min(std::max(r_acc, 0), 255);
+  g_acc = std::min(std::max(g_acc, 0), 255);
+  b_acc = std::min(std::max(b_acc, 0), 255);
 
   return qRgba(r_acc, g_acc, b_acc, qAlpha(color));
 }
